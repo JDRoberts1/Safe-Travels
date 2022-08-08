@@ -46,6 +46,8 @@
     <string name="prompt_post_hint">Tell the community about your trip . . .</string>
     <string name="prompt_location_hint">Enter trip location</string>
     <string name="prompt_post_date">When did you go?</string>
+    <string name="prompt_profile_updated">User profile updated.</string>
+
 
     <!-- App String Arrays -->
     <string-array name="actions_image">

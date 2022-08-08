@@ -6,9 +6,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -71,7 +69,7 @@ public class HomeActivity extends AppCompatActivity {
 
                     // Check selected item id and start activity intent
                     if (item.getItemId() == R.id.navigation_messages){
-                        Intent i = new Intent(getApplicationContext(), MessagesActivity.class);
+                        Intent i = new Intent(getApplicationContext(), ConversationListActivity.class);
                         startActivity(i);
                     }
                     else if (item.getItemId() == R.id.navigation_new_post){

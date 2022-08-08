@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MessagesActivity">
+    tools:context=".ConversationListActivity">
 
     <LinearLayout
         android:id="@+id/linearLayout3"
@@ -45,6 +45,7 @@
         app:layout_constraintTop_toBottomOf="@+id/linearLayout3" />
 
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/messages_RCV"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toTopOf="@+id/nav_view"

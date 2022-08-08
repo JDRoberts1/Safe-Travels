@@ -39,7 +39,7 @@ public class ProfileActivity extends AppCompatActivity {
                         startActivity(i);
                     }
                     else if (item.getItemId() == R.id.navigation_messages){
-                        Intent i = new Intent(getApplicationContext(), MessagesActivity.class);
+                        Intent i = new Intent(getApplicationContext(), ConversationListActivity.class);
                         startActivity(i);
                     }
                     else if (item.getItemId() == R.id.navigation_new_post){

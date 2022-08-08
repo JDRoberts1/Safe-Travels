@@ -2,26 +2,44 @@ package com.fullsail.android.safetravels;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageButton;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 
-public class MessagesActivity extends AppCompatActivity {
+public class ConversationListActivity extends AppCompatActivity {
 
     BottomNavigationView navView;
+    ImageButton newMessageBttn;
+    RecyclerView messagesRCV;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_messages_list);
-
+        newMessageBttn = findViewById(R.id.new_Message_Bttn);
+        messagesRCV = findViewById(R.id.messages_RCV);
         setUpBottomNav();
     }
 
+    // TODO: Set up OnClick for new Message
+    View.OnClickListener newMessageClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            // Take the user to the user search activity
+        }
+    };
+
+    // TODO: Set up RCV for users messages
+    public void setUpRCV(){
+
+    }
 
     public void setUpBottomNav(){
         navView = findViewById(R.id.nav_view);
