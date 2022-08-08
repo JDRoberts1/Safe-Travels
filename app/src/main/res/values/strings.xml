@@ -1,0 +1,79 @@
+<resources>
+    <!-- App Info -->
+    <string name="app_name">SafeTravels</string>
+    <string name="app_img">SafeTravels Logo</string>
+
+    <!-- App Actions -->
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="action_forgot_password">Forgot password</string>
+    <string name="action_reset_password">Reset Password</string>
+    <string name="action_upload_image">Upload Image</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_edit_profile">Edit Profile</string>
+    <string name="action_update_profile">Update Profile</string>
+    <string name="action_log_out">Log Out</string>
+    <string name="action_remove_account">Delete Account</string>
+    <string name="action_send_reset">Send Password Reset email</string>
+    <string name="action_view_favorites">Favorites</string>
+    <string name="action_create_new_message">Create New Message</string>
+    <string name="action_post">Post</string>
+
+    <!-- App Labels -->
+    <string name="label_chat_list">Chat List</string>
+    <string name="label_blog_post">Blog Post</string>
+    <string name="label_location">Location</string>
+    <string name="label_date">Date</string>
+    <string name="label_upload_images">Upload Image(s)</string>
+    <string name="label_vacation_photo">vacation photo</string>
+    <string name="label_recent_posts">Recent Posts</string>
+    <string name="label_pending_friend_requests">Pending Friend Requests</string>
+    <string name="label_friends_list">Friends List</string>
+
+    <!-- App Prompts -->
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_register">Register</string>
+    <string name="prompt_profile_image">Profile Image</string>
+    <string name="prompt_error"> </string>
+    <string name="prompt_photo">Upload Profile Image</string>
+    <string name="prompt_welcome">Welcome, User!</string>
+    <string name="prompt_log_in">Log In</string>
+    <string name="prompt_first_name">First Name</string>
+    <string name="prompt_last_name">Last Name</string>
+    <string name="prompt_username">Username</string>
+    <string name="prompt_password_confirmation">Confirm Password</string>
+    <string name="prompt_enter_email">Enter email address</string>
+    <string name="prompt_post_hint">Tell the community about your trip . . .</string>
+    <string name="prompt_location_hint">Enter trip location</string>
+    <string name="prompt_post_date">When did you go?</string>
+
+    <!-- App String Arrays -->
+    <string-array name="actions_image">
+        <item>Take a Photo</item>
+        <item>Choose from Library</item>
+        <item>Cancel</item>
+    </string-array>
+
+    <!-- App Titles -->
+    <string name="title_home">Home</string>
+    <string name="title_profile">Profile</string>
+    <string name="title_messages">Messages</string>
+    <string name="title_new_post">New Post</string>
+    <string name="title_friends">Friends</string>
+    <string name="title_activity_login">LoginActivity</string>
+    <string name="title_activity_register">RegisterActivity</string>
+    <string name="title_activity_launch">LaunchActivity</string>
+    <string name="title_activity_main2">MainActivity2</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+
+    <!-- App Warnings -->
+    <string name="warning_invalid_email">Not a valid email</string>
+    <string name="warning_invalid_password">Password must be >5 characters</string>
+    <string name="warning_login_failed">"Login failed"</string>
+    <string name="warning_empty_field">All fields are required</string>
+
+    <!-- App Just Added-->
+
+
+</resources>

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Widget.Theme.SafeTravels.ActionBar.Fullscreen" parent="Widget.AppCompat.ActionBar">
+        <item name="android:background">@color/black_overlay</item>
+    </style>
+
+    <style name="Widget.Theme.SafeTravels.ButtonBar.Fullscreen" parent="">
+        <item name="android:background">@color/black_overlay</item>
+        <item name="android:buttonBarStyle">?android:attr/buttonBarStyle</item>
+    </style>
+
+    <style name="Theme.SafeTravels.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@drawable/splash_background</item>
+        <item name="postSplashScreenTheme">@style/Theme.SafeTravels</item>
+    </style>
+
+    <style name="Title_TV_Style">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:fontFamily">@font/gayathri_thin</item>
+        <item name="android:textAlignment">textStart</item>
+        <item name="android:textColor">@color/orange_700</item>
+        <item name="android:textSize">24sp</item>
+    </style>
+
+    <style name="Button_TV_Style">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:fontFamily">@font/gayathri_thin</item>
+        <item name="android:textColor">@color/blue_700</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="ETV_Style">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">48dp</item>
+        <item name="android:backgroundTint">@color/orange_700</item>
+        <item name="android:foregroundTint">@color/orange_700</item>
+        <item name="android:importantForAutofill">no</item>
+    </style>
+
+    <style name="BttnStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:backgroundTint">@color/orange_700</item>
+        <item name="android:fontFamily">@font/gayathri_thin</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="Widget.Theme.SafeTravels.Starting.ActionBar.Fullscreen" parent="Widget.AppCompat.ActionBar">
+        <item name="android:background">@color/black_overlay</item>
+    </style>
+
+    <style name="Widget.Theme.SafeTravels.Starting.ButtonBar.Fullscreen" parent="">
+        <item name="android:background">@color/black_overlay</item>
+        <item name="android:buttonBarStyle">?android:attr/buttonBarStyle</item>
+    </style>
+
+    <style name="TitleStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">52dp</item>
+        <item name="android:fontFamily">@font/gayathri_thin</item>
+        <item name="android:textColor">@color/orange_700</item>
+        <item name="android:textSize">34sp</item>
+    </style>
+
+    <style name="ErrorLabelStyle">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:textColor">#CF0404</item>
+        <item name="android:visibility">gone</item>
+    </style>
+
+    <style name="style_bottom_nav">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:elevation">3dp</item>
+    </style>
+
+</resources>
