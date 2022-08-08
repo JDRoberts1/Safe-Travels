@@ -35,7 +35,7 @@ public class MessagesActivity extends AppCompatActivity {
 
                     // Check selected item id and start activity intent
                     if (item.getItemId() == R.id.navigation_home){
-                        Intent i = new Intent(getApplicationContext(), MainActivity.class);
+                        Intent i = new Intent(getApplicationContext(), HomeActivity.class);
                         startActivity(i);
 
                     }

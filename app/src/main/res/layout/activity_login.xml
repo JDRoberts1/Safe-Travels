@@ -8,10 +8,10 @@
     <TextView
         android:id="@+id/email_login_label"
         style="@style/Title_TV_Style"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="20dp"
         android:text="@string/prompt_email"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/sign_in_error_label"
         tools:ignore="TextContrastCheck" />
@@ -19,10 +19,9 @@
     <Button
         android:id="@+id/sign_in_bttn"
         style="@style/BttnStyle"
-        android:layout_marginTop="48dp"
+        android:layout_marginTop="44dp"
         android:text="@string/action_sign_in_short"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/forgot_password_bttn"
         tools:ignore="TextContrastCheck" />
@@ -42,7 +41,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/sign_in_bttn"
-        app:layout_constraintVertical_bias="0.008"
+        app:layout_constraintVertical_bias="0.026"
         tools:ignore="TextContrastCheck,TouchTargetSizeCheck" />
 
     <TextView
@@ -78,11 +77,11 @@
     <TextView
         android:id="@+id/password_login_label"
         style="@style/Title_TV_Style"
-        android:layout_marginTop="36dp"
+        android:layout_marginTop="44dp"
         android:text="@string/prompt_password"
         android:textAlignment="center"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/email_login_etv"
         tools:ignore="TextContrastCheck" />
