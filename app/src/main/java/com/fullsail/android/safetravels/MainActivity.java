@@ -34,36 +34,25 @@ public class MainActivity extends AppCompatActivity {
                 if (item.getItemId() != navView.getSelectedItemId()){
 
                     // Check selected item id and start activity intent
-                    if (item.getItemId() == R.id.navigation_home){
-                        Intent i = new Intent(getApplicationContext(), MainActivity.class);
-                        startActivity(i);
-
-                    }
-                    else if (item.getItemId() == R.id.navigation_messages){
+                    if (item.getItemId() == R.id.navigation_messages){
                         Intent i = new Intent(getApplicationContext(), MessagesActivity.class);
                         startActivity(i);
-
                     }
                     else if (item.getItemId() == R.id.navigation_new_post){
                         Intent i = new Intent(getApplicationContext(), NewPostActivity.class);
                         startActivity(i);
-
                     }
                     else if (item.getItemId() == R.id.navigation_friends){
                         Intent i = new Intent(getApplicationContext(), FriendsActivity.class);
                         startActivity(i);
-
                     }
                     else if (item.getItemId() == R.id.navigation_profile){
                         Intent i = new Intent(getApplicationContext(), ProfileActivity.class);
                         startActivity(i);
-
-
                     }
                     overridePendingTransition(0,0);
                     return true;
                 }
-
                 return false;
             }
         });

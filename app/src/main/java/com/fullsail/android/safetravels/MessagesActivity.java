@@ -39,11 +39,6 @@ public class MessagesActivity extends AppCompatActivity {
                         startActivity(i);
 
                     }
-                    else if (item.getItemId() == R.id.navigation_messages){
-                        Intent i = new Intent(getApplicationContext(), MessagesActivity.class);
-                        startActivity(i);
-
-                    }
                     else if (item.getItemId() == R.id.navigation_new_post){
                         Intent i = new Intent(getApplicationContext(), NewPostActivity.class);
                         startActivity(i);

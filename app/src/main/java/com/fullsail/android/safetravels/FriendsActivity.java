@@ -45,10 +45,6 @@ public class FriendsActivity extends AppCompatActivity {
                         Intent i = new Intent(getApplicationContext(), NewPostActivity.class);
                         startActivity(i);
                     }
-                    else if (item.getItemId() == R.id.navigation_friends){
-                        Intent i = new Intent(getApplicationContext(), FriendsActivity.class);
-                        startActivity(i);
-                    }
                     else if (item.getItemId() == R.id.navigation_profile){
                         Intent i = new Intent(getApplicationContext(), ProfileActivity.class);
                         startActivity(i);
