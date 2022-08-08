@@ -8,28 +8,55 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.SafeTravels">
-        <activity
-            android:name=".NewPostActivity"
-            android:exported="false" />
-        <activity
-            android:name=".FriendsActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ProfileActivity"
-            android:exported="false" />
-        <activity
-            android:name=".MessagesActivity"
-            android:exported="false" />
-        <activity
-            android:name=".HomeActivity"
-            android:exported="true">
+        android:theme="@style/Theme.SafeTravels.Starting">
+
+        <activity android:name=".LaunchActivity"
+            android:exported="true"
+            android:theme="@style/Theme.SafeTravels.Fullscreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".LoginActivity"
+            android:exported="true"
+            android:theme="@style/Theme.SafeTravels.Fullscreen" />
+
+        <activity
+            android:name=".RegisterActivity"
+            android:exported="true"
+            android:theme="@style/Theme.SafeTravels.Fullscreen" />
+
+        <activity
+            android:name=".ResetPasswordActivity"
+            android:exported="true"
+            android:theme="@style/Theme.SafeTravels.Fullscreen" />
+
+        <activity
+            android:name=".HomeActivity"
+            android:exported="true"
+            android:theme="@style/Theme.SafeTravels.Fullscreen" />
+
+        <activity
+            android:name=".FriendsActivity"
+            android:exported="true"
+            />
+
+        <activity
+            android:name=".NewPostActivity"
+            android:exported="true" />
+
+        <activity
+            android:name=".MessagesActivity"
+            android:exported="true" />
+
+        <activity
+            android:name=".ProfileActivity"
+            android:exported="true" />
+
     </application>
 
 </manifest>
