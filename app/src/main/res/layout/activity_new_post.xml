@@ -6,4 +6,174 @@
     android:layout_height="match_parent"
     tools:context=".NewPostActivity">
 
+    <TextView
+        android:id="@+id/post_Label"
+        style="@style/Label_TV_Style"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="40dp"
+        android:text="@string/label_blog_post"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="TextContrastCheck" />
+
+    <EditText
+        android:id="@+id/new_Post_ETV"
+        style="@style/ETV_Style"
+        android:layout_width="0dp"
+        android:layout_height="142dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:ems="10"
+        android:gravity="start|top"
+        android:hint="@string/prompt_post_hint"
+        android:importantForAutofill="no"
+        android:inputType="textMultiLine"
+        android:textColorHint="#546E7A"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.225"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/post_Label" />
+
+    <TextView
+        android:id="@+id/lcation_Post_Label"
+        style="@style/Label_TV_Style"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="12dp"
+        android:text="@string/label_location"
+        app:layout_constraintEnd_toStartOf="@+id/location_Post_ETV"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/location_Post_ETV"
+        tools:ignore="TextContrastCheck" />
+
+    <EditText
+        android:id="@+id/location_Post_ETV"
+        style="@style/ETV_Style"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="32dp"
+        android:autofillHints=""
+        android:ems="10"
+        android:hint="@string/prompt_location_hint"
+        android:inputType="textPersonName"
+        android:minHeight="48dp"
+        android:textColorHint="#546E7A"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/new_Post_ETV" />
+
+    <TextView
+        android:id="@+id/date_Post_Label"
+        style="@style/Label_TV_Style"
+        android:layout_marginTop="12dp"
+        android:text="@string/label_date"
+        app:layout_constraintEnd_toStartOf="@+id/date_Post_ETV"
+        app:layout_constraintHorizontal_bias="0.696"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/date_Post_ETV"
+        tools:ignore="TextContrastCheck" />
+
+    <EditText
+        android:id="@+id/date_Post_ETV"
+        style="@style/ETV_Style"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="32dp"
+        android:ems="10"
+        android:hint="@string/prompt_post_date"
+        android:importantForAutofill="no"
+        android:inputType="date"
+        android:minHeight="48dp"
+        android:textColorHint="#546E7A"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/location_Post_ETV" />
+
+    <TextView
+        android:id="@+id/images_Post_Label"
+        style="@style/Label_TV_Style"
+        android:layout_marginTop="24dp"
+        android:text="@string/label_upload_images"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/date_Post_ETV"
+        tools:ignore="TextContrastCheck" />
+
+    <LinearLayout
+        android:id="@+id/linearLayout4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/images_Post_Label">
+
+        <ImageView
+            android:id="@+id/post_Img_1"
+            android:layout_width="85dp"
+            android:layout_height="85dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="12dp"
+            android:contentDescription="@string/label_vacation_photo"
+            android:src="@drawable/ic_baseline_add_box_24"
+            tools:ignore="ImageContrastCheck" />
+
+        <ImageView
+            android:id="@+id/post_Img_2"
+            android:layout_width="85dp"
+            android:layout_height="85dp"
+            android:contentDescription="@string/label_vacation_photo"
+            android:src="@drawable/ic_baseline_add_box_24"
+            tools:ignore="ImageContrastCheck" />
+
+        <ImageView
+            android:id="@+id/post_Img_3"
+            android:layout_width="85dp"
+            android:layout_height="85dp"
+            android:contentDescription="@string/label_vacation_photo"
+            android:src="@drawable/ic_baseline_add_box_24"
+            tools:ignore="ImageContrastCheck" />
+
+        <ImageView
+            android:id="@+id/post_Img_4"
+            android:layout_width="85dp"
+            android:layout_height="85dp"
+            android:layout_marginStart="14dp"
+            android:layout_marginEnd="16dp"
+            android:contentDescription="@string/label_vacation_photo"
+            android:src="@drawable/ic_baseline_add_box_24"
+            tools:ignore="ImageContrastCheck" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/post_Bttn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="80dp"
+        android:layout_marginBottom="135dp"
+        android:text="@string/action_post"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout4"
+        app:layout_constraintVertical_bias="0.0"
+        tools:ignore="TextContrastCheck" />
+
+    <Button
+        android:id="@+id/cancel_Post_Bttn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="135dp"
+        android:text="@string/action_cancel"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/post_Bttn"
+        app:layout_constraintHorizontal_bias="0.513"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/post_Bttn"
+        app:layout_constraintVertical_bias="0.0"
+        tools:ignore="TextContrastCheck" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>
