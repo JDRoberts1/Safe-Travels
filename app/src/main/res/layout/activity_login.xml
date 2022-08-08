@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/email_login_label"
+        style="@style/Title_TV_Style"
+        android:layout_marginTop="16dp"
+        android:text="@string/prompt_email"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/sign_in_error_label"
+        tools:ignore="TextContrastCheck" />
+
+    <Button
+        android:id="@+id/sign_in_bttn"
+        style="@style/BttnStyle"
+        android:layout_marginTop="48dp"
+        android:text="@string/action_sign_in_short"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/forgot_password_bttn"
+        tools:ignore="TextContrastCheck" />
+
+    <TextView
+        android:id="@+id/register_bttn"
+        style="@style/Button_TV_Style"
+        android:layout_width="75dp"
+        android:layout_height="35dp"
+        android:layout_marginTop="36dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:minHeight="48dp"
+        android:text="@string/action_register"
+        android:textAlignment="center"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/sign_in_bttn"
+        app:layout_constraintVertical_bias="0.008"
+        tools:ignore="TextContrastCheck,TouchTargetSizeCheck" />
+
+    <TextView
+        android:id="@+id/forgot_password_bttn"
+        style="@style/Button_TV_Style"
+        android:layout_marginTop="16dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:minHeight="48dp"
+        android:text="@string/action_forgot_password"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.716"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/password_login_etv"
+        tools:ignore="TextContrastCheck" />
+
+    <EditText
+        android:id="@+id/password_login_etv"
+        style="@style/ETV_Style"
+        android:layout_marginTop="16dp"
+        android:backgroundTint="@color/orange_700"
+        android:ems="10"
+        android:hint="@string/prompt_password"
+        android:importantForAutofill="no"
+        android:inputType="textPassword"
+        android:minHeight="48dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.577"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/password_login_label"
+        tools:ignore="TextContrastCheck,DuplicateSpeakableTextCheck,SpeakableTextPresentCheck" />
+
+    <TextView
+        android:id="@+id/password_login_label"
+        style="@style/Title_TV_Style"
+        android:layout_marginTop="36dp"
+        android:text="@string/prompt_password"
+        android:textAlignment="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/email_login_etv"
+        tools:ignore="TextContrastCheck" />
+
+    <EditText
+        android:id="@+id/email_login_etv"
+        style="@style/ETV_Style"
+        android:layout_marginTop="16dp"
+        android:ems="10"
+        android:hint="@string/prompt_email"
+        android:importantForAutofill="no"
+        android:inputType="textEmailAddress"
+        android:minHeight="48dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.572"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/email_login_label"
+        tools:ignore="DuplicateSpeakableTextCheck,TextContrastCheck,SpeakableTextPresentCheck" />
+
+    <TextView
+        android:id="@+id/title_label"
+        style="@style/TitleStyle"
+        android:layout_marginTop="32dp"
+        android:text="@string/prompt_log_in"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="TextContrastCheck" />
+
+    <TextView
+        android:id="@+id/sign_in_error_label"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:textAlignment="center"
+        android:textColor="#DF0808"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/title_label" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
