@@ -240,28 +240,22 @@ public class RegisterActivity extends AppCompatActivity {
 
     }
 
-    // Method to add new user to Firestore Collection
-    private void addToCollection(FirebaseUser user) {
-
-    }
-
     // OnClickListener for Sign-In textview
     View.OnClickListener signInClick = v -> {
-
-        // TODO: Create Intent to take user to sign in screen
+        // Create Intent to take user to sign in screen
         logInScreenIntent();
     };
 
     // OnClickListener for Upload Image button
     View.OnClickListener uploadClick = v -> {
 
-        // TODO: Request Permission
+        // Request Permission
         if (ActivityCompat.checkSelfPermission(RegisterActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
 
             requestPerms.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE);
         }
 
-        // TODO: SET UP CAMERA code
+        // Set up camera code
         final CharSequence[] items = {"Take A Photo", "Choose from Gallery", "Cancel"};
 
         AlertDialog.Builder builder = new AlertDialog.Builder(RegisterActivity.this);
@@ -299,10 +293,7 @@ public class RegisterActivity extends AppCompatActivity {
 
                                 if (user != null) {
                                     updateUI(user);
-                                    addToCollection(user);
-
                                 }
-
 
                                 logInScreenIntent();
 

@@ -119,7 +119,6 @@ public class EditProfileActivity extends AppCompatActivity {
         if (user.getPhotoUrl() != null) {
             profileImage.setImageURI(user.getPhotoUrl());
         }
-
     }
 
     // Intent to send the user back to Log In Screen
@@ -220,6 +219,7 @@ public class EditProfileActivity extends AppCompatActivity {
                     .addOnFailureListener(e -> errorLabel.setText(e.getLocalizedMessage()));
                 }
 
+                // Check if user has updated their img
                 if (updatedImg){
                     Uri imgUri = getImgUri(EditProfileActivity.this, imageBitmap, user.getUid());
 

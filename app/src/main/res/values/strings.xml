@@ -74,6 +74,7 @@
     <string name="warning_invalid_password">Password must be >5 characters</string>
     <string name="warning_login_failed">"Login failed"</string>
     <string name="warning_empty_field">All fields are required</string>
+    <string name="default_counter_label">(0)</string>
 
     <!-- App Just Added-->
 

@@ -26,9 +26,6 @@ public class LaunchActivity extends AppCompatActivity {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                // TODO: check if a user is currently logged in
-                //toLogInScreen();
-
                 // check if a user is currently logged in
                 if (cUser != null){
                     toMainScreen();

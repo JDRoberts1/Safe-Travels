@@ -24,6 +24,7 @@ public class ConversationListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_messages_list);
         newMessageBttn = findViewById(R.id.new_Message_Bttn);
+        newMessageBttn.setOnClickListener(newMessageClick);
         messagesRCV = findViewById(R.id.messages_RCV);
         setUpBottomNav();
     }
@@ -33,6 +34,7 @@ public class ConversationListActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
             // Take the user to the user search activity
+            startActivity(new Intent(ConversationListActivity.this, NewConversationActivity.class));
         }
     };
 
@@ -41,6 +43,7 @@ public class ConversationListActivity extends AppCompatActivity {
 
     }
 
+    // Method to set up bottom nav bar
     public void setUpBottomNav(){
         navView = findViewById(R.id.nav_view);
         navView.setSelectedItemId(R.id.navigation_messages);
@@ -55,23 +58,18 @@ public class ConversationListActivity extends AppCompatActivity {
                     if (item.getItemId() == R.id.navigation_home){
                         Intent i = new Intent(getApplicationContext(), HomeActivity.class);
                         startActivity(i);
-
                     }
                     else if (item.getItemId() == R.id.navigation_new_post){
                         Intent i = new Intent(getApplicationContext(), NewPostActivity.class);
                         startActivity(i);
-
                     }
                     else if (item.getItemId() == R.id.navigation_friends){
                         Intent i = new Intent(getApplicationContext(), FriendsActivity.class);
                         startActivity(i);
-
                     }
                     else if (item.getItemId() == R.id.navigation_profile){
                         Intent i = new Intent(getApplicationContext(), ProfileActivity.class);
                         startActivity(i);
-
-
                     }
                     overridePendingTransition(0,0);
                     return true;

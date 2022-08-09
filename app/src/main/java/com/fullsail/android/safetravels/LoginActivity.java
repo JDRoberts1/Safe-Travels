@@ -91,6 +91,7 @@ public class LoginActivity extends AppCompatActivity {
 
     // Method to log user in
     private void logInUser(String email, String password){
+
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
