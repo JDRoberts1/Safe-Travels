@@ -68,6 +68,10 @@
             android:name=".UserProfileActivity"
             android:exported="true"
             android:theme="@style/Theme.SafeTravels.Fullscreen" />
+        <activity
+            android:name=".UserFriendSearchActivity"
+            android:exported="true"
+            android:theme="@style/Theme.SafeTravels.Fullscreen"/>
     </application>
 
 </manifest>

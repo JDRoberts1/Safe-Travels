@@ -23,13 +23,14 @@ public class FriendsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_friends);
 
         addBttn = findViewById(R.id.add_Friends_Button);
+        addBttn.setOnClickListener(addClick);
         setUpBottomNav();
     }
 
     View.OnClickListener addClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            startActivity(new Intent(FriendsActivity.this, ));
+            startActivity(new Intent(FriendsActivity.this, UserFriendSearchActivity.class));
         }
     };
 
