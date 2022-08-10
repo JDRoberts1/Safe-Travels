@@ -60,13 +60,20 @@ public class UserFriendSearchActivity extends AppCompatActivity {
 
     }
 
+    // Set up OnItemClickListener
     AdapterView.OnItemClickListener userCLick = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             // Intent to users profile
+            User selectedUser = users.get(position);
+            Intent i = new Intent(UserFriendSearchActivity.this, ProfileActivity.class);
+            i.putExtra(TAG, selectedUser);
+            startActivity(i);
+            overridePendingTransition(0,0);
         }
     };
 
+    // Set up OnQueryTextListener
     SearchView.OnQueryTextListener query = new SearchView.OnQueryTextListener() {
         @Override
         public boolean onQueryTextSubmit(String query) {
@@ -97,8 +104,6 @@ public class UserFriendSearchActivity extends AppCompatActivity {
             return false;
         }
     };
-
-    // TODO: Set up Item on click listener
 
     // Method to retrieve users from Firebase Collection
     public void getUsers(){

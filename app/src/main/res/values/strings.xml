@@ -75,6 +75,9 @@
     <string name="warning_login_failed">"Login failed"</string>
     <string name="warning_empty_field">All fields are required</string>
     <string name="default_counter_label">(0)</string>
+    <string name="label_conversation">Conversation</string>
+    <string name="prompt_type_message">Type Message . . .</string>
+    <string name="action_send_message">send message</string>
 
     <!-- App Just Added-->
 

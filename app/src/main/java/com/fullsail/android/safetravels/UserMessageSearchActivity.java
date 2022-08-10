@@ -59,6 +59,7 @@ public class UserMessageSearchActivity extends AppCompatActivity {
         usersListView.setAdapter(adpt);
     }
 
+    // Set up Item on click listener
     AdapterView.OnItemClickListener userCLick = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -66,9 +67,11 @@ public class UserMessageSearchActivity extends AppCompatActivity {
             Intent i = new Intent(UserMessageSearchActivity.this, ConversationActivity.class);
             i.putExtra(TAG, selectedUser);
             startActivity(i);
+            overridePendingTransition(0,0);
         }
     };
 
+    // Set up OnQueryTextListener
     SearchView.OnQueryTextListener query = new SearchView.OnQueryTextListener() {
         @Override
         public boolean onQueryTextSubmit(String query) {
@@ -99,8 +102,6 @@ public class UserMessageSearchActivity extends AppCompatActivity {
             return false;
         }
     };
-
-    // TODO: Set up Item on click listener
 
     // Method to retrieve users from Firebase Collection
     public void getUsers(){

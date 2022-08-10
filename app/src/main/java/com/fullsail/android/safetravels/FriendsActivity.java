@@ -6,12 +6,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageButton;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 
 public class FriendsActivity extends AppCompatActivity {
 
+    ImageButton addBttn;
     BottomNavigationView navView;
 
     @Override
@@ -19,12 +22,20 @@ public class FriendsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_friends);
 
+        addBttn = findViewById(R.id.add_Friends_Button);
         setUpBottomNav();
     }
 
+    View.OnClickListener addClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            startActivity(new Intent(FriendsActivity.this, ));
+        }
+    };
+
     public void setUpBottomNav(){
         navView = findViewById(R.id.nav_view);
-        navView.setSelectedItemId(R.id.navigation_home);
+        navView.setSelectedItemId(R.id.navigation_friends);
 
         navView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override

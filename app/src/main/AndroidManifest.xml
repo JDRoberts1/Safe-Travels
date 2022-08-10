@@ -10,19 +10,22 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SafeTravels.Starting.Fullscreen">
         <activity
+            android:name=".ProfileActivity"
+            android:exported="false" />
+        <activity
             android:name=".LocationSearchActivity"
             android:exported="false"
             android:theme="@style/Theme.SafeTravels" />
         <activity
             android:name=".ConversationActivity"
             android:exported="false"
-            android:theme="@style/Theme.SafeTravels"
-            android:parentActivityName=".ConversationListActivity"/>
+            android:parentActivityName=".ConversationListActivity"
+            android:theme="@style/Theme.SafeTravels" />
         <activity
             android:name=".UserMessageSearchActivity"
             android:exported="false"
-            android:theme="@style/Theme.SafeTravels"
-            android:parentActivityName=".ConversationListActivity" />
+            android:parentActivityName=".ConversationListActivity"
+            android:theme="@style/Theme.SafeTravels" />
         <activity
             android:name=".LaunchActivity"
             android:exported="true"
@@ -65,7 +68,6 @@
             android:name=".UserProfileActivity"
             android:exported="true"
             android:theme="@style/Theme.SafeTravels.Fullscreen" />
-
     </application>
 
 </manifest>

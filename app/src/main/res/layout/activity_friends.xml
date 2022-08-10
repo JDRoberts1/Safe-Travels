@@ -6,28 +6,17 @@
     android:layout_height="match_parent"
     tools:context=".FriendsActivity">
 
-    <SearchView
-        android:id="@+id/userSearchView"
-        android:layout_width="411dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="8dp"
-        android:queryHint="Search Users"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <LinearLayout
         android:id="@+id/linearLayout2"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
         android:gravity="center|start"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/userSearchView">
+        app:layout_constraintTop_toBottomOf="@+id/add_Friends_Button">
 
         <TextView
             android:id="@+id/pending_Friends_Label"
@@ -125,6 +114,20 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:menu="@menu/bottom_nav_menu" />
+
+    <ImageButton
+        android:id="@+id/add_Friends_Button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="364dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:backgroundTint="#00FFFFFF"
+        android:minHeight="48dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_baseline_person_add_alt_1_24" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

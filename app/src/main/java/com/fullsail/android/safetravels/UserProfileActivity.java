@@ -20,7 +20,6 @@ public class UserProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_profile);
         setUpBottomNav();
-
     }
 
     public void setUpBottomNav(){
@@ -48,10 +47,6 @@ public class UserProfileActivity extends AppCompatActivity {
                     }
                     else if (item.getItemId() == R.id.navigation_friends){
                         Intent i = new Intent(getApplicationContext(), FriendsActivity.class);
-                        startActivity(i);
-                    }
-                    else if (item.getItemId() == R.id.navigation_profile){
-                        Intent i = new Intent(getApplicationContext(), UserProfileActivity.class);
                         startActivity(i);
                     }
                     overridePendingTransition(0,0);
