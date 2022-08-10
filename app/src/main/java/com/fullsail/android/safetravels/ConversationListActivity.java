@@ -34,7 +34,7 @@ public class ConversationListActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
             // Take the user to the user search activity
-            startActivity(new Intent(ConversationListActivity.this, NewConversationActivity.class));
+            startActivity(new Intent(ConversationListActivity.this, UserSearchActivity.class));
         }
     };
 

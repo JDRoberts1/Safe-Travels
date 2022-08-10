@@ -4,20 +4,25 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/playstore_icon"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@drawable/playstore_icon"
         android:supportsRtl="true"
-        android:theme="@style/Theme.SafeTravels.Starting">
+        android:theme="@style/Theme.SafeTravels.Starting.Fullscreen">
         <activity
             android:name=".LocationSearchActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.SafeTravels" />
         <activity
             android:name=".ConversationActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.SafeTravels"
+            android:parentActivityName=".ConversationListActivity"/>
         <activity
             android:name=".UserSearchActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.SafeTravels"
+            android:parentActivityName=".ConversationListActivity" />
         <activity
             android:name=".LaunchActivity"
             android:exported="true"
@@ -60,11 +65,6 @@
             android:name=".ProfileActivity"
             android:exported="true"
             android:theme="@style/Theme.SafeTravels.Fullscreen" />
-        <activity
-            android:name=".NewConversationActivity"
-            android:exported="true"
-            android:theme="@style/Theme.SafeTravels"
-            android:parentActivityName=".ConversationListActivity"/>
 
     </application>
 

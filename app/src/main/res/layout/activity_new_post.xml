@@ -153,26 +153,20 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
         android:layout_marginEnd="80dp"
-        android:layout_marginBottom="135dp"
         android:text="@string/action_post"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout4"
-        app:layout_constraintVertical_bias="0.0"
         tools:ignore="TextContrastCheck" />
 
     <Button
         android:id="@+id/cancel_Post_Bttn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="135dp"
         android:text="@string/action_cancel"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/post_Bttn"
         app:layout_constraintHorizontal_bias="0.513"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/post_Bttn"
-        app:layout_constraintVertical_bias="0.0"
         tools:ignore="TextContrastCheck" />
 
 
