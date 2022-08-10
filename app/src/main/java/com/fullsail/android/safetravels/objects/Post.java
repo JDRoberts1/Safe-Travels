@@ -2,6 +2,7 @@ package com.fullsail.android.safetravels.objects;
 
 public class Post {
 
+    String uId;
     String title;
     String post;
     String date;
@@ -9,13 +10,18 @@ public class Post {
     String username;
     String datePosted;
 
-    public Post(String title, String post, String date, String location, String username, String datePosted) {
+    public Post(String uId, String title, String post, String date, String location, String username, String datePosted) {
+        this.uId = uId;
         this.title = title;
         this.post = post;
         this.date = date;
         this.location = location;
         this.username = username;
         this.datePosted = datePosted;
+    }
+
+    public String getuId() {
+        return uId;
     }
 
     public String getTitle() {

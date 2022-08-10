@@ -1,12 +1,5 @@
 package com.fullsail.android.safetravels;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-
 import android.Manifest;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -22,24 +15,41 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+
+import com.fullsail.android.safetravels.objects.Post;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.sql.Timestamp;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class NewPostActivity extends AppCompatActivity {
 
     private static final String TAG = "NewPostActivity";
-    EditText new_Post_ETV;
-    EditText location_Post_ETV;
-    EditText date_Post_ETV;
+    EditText post_Title_ETV;
+    EditText post_ETV;
+    EditText location_ETV;
+    EditText date_ETV;
     ImageView post_Img_1, post_Img_2, post_Img_3, post_Img_4;
     Button post_Bttn;
     Button cancel_Post_Bttn;
 
     Bitmap imageBitmap = null;
-    FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     static final int REQUEST_IMAGE_CAPTURE = 1;
     static final int REQUEST_IMAGE_GALLERY = 2;
@@ -51,9 +61,10 @@ public class NewPostActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_post);
 
-        new_Post_ETV = findViewById(R.id.new_Post_ETV);
-        location_Post_ETV = findViewById(R.id.location_Post_ETV);
-        date_Post_ETV = findViewById(R.id.date_Post_ETV);
+        post_Title_ETV = findViewById(R.id.post_Title_ETV);
+        post_ETV = findViewById(R.id.new_Post_ETV);
+        location_ETV = findViewById(R.id.location_Post_ETV);
+        date_ETV = findViewById(R.id.date_Post_ETV);
 
         post_Img_1 = findViewById(R.id.post_Img_1);
         post_Img_1.setOnClickListener(imgClick);
@@ -118,11 +129,43 @@ public class NewPostActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
             // Check for null or empty fields
+            if (!checkForEmptyFields()){
 
-            // Post to user's post collection
+                String uid = currentUser.getUid();
+                String title = post_Title_ETV.getText().toString();
+                String post = post_ETV.getText().toString();
+                String date = date_ETV.getText().toString() ;
+                String location = location_ETV.getText().toString();
+                String username = currentUser.getDisplayName();
+
+                // Create timestamp for the date user posted the entry
+                Date dateTS = new Date();
+                Timestamp tS = new Timestamp(dateTS.getTime());
+                String datePosted = tS.toString() ;
+
+                Post newUserPost = new Post(uid, title, post, date, location, username, datePosted);
+
+                // Add new post to post collection
+                db.collection("userList")
+                        .document(uid)
+                        .set(newUserPost)
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                Log.d(TAG, "DocumentSnapshot successfully written!");
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.w(TAG, "Error writing document", e);
+                            }
+                        });
+            }
         }
     };
 
+    // OnClickListener for when the user clicks the Img View button.
     View.OnClickListener imgClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -181,13 +224,16 @@ public class NewPostActivity extends AppCompatActivity {
     // Method to validate user entries for blanks and whitespace
     private boolean checkForEmptyFields(){
         // Check if any fiends are empty or only contain whitespace
-        if (new_Post_ETV.getText().toString().isEmpty() || new_Post_ETV.getText().toString().trim().isEmpty()){
-            return false;
+        if (post_Title_ETV.getText().toString().isEmpty() || post_Title_ETV.getText().toString().trim().isEmpty()){
+            return true;
         }
-        else if (location_Post_ETV.getText().toString().isEmpty() || location_Post_ETV.getText().toString().trim().isEmpty()){
-            return false;
+        else if (post_ETV.getText().toString().isEmpty() || post_ETV.getText().toString().trim().isEmpty()){
+            return true;
         }
-        else return !date_Post_ETV.getText().toString().isEmpty() && !date_Post_ETV.getText().toString().trim().isEmpty();
+        else if (location_ETV.getText().toString().isEmpty() || location_ETV.getText().toString().trim().isEmpty()){
+            return true;
+        }
+        else return date_ETV.getText().toString().isEmpty() || date_ETV.getText().toString().trim().isEmpty();
     }
 
 }

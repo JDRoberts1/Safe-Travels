@@ -6,11 +6,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import com.fullsail.android.safetravels.objects.User;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -24,10 +27,16 @@ public class ConversationActivity extends AppCompatActivity {
     FloatingActionButton sendBttn;
     User user;
 
+    FirebaseDatabase db;
+    DatabaseReference ref;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_conversation);
+
+        db = FirebaseDatabase.getInstance();
+        ref = db.getReference();
 
         messageImg = findViewById(R.id.message_Img);
         conversationLabel = findViewById(R.id.conversation_Label);
@@ -56,5 +65,16 @@ public class ConversationActivity extends AppCompatActivity {
         String labelString = "Conversation with" + user.getUsername();
         conversationLabel.setText(labelString);
     }
+
+    // TODO: Set up onClickListener for send button
+    View.OnClickListener sendClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+
+            String message =
+
+
+        }
+    };
 
 }
