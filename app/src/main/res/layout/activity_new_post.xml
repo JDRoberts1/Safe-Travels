@@ -6,23 +6,12 @@
     android:layout_height="match_parent"
     tools:context=".NewPostActivity">
 
-    <TextView
-        android:id="@+id/post_Label"
-        style="@style/Label_TV_Style"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="40dp"
-        android:text="@string/label_blog_post"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="TextContrastCheck" />
-
     <EditText
         android:id="@+id/new_Post_ETV"
         style="@style/ETV_Style"
         android:layout_width="0dp"
         android:layout_height="142dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
         android:ems="10"
         android:gravity="start|top"
@@ -33,7 +22,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.225"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/post_Label" />
+        app:layout_constraintTop_toBottomOf="@+id/post_Title_ETV" />
 
     <TextView
         android:id="@+id/lcation_Post_Label"
@@ -168,6 +157,20 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/post_Bttn"
         tools:ignore="TextContrastCheck" />
+
+    <EditText
+        android:id="@+id/post_Title_ETV"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="8dp"
+        android:ems="10"
+        android:hint="Enter Post Title"
+        android:inputType="textPersonName"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
