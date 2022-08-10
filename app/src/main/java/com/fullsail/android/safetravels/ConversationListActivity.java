@@ -34,7 +34,7 @@ public class ConversationListActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
             // Take the user to the user search activity
-            startActivity(new Intent(ConversationListActivity.this, UserSearchActivity.class));
+            startActivity(new Intent(ConversationListActivity.this, UserMessageSearchActivity.class));
         }
     };
 
@@ -68,7 +68,7 @@ public class ConversationListActivity extends AppCompatActivity {
                         startActivity(i);
                     }
                     else if (item.getItemId() == R.id.navigation_profile){
-                        Intent i = new Intent(getApplicationContext(), ProfileActivity.class);
+                        Intent i = new Intent(getApplicationContext(), UserProfileActivity.class);
                         startActivity(i);
                     }
                     overridePendingTransition(0,0);

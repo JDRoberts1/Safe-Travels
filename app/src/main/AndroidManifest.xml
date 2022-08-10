@@ -19,7 +19,7 @@
             android:theme="@style/Theme.SafeTravels"
             android:parentActivityName=".ConversationListActivity"/>
         <activity
-            android:name=".UserSearchActivity"
+            android:name=".UserMessageSearchActivity"
             android:exported="false"
             android:theme="@style/Theme.SafeTravels"
             android:parentActivityName=".ConversationListActivity" />
@@ -62,7 +62,7 @@
             android:exported="true"
             android:theme="@style/Theme.SafeTravels.Fullscreen" />
         <activity
-            android:name=".ProfileActivity"
+            android:name=".UserProfileActivity"
             android:exported="true"
             android:theme="@style/Theme.SafeTravels.Fullscreen" />
 

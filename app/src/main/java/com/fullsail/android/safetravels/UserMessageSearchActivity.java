@@ -24,11 +24,10 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
-import java.util.List;
 
-public class UserSearchActivity extends AppCompatActivity {
+public class UserMessageSearchActivity extends AppCompatActivity {
 
-    public static final String TAG = "UserSearchActivity";
+    public static final String TAG = "UserMessageSearchActivity";
     SearchView searchView;
     ListView usersListView;
     FirebaseFirestore db;
@@ -58,14 +57,13 @@ public class UserSearchActivity extends AppCompatActivity {
         getUsers();
         adpt = new UserListAdapter(this.getApplicationContext(), R.layout.user_listview_item ,users);
         usersListView.setAdapter(adpt);
-
     }
 
     AdapterView.OnItemClickListener userCLick = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             User selectedUser = users.get(position);
-            Intent i = new Intent(UserSearchActivity.this, ConversationActivity.class);
+            Intent i = new Intent(UserMessageSearchActivity.this, ConversationActivity.class);
             i.putExtra(TAG, selectedUser);
             startActivity(i);
         }
@@ -75,17 +73,19 @@ public class UserSearchActivity extends AppCompatActivity {
         @Override
         public boolean onQueryTextSubmit(String query) {
             if (!query.isEmpty()){
+
                 for (User u : users){
+
                     if (u.getUsername().toLowerCase().contains(query.toLowerCase())){
+
                         adpt.getFilter().filter(query);
                     }
                     else{
                         // Search query not found in List View
-                        Toast.makeText(UserSearchActivity.this,
+                        Toast.makeText(UserMessageSearchActivity.this,
                                 "Not found",
                                 Toast.LENGTH_LONG)
                                 .show();
-
                     }
                 }
             }

@@ -81,7 +81,7 @@ public class HomeActivity extends AppCompatActivity {
                         startActivity(i);
                     }
                     else if (item.getItemId() == R.id.navigation_profile){
-                        Intent i = new Intent(getApplicationContext(), ProfileActivity.class);
+                        Intent i = new Intent(getApplicationContext(), UserProfileActivity.class);
                         startActivity(i);
                     }
                     overridePendingTransition(0,0);

@@ -1,6 +1,5 @@
 package com.fullsail.android.safetravels;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -12,14 +11,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 
-public class ProfileActivity extends AppCompatActivity {
+public class UserProfileActivity extends AppCompatActivity {
 
     BottomNavigationView navView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_profile);
+        setContentView(R.layout.activity_user_profile);
+        setUpBottomNav();
 
     }
 
@@ -51,7 +51,7 @@ public class ProfileActivity extends AppCompatActivity {
                         startActivity(i);
                     }
                     else if (item.getItemId() == R.id.navigation_profile){
-                        Intent i = new Intent(getApplicationContext(), ProfileActivity.class);
+                        Intent i = new Intent(getApplicationContext(), UserProfileActivity.class);
                         startActivity(i);
                     }
                     overridePendingTransition(0,0);
