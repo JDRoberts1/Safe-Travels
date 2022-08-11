@@ -3,15 +3,18 @@ package com.fullsail.android.safetravels;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.TextView;
 
-import com.fullsail.android.safetravels.objects.User;
+import com.fullsail.android.safetravels.adapters.PostListAdapter;
+import com.fullsail.android.safetravels.objects.Post;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -23,6 +26,8 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.ArrayList;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class HomeActivity extends AppCompatActivity {
@@ -32,25 +37,34 @@ public class HomeActivity extends AppCompatActivity {
     TextView welcomeLabel;
     CircleImageView iv;
     RecyclerView blogRCV;
-
+    PostListAdapter adapter;
     FirebaseFirestore db;
     CollectionReference cR;
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
     FirebaseUser cUser = mAuth.getCurrentUser();
+
+    ArrayList<Post> posts = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
         welcomeLabel = findViewById(R.id.welcomeLabel);
         iv = findViewById(R.id.profile_img_main);
+        navView = findViewById(R.id.nav_view);
 
-
+        savePosts();
         displayInfo();
-        displayPosts();
         setUpBottomNav();
+    }
+
+    private void displayPosts() {
+        blogRCV = findViewById(R.id.recent_Posts_RCV);
+        blogRCV.setLayoutManager(new LinearLayoutManager(this.getApplicationContext()));
+        adapter = new PostListAdapter(posts, this.getApplicationContext());
+        blogRCV.setAdapter(adapter);
+        Log.i(TAG, "displayPosts: " + posts.size());
     }
 
     // Method to display current users profile information
@@ -74,7 +88,6 @@ public class HomeActivity extends AppCompatActivity {
 
     // Method to set up bottom nav bar
     public void setUpBottomNav(){
-        navView = findViewById(R.id.nav_view);
         navView.setSelectedItemId(R.id.navigation_home);
 
         navView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
@@ -110,7 +123,7 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     // TODO: Set up Blog Post Recycle View (Display All Blog Post)
-    private void displayPosts(){
+    private void savePosts(){
         // Get User List collection
         db = FirebaseFirestore.getInstance();
         cR = db.collection("blogPosts");
@@ -125,12 +138,53 @@ public class HomeActivity extends AppCompatActivity {
 
                 for (QueryDocumentSnapshot doc : value) {
 
-                    String id = (String) doc.get("title");
+                    if (!doc.getId().equals("sample")) {
 
-                    if (id != null && !doc.getId().equals("sample")) {
+                        Post newUserPost;
+                        String date = (String) doc.get("date");;
+                        String datePosted = (String) doc.get("datePosted");
+                        String location = (String) doc.get("location");
+                        String post = (String) doc.get("post");
 
+                        String uriString = (String) doc.get("profileImgUri");
+                        Uri profileImgUri = null;
+                        if (uriString != null){
+                            profileImgUri = Uri.parse(uriString);
+                        }
+
+                        String title = (String) doc.get("title");
+                        Log.i(TAG, "onEvent: " + title);
+                        String uid = (String) doc.get("uid");
+                        String username = (String) doc.get("username");
+
+                        Uri uri1 = null;
+                        Uri uri2 = null;
+                        Uri uri3 = null;
+                        Uri uri4 = null;
+
+//                        if (uri1 != null){
+//                            newUserPost = new Post(uid, title, post, date, location, username, datePosted, profileImgUri, null, null, null, null);
+//                        }
+//                        else if(uri2 == null){
+//                            newUserPost = new Post(uid, title, post, date, location, username, datePosted, profileImgUri, uri1, null, null, null);
+//                        }
+//                        else if(uri3 == null){
+//                            newUserPost = new Post(uid, title, post, date, location, username, datePosted, profileImgUri, uri1, uri2, null, null);
+//                        }
+//                        else if(uri4 == null){
+//                            newUserPost = new Post(uid, title, post, date, location, username, datePosted, profileImgUri, uri1, uri2, uri3, null);
+//                        }
+//                        else {
+//                            newUserPost = new Post(uid, title, post, date, location, username, datePosted, profileImgUri, uri1, uri2, uri3, uri4);
+//                        }
+
+                        newUserPost = new Post(uid, title, post, date, location, username, datePosted, profileImgUri, null, null, null, null);
+                        posts.add(newUserPost);
                     }
                 }
+
+                Log.i(TAG, "onEvent: " + posts.size());
+                displayPosts();
 
             }
         });

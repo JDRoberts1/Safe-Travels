@@ -197,11 +197,6 @@ public class NewPostActivity extends AppCompatActivity {
             else{
                 Toast.makeText(NewPostActivity.this, "All fields must be filled out", Toast.LENGTH_SHORT).show();
             }
-
-
-
-
-
         }
     };
 
@@ -215,8 +210,6 @@ public class NewPostActivity extends AppCompatActivity {
         String location = location_ETV.getText().toString();
         String username = currentUser.getDisplayName();
         Uri imgUri = null;
-
-
 
         // Create timestamp for the date user posted the entry
         Date dateTS = new Date();
