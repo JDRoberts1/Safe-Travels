@@ -117,19 +117,19 @@ public class NewPostActivity extends AppCompatActivity {
     // saveAndDisplayImg Method
     // Method to determine next empty imageview and place the image.
     private void saveAndDisplayImg(Bitmap imageBitmap) {
-        if (uri1 != null){
+        if (uri1 == null){
             uri1 = getImgUri(this.getApplicationContext(), imageBitmap, currentUser.getUid());
             post_Img_1.setImageURI(uri1);
         }
-        else if(uri2 != null){
+        else if(uri2 == null){
             uri2 = getImgUri(this.getApplicationContext(), imageBitmap, currentUser.getUid());
             post_Img_2.setImageURI(uri2);
         }
-        else if(uri3 != null){
+        else if(uri3 == null){
             uri3 = getImgUri(this.getApplicationContext(), imageBitmap, currentUser.getUid());
             post_Img_3.setImageURI(uri3);
         }
-        else if(uri4 != null){
+        else if(uri4 == null){
             uri4 = getImgUri(this.getApplicationContext(), imageBitmap, currentUser.getUid());
             post_Img_4.setImageURI(uri3);
         }
@@ -137,16 +137,15 @@ public class NewPostActivity extends AppCompatActivity {
 
     }
 
-    // TODO: Set up cancel click OnClickListener
+    // Set up cancel click OnClickListener
     View.OnClickListener cancelClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            // Send the user back to home screen
-            startActivity(new Intent(NewPostActivity.this, HomeActivity.class));
+            backToHome();
         }
     };
 
-    // TODO: Set up post click OnClickListener
+    // Set up post click OnClickListener
     View.OnClickListener postClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -258,7 +257,7 @@ public class NewPostActivity extends AppCompatActivity {
         }
     }
 
-    // Method used to retrieve the users profile image uri
+    // Method to retrieve the image uri string and return URI
     public Uri getImgUri(Context c, Bitmap bitmapImg, String uuid){
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         bitmapImg.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
