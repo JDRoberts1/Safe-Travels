@@ -1,18 +1,27 @@
 package com.fullsail.android.safetravels;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import com.fullsail.android.safetravels.objects.User;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -24,6 +33,8 @@ public class HomeActivity extends AppCompatActivity {
     CircleImageView iv;
     RecyclerView blogRCV;
 
+    FirebaseFirestore db;
+    CollectionReference cR;
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
     FirebaseUser cUser = mAuth.getCurrentUser();
 
@@ -31,9 +42,14 @@ public class HomeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
         welcomeLabel = findViewById(R.id.welcomeLabel);
         iv = findViewById(R.id.profile_img_main);
+
+
         displayInfo();
+        displayPosts();
         setUpBottomNav();
     }
 
@@ -95,7 +111,29 @@ public class HomeActivity extends AppCompatActivity {
 
     // TODO: Set up Blog Post Recycle View (Display All Blog Post)
     private void displayPosts(){
+        // Get User List collection
+        db = FirebaseFirestore.getInstance();
+        cR = db.collection("blogPosts");
 
+        cR.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                if (error != null) {
+                    Log.w(TAG, "Listen failed.", error);
+                    return;
+                }
+
+                for (QueryDocumentSnapshot doc : value) {
+
+                    String id = (String) doc.get("title");
+
+                    if (id != null && !doc.getId().equals("sample")) {
+
+                    }
+                }
+
+            }
+        });
     }
 
 }

@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -34,8 +35,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 public class NewPostActivity extends AppCompatActivity {
 
@@ -45,7 +44,7 @@ public class NewPostActivity extends AppCompatActivity {
     EditText location_ETV;
     EditText date_ETV;
     ImageView post_Img_1, post_Img_2, post_Img_3, post_Img_4;
-    Uri uri1, uri2, uri3, uri4 = null;
+    Uri uri1, uri2, uri3, uri4;
     Button post_Bttn;
     Button cancel_Post_Bttn;
 
@@ -96,8 +95,13 @@ public class NewPostActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            Bundle extras = data.getExtras();
-            imageBitmap = (Bitmap) extras.get("data");
+            Bundle extras = null;
+            if (data != null) {
+                extras = data.getExtras();
+            }
+            if (extras != null) {
+                imageBitmap = (Bitmap) extras.get("data");
+            }
         }
         else if (requestCode == REQUEST_IMAGE_GALLERY && resultCode == RESULT_OK){
 
@@ -131,10 +135,8 @@ public class NewPostActivity extends AppCompatActivity {
         }
         else if(uri4 == null){
             uri4 = getImgUri(this.getApplicationContext(), imageBitmap, currentUser.getUid());
-            post_Img_4.setImageURI(uri3);
+            post_Img_4.setImageURI(uri4);
         }
-
-
     }
 
     // Set up cancel click OnClickListener
@@ -149,22 +151,10 @@ public class NewPostActivity extends AppCompatActivity {
     View.OnClickListener postClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+
             // Check for null or empty fields
             if (!checkForEmptyFields()){
-
-                String uid = currentUser.getUid();
-                String title = post_Title_ETV.getText().toString();
-                String post = post_ETV.getText().toString();
-                String date = date_ETV.getText().toString() ;
-                String location = location_ETV.getText().toString();
-                String username = currentUser.getDisplayName();
-
-                // Create timestamp for the date user posted the entry
-                Date dateTS = new Date();
-                Timestamp tS = new Timestamp(dateTS.getTime());
-                String datePosted = tS.toString() ;
-
-                Post newUserPost = new Post(uid, title, post, date, location, username, datePosted);
+                Post newUserPost = createPost();
 
                 // Add new post to blogPosts collection
                 db.collection("blogPosts")
@@ -185,7 +175,7 @@ public class NewPostActivity extends AppCompatActivity {
 
                 // Add new post to user's blogPosts collection
                 db.collection("users")
-                        .document(uid)
+                        .document(currentUser.getUid())
                         .collection("posts")
                         .document()
                         .set(newUserPost)
@@ -202,12 +192,61 @@ public class NewPostActivity extends AppCompatActivity {
                             }
                         });
 
+                backToHome();
+            }
+            else{
+                Toast.makeText(NewPostActivity.this, "All fields must be filled out", Toast.LENGTH_SHORT).show();
             }
 
-            backToHome();
+
+
+
 
         }
     };
+
+    // Method to Create new Post object
+    private Post createPost() {
+
+        String uid = currentUser.getUid();
+        String title = post_Title_ETV.getText().toString();
+        String post = post_ETV.getText().toString();
+        String date = date_ETV.getText().toString() ;
+        String location = location_ETV.getText().toString();
+        String username = currentUser.getDisplayName();
+        Uri imgUri = null;
+
+
+
+        // Create timestamp for the date user posted the entry
+        Date dateTS = new Date();
+        Timestamp tS = new Timestamp(dateTS.getTime());
+        String datePosted = tS.toString() ;
+        Post newUserPost;
+
+        // TODO: Add images to post
+        if (currentUser.getPhotoUrl() != null){
+            imgUri = currentUser.getPhotoUrl();
+        }
+
+        if (uri1 == null){
+            newUserPost = new Post(uid, title, post, date, location, username, datePosted, imgUri, null, null, null, null);
+        }
+        else if(uri2 == null){
+            newUserPost = new Post(uid, title, post, date, location, username, datePosted, imgUri, uri1, null, null, null);
+        }
+        else if(uri3 == null){
+            newUserPost = new Post(uid, title, post, date, location, username, datePosted, imgUri, uri1, uri2, null, null);
+        }
+        else if(uri4 == null){
+            newUserPost = new Post(uid, title, post, date, location, username, datePosted, imgUri, uri1, uri2, uri3, null);
+        }
+        else {
+            newUserPost = new Post(uid, title, post, date, location, username, datePosted, imgUri, uri1, uri2, uri3, uri4);
+        }
+
+        return newUserPost;
+    }
 
     // OnClickListener for when the user clicks the Img View button.
     View.OnClickListener imgClick = new View.OnClickListener() {
