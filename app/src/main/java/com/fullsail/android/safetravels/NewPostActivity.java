@@ -181,6 +181,7 @@ public class NewPostActivity extends AppCompatActivity {
                 requestPerms.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE);
             }
 
+
             // Set up camera code
             final CharSequence[] items = {"Take A Photo", "Choose from Gallery", "Cancel"};
 

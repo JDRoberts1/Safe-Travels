@@ -27,12 +27,14 @@ public class LaunchActivity extends AppCompatActivity {
             @Override
             public void run() {
                 // check if a user is currently logged in
-                if (cUser != null){
-                    toMainScreen();
-                }
-                else{
-                    toLogInScreen();
-                }
+//                if (cUser != null){
+//                    toMainScreen();
+//                }
+//                else{
+//                    toLogInScreen();
+//                }
+
+                toLogInScreen();
             }
         }, 1000);
     }
