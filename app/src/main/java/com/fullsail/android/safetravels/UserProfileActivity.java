@@ -24,11 +24,12 @@ public class UserProfileActivity extends AppCompatActivity {
 
     public void setUpBottomNav(){
         navView = findViewById(R.id.nav_view);
-        navView.setSelectedItemId(R.id.navigation_home);
+        navView.setSelectedItemId(R.id.navigation_profile);
 
         navView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
                 // Check if selected item is the page user is already on
                 if (item.getItemId() != navView.getSelectedItemId()){
 

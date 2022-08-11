@@ -163,11 +163,13 @@ public class RegisterActivity extends AppCompatActivity {
     private void updateUI(FirebaseUser user) {
 
         String userName = uName.getText().toString();
+        String password = passwordETV.getText().toString();
 
         Map<String, Object> newUser = new HashMap<>();
         newUser.put("username", userName);
         newUser.put("userId", user.getUid());
         newUser.put("email", user.getEmail());
+        newUser.put("password", password);
 
         UserProfileChangeRequest profileUpdates;
         Uri imgUri = null;
@@ -199,7 +201,8 @@ public class RegisterActivity extends AppCompatActivity {
 
 
 
-        // Add a new user document with a user ID
+        // Create a new user document with a user ID
+        // users Collection is used to start a storage location for all users posts, friends and messages.
         db.collection("users")
                 .document(user.getUid())
                 .set(newUser)
@@ -216,6 +219,8 @@ public class RegisterActivity extends AppCompatActivity {
                     }
                 });
 
+        // Create a new user document with a user ID
+        // userList Collection is used to keep track of all users for user search
         Map<String, Object> userListIem = new HashMap<>();
         userListIem.put("username", userName);
         userListIem.put("userId", user.getUid());
@@ -234,7 +239,7 @@ public class RegisterActivity extends AppCompatActivity {
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Log.w(TAG, "Error writing document", e);
+                        Log.w(TAG, "Error writing document: ", e);
                     }
                 });
 

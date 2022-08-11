@@ -71,7 +71,6 @@ public class ConversationActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
 
-            String message =
 
 
         }

@@ -45,6 +45,7 @@ public class NewPostActivity extends AppCompatActivity {
     EditText location_ETV;
     EditText date_ETV;
     ImageView post_Img_1, post_Img_2, post_Img_3, post_Img_4;
+    String uri1, uri2, uri3, uri4 = null;
     Button post_Bttn;
     Button cancel_Post_Bttn;
 
@@ -111,7 +112,12 @@ public class NewPostActivity extends AppCompatActivity {
             }
         }
 
-        //profileImage.setImageBitmap(imageBitmap);
+        saveAndDisplayImg(imageBitmap);
+
+    }
+
+    // Method to determine next empty imageview and place the image.
+    private void saveAndDisplayImg(Bitmap imageBitmap) {
 
     }
 
@@ -145,8 +151,8 @@ public class NewPostActivity extends AppCompatActivity {
 
                 Post newUserPost = new Post(uid, title, post, date, location, username, datePosted);
 
-                // Add new post to post collection
-                db.collection("userList")
+                // Add new post to blogPosts collection
+                db.collection("blogPosts")
                         .document(uid)
                         .set(newUserPost)
                         .addOnSuccessListener(new OnSuccessListener<Void>() {
