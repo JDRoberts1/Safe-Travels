@@ -45,7 +45,7 @@ public class NewPostActivity extends AppCompatActivity {
     EditText location_ETV;
     EditText date_ETV;
     ImageView post_Img_1, post_Img_2, post_Img_3, post_Img_4;
-    String uri1, uri2, uri3, uri4 = null;
+    Uri uri1, uri2, uri3, uri4 = null;
     Button post_Bttn;
     Button cancel_Post_Bttn;
 
@@ -95,8 +95,6 @@ public class NewPostActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        //profileImage.setVisibility(View.VISIBLE);
-
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             Bundle extras = data.getExtras();
             imageBitmap = (Bitmap) extras.get("data");
@@ -116,8 +114,26 @@ public class NewPostActivity extends AppCompatActivity {
 
     }
 
+    // saveAndDisplayImg Method
     // Method to determine next empty imageview and place the image.
     private void saveAndDisplayImg(Bitmap imageBitmap) {
+        if (uri1 != null){
+            uri1 = getImgUri(this.getApplicationContext(), imageBitmap, currentUser.getUid());
+            post_Img_1.setImageURI(uri1);
+        }
+        else if(uri2 != null){
+            uri2 = getImgUri(this.getApplicationContext(), imageBitmap, currentUser.getUid());
+            post_Img_2.setImageURI(uri2);
+        }
+        else if(uri3 != null){
+            uri3 = getImgUri(this.getApplicationContext(), imageBitmap, currentUser.getUid());
+            post_Img_3.setImageURI(uri3);
+        }
+        else if(uri4 != null){
+            uri4 = getImgUri(this.getApplicationContext(), imageBitmap, currentUser.getUid());
+            post_Img_4.setImageURI(uri3);
+        }
+
 
     }
 
@@ -153,7 +169,7 @@ public class NewPostActivity extends AppCompatActivity {
 
                 // Add new post to blogPosts collection
                 db.collection("blogPosts")
-                        .document(uid)
+                        .document()
                         .set(newUserPost)
                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
@@ -167,7 +183,30 @@ public class NewPostActivity extends AppCompatActivity {
                                 Log.w(TAG, "Error writing document", e);
                             }
                         });
+
+                // Add new post to user's blogPosts collection
+                db.collection("users")
+                        .document(uid)
+                        .collection("posts")
+                        .document()
+                        .set(newUserPost)
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                Log.d(TAG, "DocumentSnapshot successfully written!");
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.w(TAG, "Error writing document", e);
+                            }
+                        });
+
             }
+
+            backToHome();
+
         }
     };
 
@@ -180,7 +219,6 @@ public class NewPostActivity extends AppCompatActivity {
 
                 requestPerms.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE);
             }
-
 
             // Set up camera code
             final CharSequence[] items = {"Take A Photo", "Choose from Gallery", "Cancel"};
@@ -241,6 +279,11 @@ public class NewPostActivity extends AppCompatActivity {
             return true;
         }
         else return date_ETV.getText().toString().isEmpty() || date_ETV.getText().toString().trim().isEmpty();
+    }
+
+    // Intent method to Send the user back to home screen
+    private void backToHome(){
+        startActivity(new Intent(NewPostActivity.this, HomeActivity.class));
     }
 
 }
