@@ -78,6 +78,23 @@
     <string name="label_conversation">Conversation</string>
     <string name="prompt_type_message">Type Message . . .</string>
     <string name="action_send_message">send message</string>
+    <string name="title_activity_edit_post">EditPostActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="prompt_enter_post_title">Enter Post Title</string>
+    <string name="label_edit_post">Edit Post</string>
+    <string name="action_add_new_friend">add new friend</string>
+    <string name="action_decline_friend">decline friend</string>
+    <string name="label_image_view_1">image view 1</string>
+    <string name="label_image_view_2">image view 2</string>
+    <string name="label_image_view_3">image view 3</string>
+    <string name="label_image_view_4">image view 4</string>
+    <string name="label_recmessage">recMessage</string>
+    <string name="label_post_title">Post Title</string>
+    <string name="title_edit_profile">Edit Profile</string>
+    <string name="title_conversation">Conversation</string>
+    <string name="title_view_post">Post</string>
+    <string name="title_edit_post">Edit Post</string>
 
     <!-- App Just Added-->
 

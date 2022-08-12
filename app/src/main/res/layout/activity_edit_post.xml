@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".NewPostActivity">
+    android:theme="@style/ThemeOverlay.SafeTravels.FullscreenContainer"
+    tools:context=".EditPostActivity" >
 
     <EditText
         android:id="@+id/post_Title_ETV"
@@ -178,6 +179,5 @@
         android:textColorHint="#546E7A"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/location_Post_ETV" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

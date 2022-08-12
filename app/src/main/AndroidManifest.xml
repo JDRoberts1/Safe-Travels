@@ -8,13 +8,22 @@
         android:label="@string/app_name"
         android:roundIcon="@drawable/playstore_icon"
         android:supportsRtl="true"
-        android:theme="@style/Theme.SafeTravels.Starting.Fullscreen">
+        android:theme="@style/Theme.SafeTravels.Starting.Fullscreen"
+        android:configChanges="orientation|screenSize">
+        <activity
+            android:name=".EditPostActivity"
+            android:exported="false"
+            android:label="@string/title_edit_post"
+            android:theme="@style/Theme.SafeTravels" />
         <activity
             android:name=".ViewPostActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:parentActivityName=".HomeActivity"
+            android:label="@string/title_view_post"/>
         <activity
             android:name=".ProfileActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:label="@string/title_profile" />
         <activity
             android:name=".LocationSearchActivity"
             android:exported="false"
@@ -23,7 +32,8 @@
             android:name=".ConversationActivity"
             android:exported="false"
             android:parentActivityName=".ConversationListActivity"
-            android:theme="@style/Theme.SafeTravels" />
+            android:theme="@style/Theme.SafeTravels"
+            android:label="@string/title_conversation"/>
         <activity
             android:name=".UserMessageSearchActivity"
             android:exported="false"
@@ -54,11 +64,13 @@
         <activity
             android:name=".HomeActivity"
             android:exported="true"
-            android:theme="@style/Theme.SafeTravels.Fullscreen" />
+            android:theme="@style/Theme.SafeTravels"
+            android:label="@string/title_home"/>
         <activity
             android:name=".FriendsActivity"
             android:exported="true"
-            android:theme="@style/Theme.SafeTravels.Fullscreen" />
+            android:theme="@style/Theme.SafeTravels"
+            android:label="@string/title_friends"/>
         <activity
             android:name=".NewPostActivity"
             android:exported="true"
@@ -66,20 +78,22 @@
         <activity
             android:name=".ConversationListActivity"
             android:exported="true"
-            android:theme="@style/Theme.SafeTravels.Fullscreen" />
+            android:theme="@style/Theme.SafeTravels"
+            android:label="@string/title_messages"/>
         <activity
             android:name=".UserProfileActivity"
             android:exported="true"
-            android:theme="@style/Theme.SafeTravels" />
+            android:theme="@style/Theme.SafeTravels"
+            android:label="@string/title_profile"/>
         <activity
             android:name=".UserFriendSearchActivity"
             android:exported="true"
             android:theme="@style/Theme.SafeTravels.Fullscreen" />
-
         <activity
             android:name=".EditProfileActivity"
             android:exported="true"
-            android:theme="@style/Theme.SafeTravels.Fullscreen"/>
+            android:theme="@style/Theme.SafeTravels"
+            android:label="@string/title_edit_profile"/>
     </application>
 
 </manifest>

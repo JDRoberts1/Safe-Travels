@@ -199,8 +199,6 @@ public class RegisterActivity extends AppCompatActivity {
                     }
                 });
 
-
-
         // Create a new user document with a user ID
         // users Collection is used to start a storage location for all users posts, friends and messages.
         db.collection("users")
