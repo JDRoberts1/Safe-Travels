@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/logOut_Bttn"
+        android:title="@string/action_log_out"
+        android:icon="@drawable/ic_baseline_logout_24"
+        app:showAsAction="withText"/>
+    <item
+        android:id="@+id/delete_acct_Bttn"
+        android:title="@string/action_remove_account"
+        android:icon="@drawable/ic_baseline_delete_forever_24"
+        app:showAsAction="withText"/>
+
+
+</menu>

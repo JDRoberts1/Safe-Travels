@@ -18,17 +18,26 @@ import android.widget.TextView;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class EditProfileActivity extends AppCompatActivity {
 
@@ -43,34 +52,33 @@ public class EditProfileActivity extends AppCompatActivity {
     TextView errorLabel;
     EditText uName;
     EditText emailETV;
-    Button passwordReset;
-    Button deleteAcctBttn;
+    EditText passwordETV;
+    Button cancelBttn;
     Button updateProfileBttn;
     Button uploadBttn;
     ImageView profileImage;
 
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
     FirebaseUser user = mAuth.getCurrentUser();
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_profile);
 
-        uName = findViewById(R.id.username_edit);
-        emailETV = findViewById(R.id.email_register_edit);
-        errorLabel = findViewById(R.id.error_label_edit);
-
-        deleteAcctBttn = findViewById(R.id.delete_acct_bttn);
-        deleteAcctBttn.setOnClickListener(deleteClick);
+        uName = findViewById(R.id.username_Edit_ETV);
+        emailETV = findViewById(R.id.email_Edit_ETV);
+        passwordETV = findViewById(R.id.password_Edit_ETV);
+        errorLabel = findViewById(R.id.error_Edit_Label);
 
         updateProfileBttn = findViewById(R.id.update_bttn);
         updateProfileBttn.setOnClickListener(updateClick);
 
-        passwordReset = findViewById(R.id.reset_pw_bttn);
-        passwordReset.setOnClickListener(resetClick);
+        cancelBttn = findViewById(R.id.cancel_Edit_Bttn);
+        cancelBttn.setOnClickListener(cancelClick);
 
-        uploadBttn = findViewById(R.id.upload_bttn_edit);
+        uploadBttn = findViewById(R.id.upload_Edit_Bttn);
         uploadBttn.setOnClickListener(uploadClick);
 
         profileImage = findViewById(R.id.profile_picture_iv_edit);
@@ -155,24 +163,24 @@ public class EditProfileActivity extends AppCompatActivity {
         }
     }
 
-    // Method to remove users account
-    private void deleteUser() {
-        user.delete()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        Log.d(TAG, "User account deleted.");
-                    }
-                });
-
-        logOutIntent();
-    }
-
     // Method to update users email address
     private void updateEmail(String newEmail) {
         user.updateEmail(newEmail)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
+                        Map<String, Object> data = new HashMap<>();
+                        data.put("email", newEmail);
+
+                        db.collection("users")
+                                .document(user.getUid())
+                                .set(data, SetOptions.merge() );
+
+                        db.collection("userList")
+                                .document(user.getUid())
+                                .set(data, SetOptions.merge() );
+
                         Log.d(TAG, "User email address updated.");
+                        logOutIntent();
                     }
                 })
                 .addOnFailureListener(e -> errorLabel.setText(e.getLocalizedMessage()));
@@ -185,6 +193,14 @@ public class EditProfileActivity extends AppCompatActivity {
         String path = MediaStore.Images.Media.insertImage(c.getContentResolver(), bitmapImg, uuid, null);
         return Uri.parse(path);
     }
+
+    // On
+    View.OnClickListener cancelClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            startActivity(new Intent(EditProfileActivity.this, UserProfileActivity.class));
+        }
+    };
 
     // OnClickListener for Update button Press
     View.OnClickListener updateClick = new View.OnClickListener() {
@@ -201,11 +217,11 @@ public class EditProfileActivity extends AppCompatActivity {
                 if (!user.getEmail().equals(newEmail)){
 
                     updateEmail(newEmail);
-                    logOutIntent();
                 }
 
                 // If username is different, Update the username
                 if (!user.getDisplayName().equals(newUserName)){
+
                     UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
                             .setDisplayName(newUserName)
                             .build();
@@ -213,6 +229,20 @@ public class EditProfileActivity extends AppCompatActivity {
                     user.updateProfile(profileUpdates)
                             .addOnCompleteListener(task -> {
                                 if (task.isSuccessful()) {
+                                    Map<String, Object> data = new HashMap<>();
+                                    data.put("username", newUserName);
+
+                                    db.collection("users")
+                                            .document(user.getUid())
+                                            .set(data, SetOptions.merge() );
+
+                                    db.collection("userList")
+                                            .document(user.getUid())
+                                            .set(data, SetOptions.merge() );
+
+
+                                    // TODO: UPDATE USERNAME IN BLOG POSTS
+
                                     Log.d(TAG, "User profile updated.");
                                 }
                             })
@@ -230,10 +260,47 @@ public class EditProfileActivity extends AppCompatActivity {
                     user.updateProfile(profileUpdates)
                             .addOnCompleteListener(task -> {
                                 if (task.isSuccessful()) {
+                                    Map<String, Object> data = new HashMap<>();
+                                    data.put("profileImg", imgUri);
+
+                                    db.collection("users")
+                                            .document(user.getUid())
+                                            .set(data, SetOptions.merge() );
+
+                                    db.collection("userList")
+                                            .document(user.getUid())
+                                            .set(data, SetOptions.merge() );
+
                                     Log.d(TAG, "User profile updated.");
                                 }
                             })
                             .addOnFailureListener(e -> errorLabel.setText(e.getLocalizedMessage()));
+                }
+
+                // If username is different, Update the username
+                if (!passwordETV.getText().toString().isEmpty()){
+                    String newPassword = passwordETV.getText().toString();
+                    user.updatePassword(newPassword)
+                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()) {
+                                        Map<String, Object> pw = new HashMap<>();
+                                        pw.put("password", newPassword);
+
+                                        db.collection("users")
+                                                .document(user.getUid())
+                                                .set(pw, SetOptions.merge() );
+
+                                        db.collection("userList")
+                                                .document(user.getUid())
+                                                .set(pw, SetOptions.merge() );
+
+                                        Log.d(TAG, "User password updated.");
+                                        logOutIntent();
+                                    }
+                                }
+                            });
                 }
 
                 errorLabel.setText(R.string.prompt_profile_updated);
@@ -245,15 +312,6 @@ public class EditProfileActivity extends AppCompatActivity {
 
         }
     };
-
-    // OnClickListener for Reset Password button
-    View.OnClickListener resetClick = v -> {
-        Intent resetIntent = new Intent(EditProfileActivity.this, ResetPasswordActivity.class);
-        startActivity(resetIntent);
-    };
-
-    // OnClickListener for Delete Account button
-    View.OnClickListener deleteClick = v -> deleteUser();
 
     // OnClickListener for Image upload button
     View.OnClickListener uploadClick = v -> {

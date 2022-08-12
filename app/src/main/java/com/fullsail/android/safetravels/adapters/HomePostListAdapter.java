@@ -1,6 +1,8 @@
 package com.fullsail.android.safetravels.adapters;
 
 import android.content.Context;
+import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,22 +11,23 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
+import com.fullsail.android.safetravels.ProfileActivity;
 import com.fullsail.android.safetravels.R;
 import com.fullsail.android.safetravels.objects.Post;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class PostListAdapter extends ArrayAdapter<Post> {
+public class HomePostListAdapter extends ArrayAdapter<Post> {
 
     ArrayList<Post> posts;
     Context mContext;
     private static final long BASE_ID = 0x1011;
+    public static final String TAG = "HomePostListAdapter";
 
 
-    public PostListAdapter(@NonNull Context context, int resource, @NonNull ArrayList<Post> posts) {
+    public HomePostListAdapter(@NonNull Context context, int resource, @NonNull ArrayList<Post> posts) {
         super(context, resource, posts);
         this.posts = posts;
         this.mContext = context;
@@ -71,6 +74,15 @@ public class PostListAdapter extends ArrayAdapter<Post> {
         else {
             holder.userImageView.setImageResource(R.drawable.default_img);
         }
+
+        holder.userImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String username = p.getUsername();
+                Intent i = new Intent(v.getContext(), ProfileActivity.class);
+                i.putExtra(TAG, username);
+            }
+        });
 
         holder.username_CV.setText(p.getUsername());
         holder.title_CV.setText(p.getTitle());

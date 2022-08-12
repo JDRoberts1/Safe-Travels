@@ -1,25 +1,31 @@
 package com.fullsail.android.safetravels;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.appcompat.view.menu.MenuBuilder;
 
 import com.fullsail.android.safetravels.adapters.PostListAdapter;
 import com.fullsail.android.safetravels.objects.Post;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -37,10 +43,11 @@ public class UserProfileActivity extends AppCompatActivity {
     TextView usernameLabel;
     TextView editBttn;
     CircleImageView iv;
-    RecyclerView userBlogRCV;
+    ListView userBlogLV;
     PostListAdapter adapter;
     FirebaseFirestore db;
     CollectionReference cR;
+    DocumentReference dR;
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
     FirebaseUser cUser = mAuth.getCurrentUser();
     ArrayList<Post> posts = new ArrayList<>();
@@ -55,10 +62,71 @@ public class UserProfileActivity extends AppCompatActivity {
         navView = findViewById(R.id.nav_view);
         editBttn = findViewById(R.id.edit_Profile_Bttn);
         editBttn.setClickable(true);
+        editBttn.setOnClickListener(editClick);
 
         savePosts();
         displayInfo();
         setUpBottomNav();
+    }
+
+    View.OnClickListener editClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            // Intent to edit profile activity
+            startActivity(new Intent(UserProfileActivity.this, EditProfileActivity.class));
+        }
+    };
+
+    // Menu Set Up
+    @SuppressLint("RestrictedApi")
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.profile_menu, menu);
+        if (menu instanceof MenuBuilder){
+            ((MenuBuilder) menu).setOptionalIconsVisible(true);
+        }
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.logOut_Bttn){
+            FirebaseAuth.getInstance().signOut();
+            logOutIntent();
+        }
+        else if (item.getItemId() == R.id.delete_acct_Bttn){
+
+            String id = cUser.getUid();
+
+            cUser.delete()
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+
+                                removeUserInfo(id);
+                                logOutIntent();
+
+                                Log.d(TAG, "User account deleted.");
+                            }
+                        }
+                    });
+
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void removeUserInfo(String id) {
+        dR = db.collection("users").document(id);
+        dR.delete();
+
+        dR = db.collection("userList").document(id);
+        dR.delete();
+    }
+
+    // Intent to send the user back to Log In Screen
+    private void logOutIntent(){
+        startActivity(new Intent(UserProfileActivity.this, LoginActivity.class));
     }
 
     // Method to display current users profile information
@@ -177,8 +245,6 @@ public class UserProfileActivity extends AppCompatActivity {
                         posts.add(newUserPost);
                     }
                 }
-
-                Log.i(TAG, "onEvent: " + posts.size());
                 displayPosts();
 
             }
@@ -186,10 +252,9 @@ public class UserProfileActivity extends AppCompatActivity {
     }
 
     private void displayPosts() {
-        userBlogRCV = findViewById(R.id.user_Posts_RCV);
-        userBlogRCV.setLayoutManager(new LinearLayoutManager(this.getApplicationContext()));
-        adapter = new PostListAdapter(posts, this.getApplicationContext());
-        userBlogRCV.setAdapter(adapter);
+        userBlogLV = findViewById(R.id.user_Posts_LV);
+        adapter = new PostListAdapter(this.getApplicationContext(), R.layout.post_rcv_item ,posts);
+        userBlogLV.setAdapter(adapter);
         Log.i(TAG, "displayPosts: " + posts.size());
     }
 }

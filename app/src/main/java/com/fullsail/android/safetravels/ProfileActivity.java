@@ -11,7 +11,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
-import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.fullsail.android.safetravels.adapters.PostListAdapter;
@@ -20,9 +20,7 @@ import com.fullsail.android.safetravels.objects.User;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -40,7 +38,7 @@ public class ProfileActivity extends AppCompatActivity {
     TextView usernameLabel;
     TextView editBttn;
     CircleImageView iv;
-    RecyclerView userBlogRCV;
+    ListView userBlogRCV;
     PostListAdapter adapter;
     FirebaseFirestore db;
     CollectionReference cR;
@@ -180,9 +178,8 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void displayPosts() {
-        userBlogRCV = findViewById(R.id.user_Posts_RCV);
-        userBlogRCV.setLayoutManager(new LinearLayoutManager(this.getApplicationContext()));
-        adapter = new PostListAdapter(posts, this.getApplicationContext());
+        userBlogRCV = findViewById(R.id.user_Posts_LV);
+        adapter = new PostListAdapter(this.getApplicationContext(),R.layout.post_rcv_item ,posts);
         userBlogRCV.setAdapter(adapter);
         Log.i(TAG, "displayPosts: " + posts.size());
     }

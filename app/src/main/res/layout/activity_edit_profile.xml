@@ -7,19 +7,6 @@
     tools:layout_editor_absoluteX="0dp"
     tools:layout_editor_absoluteY="-27dp">
 
-    <Button
-        android:id="@+id/upload_bttn_edit"
-        style="@style/BttnStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="36dp"
-        android:text="@string/action_upload_image"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/frameLayout"
-        tools:ignore="TextContrastCheck" />
-
     <FrameLayout
         android:id="@+id/frameLayout"
         android:layout_width="169dp"
@@ -41,8 +28,46 @@
             tools:layout_editor_absoluteY="25dp" />
     </FrameLayout>
 
+    <Button
+        android:id="@+id/upload_Edit_Bttn"
+        style="@style/BttnStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="36dp"
+        android:text="@string/action_upload_image"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/frameLayout"
+        tools:ignore="TextContrastCheck" />
+
+    <TextView
+        android:id="@+id/error_Edit_Label"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:textAlignment="center"
+        android:textColor="#EA0202"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/upload_Edit_Bttn" />
+
+    <TextView
+        android:id="@+id/username_Edit_Label"
+        style="@style/Title_TV_Style"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="44dp"
+        android:text="@string/prompt_username"
+        app:layout_constraintEnd_toStartOf="@+id/username_Edit_ETV"
+        app:layout_constraintHorizontal_bias="0.432"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/error_Edit_Label"
+        tools:ignore="TextContrastCheck" />
+
     <EditText
-        android:id="@+id/username_edit"
+        android:id="@+id/username_Edit_ETV"
         style="@style/ETV_Style"
         android:layout_width="wrap_content"
         android:layout_height="50dp"
@@ -55,22 +80,79 @@
         android:minHeight="48dp"
         android:textColorHint="#546E7A"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/error_label_edit"
+        app:layout_constraintTop_toBottomOf="@+id/error_Edit_Label"
         tools:ignore="SpeakableTextPresentCheck,DuplicateSpeakableTextCheck" />
 
+    <TextView
+        android:id="@+id/email_Edit_Label"
+        style="@style/Title_TV_Style"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="@string/prompt_email"
+        app:layout_constraintEnd_toStartOf="@+id/email_Edit_ETV"
+        app:layout_constraintHorizontal_bias="0.671"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/username_Edit_Label"
+        tools:ignore="TextContrastCheck" />
+
+    <EditText
+        android:id="@+id/email_Edit_ETV"
+        style="@style/ETV_Style"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="16dp"
+        android:ems="10"
+        android:hint="@string/prompt_email"
+        android:importantForAutofill="no"
+        android:inputType="textEmailAddress"
+        android:textColorHint="#546E7A"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/username_Edit_ETV"
+        tools:ignore="SpeakableTextPresentCheck,DuplicateSpeakableTextCheck,TextContrastCheck" />
+
+    <TextView
+        android:id="@+id/password_Edit_Label"
+        style="@style/Title_TV_Style"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="@string/prompt_password"
+        app:layout_constraintEnd_toStartOf="@+id/password_Edit_ETV"
+        app:layout_constraintHorizontal_bias="0.488"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/email_Edit_Label"
+        tools:ignore="TextContrastCheck" />
+
+    <EditText
+        android:id="@+id/password_Edit_ETV"
+        style="@style/ETV_Style"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="16dp"
+        android:ems="10"
+        android:hint="@string/prompt_password"
+        android:importantForAutofill="no"
+        android:inputType="textPassword"
+        android:textColorHint="#546E7A"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/email_Edit_ETV"
+        tools:ignore="SpeakableTextPresentCheck,DuplicateSpeakableTextCheck,TextContrastCheck" />
+
     <Button
-        android:id="@+id/delete_acct_bttn"
+        android:id="@+id/cancel_Edit_Bttn"
         style="@style/BttnStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:backgroundTint="#F44336"
-        android:text="@string/action_remove_account"
+        android:layout_marginStart="60dp"
+        android:layout_marginBottom="117dp"
+        android:text="@string/action_cancel"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/reset_pw_bttn"
-        app:layout_constraintVertical_bias="0.218"
+        app:layout_constraintTop_toTopOf="@+id/update_bttn"
+        app:layout_constraintVertical_bias="0.0"
         tools:ignore="TextContrastCheck" />
 
     <Button
@@ -78,78 +160,14 @@
         style="@style/BttnStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="28dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="60dp"
         android:text="@string/action_update_profile"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/email_register_edit"
+        app:layout_constraintHorizontal_bias="0.416"
+        app:layout_constraintStart_toEndOf="@+id/cancel_Edit_Bttn"
+        app:layout_constraintTop_toBottomOf="@+id/password_Edit_ETV"
         tools:ignore="TextContrastCheck" />
-
-    <Button
-        android:id="@+id/reset_pw_bttn"
-        style="@style/BttnStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="28dp"
-        android:text="@string/action_reset_password"
-        app:layout_constraintEnd_toStartOf="@+id/update_bttn"
-        app:layout_constraintHorizontal_bias="0.322"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/email_register_edit"
-        tools:ignore="TextContrastCheck" />
-
-    <TextView
-        android:id="@+id/label_username2"
-        style="@style/Title_TV_Style"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="44dp"
-        android:text="@string/prompt_username"
-        app:layout_constraintEnd_toStartOf="@+id/username_edit"
-        app:layout_constraintHorizontal_bias="0.432"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/error_label_edit"
-        tools:ignore="TextContrastCheck" />
-
-    <TextView
-        android:id="@+id/email_register_label2"
-        style="@style/Title_TV_Style"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="36dp"
-        android:text="@string/prompt_email"
-        app:layout_constraintEnd_toStartOf="@+id/email_register_edit"
-        app:layout_constraintHorizontal_bias="0.531"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/label_username2"
-        tools:ignore="TextContrastCheck" />
-
-    <EditText
-        android:id="@+id/email_register_edit"
-        style="@style/ETV_Style"
-        android:layout_width="wrap_content"
-        android:layout_height="50dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="20dp"
-        android:ems="10"
-        android:hint="@string/prompt_email"
-        android:importantForAutofill="no"
-        android:inputType="textEmailAddress"
-        android:textColorHint="#546E7A"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/username_edit"
-        tools:ignore="SpeakableTextPresentCheck,DuplicateSpeakableTextCheck,TextContrastCheck" />
-
-    <TextView
-        android:id="@+id/error_label_edit"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:textAlignment="center"
-        android:textColor="#EA0202"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/upload_bttn_edit" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

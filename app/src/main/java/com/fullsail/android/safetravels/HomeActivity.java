@@ -4,15 +4,18 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ListView;
 import android.widget.TextView;
 
+import com.fullsail.android.safetravels.adapters.HomePostListAdapter;
 import com.fullsail.android.safetravels.adapters.PostListAdapter;
 import com.fullsail.android.safetravels.objects.Post;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -36,12 +39,13 @@ public class HomeActivity extends AppCompatActivity {
     BottomNavigationView navView;
     TextView welcomeLabel;
     CircleImageView iv;
-    RecyclerView blogRCV;
-    PostListAdapter adapter;
+    ListView blogLV;
+    HomePostListAdapter adapter;
     FirebaseFirestore db;
     CollectionReference cR;
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
     FirebaseUser cUser = mAuth.getCurrentUser();
+    CircleImageView otherUserProfile;
 
     ArrayList<Post> posts = new ArrayList<>();
 
@@ -59,11 +63,27 @@ public class HomeActivity extends AppCompatActivity {
         setUpBottomNav();
     }
 
+    // OnItemSelectedListener for when a user taps on a post
+    AdapterView.OnItemSelectedListener itemClick = new AdapterView.OnItemSelectedListener() {
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            Post selectedPost = posts.get(position);
+            Intent i = new Intent(HomeActivity.this, ViewPostActivity.class);
+            i.putExtra(TAG, selectedPost);
+            startActivity(i);
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+
+        }
+    };
+
     private void displayPosts() {
-        blogRCV = findViewById(R.id.recent_Posts_RCV);
-        blogRCV.setLayoutManager(new LinearLayoutManager(this.getApplicationContext()));
-        adapter = new PostListAdapter(posts, this.getApplicationContext());
-        blogRCV.setAdapter(adapter);
+        blogLV = findViewById(R.id.recent_Posts_LV);
+        blogLV.setOnItemSelectedListener(itemClick);
+        adapter = new HomePostListAdapter(this.getApplicationContext(), R.layout.post_rcv_item, posts);
+        blogLV.setAdapter(adapter);
         Log.i(TAG, "displayPosts: " + posts.size());
     }
 

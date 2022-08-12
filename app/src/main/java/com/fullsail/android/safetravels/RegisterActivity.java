@@ -224,7 +224,7 @@ public class RegisterActivity extends AppCompatActivity {
         Map<String, Object> userListIem = new HashMap<>();
         userListIem.put("username", userName);
         userListIem.put("userId", user.getUid());
-        userListIem.put("img", imgUri);
+        userListIem.put("profileImg", imgUri);
 
         // Add a new user to userList with a user ID
         db.collection("userList")
