@@ -1,6 +1,5 @@
 package com.fullsail.android.safetravels;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -11,11 +10,9 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.view.menu.MenuBuilder;
 
 import com.fullsail.android.safetravels.objects.Post;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.navigation.NavigationBarView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -45,7 +42,7 @@ public class ViewPostActivity extends AppCompatActivity {
         setContentView(R.layout.activity_view_post);
 
         Intent i = getIntent();
-        p = (Post) i.getParcelableExtra(HomeActivity.TAG);
+        p = i.getParcelableExtra(HomeActivity.TAG);
 
 
         profileImgView = findViewById(R.id.poster_ImgView);
@@ -126,34 +123,31 @@ public class ViewPostActivity extends AppCompatActivity {
     public void setUpBottomNav(){
         navView.setSelectedItemId(R.id.navigation_home);
 
-        navView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                // Check if selected item is the page user is already on
-                if (item.getItemId() != navView.getSelectedItemId()){
+        navView.setOnItemSelectedListener(item -> {
+            // Check if selected item is the page user is already on
+            if (item.getItemId() != navView.getSelectedItemId()){
 
-                    // Check selected item id and start activity intent
-                    if (item.getItemId() == R.id.navigation_messages){
-                        Intent i = new Intent(getApplicationContext(), ConversationListActivity.class);
-                        startActivity(i);
-                    }
-                    else if (item.getItemId() == R.id.navigation_new_post){
-                        Intent i = new Intent(getApplicationContext(), NewPostActivity.class);
-                        startActivity(i);
-                    }
-                    else if (item.getItemId() == R.id.navigation_friends){
-                        Intent i = new Intent(getApplicationContext(), FriendsActivity.class);
-                        startActivity(i);
-                    }
-                    else if (item.getItemId() == R.id.navigation_profile){
-                        Intent i = new Intent(getApplicationContext(), UserProfileActivity.class);
-                        startActivity(i);
-                    }
-                    overridePendingTransition(0,0);
-                    return true;
+                // Check selected item id and start activity intent
+                if (item.getItemId() == R.id.navigation_messages){
+                    Intent i = new Intent(getApplicationContext(), ConversationListActivity.class);
+                    startActivity(i);
                 }
-                return false;
+                else if (item.getItemId() == R.id.navigation_new_post){
+                    Intent i = new Intent(getApplicationContext(), NewPostActivity.class);
+                    startActivity(i);
+                }
+                else if (item.getItemId() == R.id.navigation_friends){
+                    Intent i = new Intent(getApplicationContext(), FriendsActivity.class);
+                    startActivity(i);
+                }
+                else if (item.getItemId() == R.id.navigation_profile){
+                    Intent i = new Intent(getApplicationContext(), UserProfileActivity.class);
+                    startActivity(i);
+                }
+                overridePendingTransition(0,0);
+                return true;
             }
+            return false;
         });
 
     }
