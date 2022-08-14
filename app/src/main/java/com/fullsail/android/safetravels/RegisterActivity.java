@@ -19,25 +19,17 @@ import android.widget.TextView;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -110,14 +102,19 @@ public class RegisterActivity extends AppCompatActivity {
         profileImage.setVisibility(View.VISIBLE);
 
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            Bundle extras = data.getExtras();
-            imageBitmap = (Bitmap) extras.get("data");
+            Bundle extras = null;
+            if (data != null) {
+                extras = data.getExtras();
+            }
+            if (extras != null) {
+                imageBitmap = (Bitmap) extras.get("data");
+            }
         }
         else if (requestCode == REQUEST_IMAGE_GALLERY && resultCode == RESULT_OK){
 
             if (data != null) {
                 try {
-                    imageBitmap = (Bitmap) MediaStore.Images.Media.getBitmap(getApplicationContext().getContentResolver(), data.getData());
+                    imageBitmap = MediaStore.Images.Media.getBitmap(getApplicationContext().getContentResolver(), data.getData());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -223,18 +220,8 @@ public class RegisterActivity extends AppCompatActivity {
         db.collection("users")
                 .document(user.getUid())
                 .set(newUser)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d(TAG, "DocumentSnapshot successfully written!");
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w(TAG, "Error writing document", e);
-                    }
-                });
+                .addOnSuccessListener(aVoid -> Log.d(TAG, "DocumentSnapshot successfully written!"))
+                .addOnFailureListener(e -> Log.w(TAG, "Error writing document", e));
 
         // Create a new user document with a user ID
         // userList Collection is used to keep track of all users for user search
@@ -247,18 +234,8 @@ public class RegisterActivity extends AppCompatActivity {
         db.collection("userList")
                 .document(user.getUid())
                 .set(userListIem)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d(TAG, "DocumentSnapshot successfully written!");
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w(TAG, "Error writing document: ", e);
-                    }
-                });
+                .addOnSuccessListener(aVoid -> Log.d(TAG, "DocumentSnapshot successfully written!"))
+                .addOnFailureListener(e -> Log.w(TAG, "Error writing document: ", e));
 
     }
 
@@ -370,13 +347,10 @@ public class RegisterActivity extends AppCompatActivity {
         db.collection("bannedEmails")
                 .document()
                 .set(newUser)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        // TODO: Display Rejected Screen
+                .addOnCompleteListener(task -> {
+                    // TODO: Display Rejected Screen
 
 
-                    }
                 });
     }
 
@@ -384,20 +358,17 @@ public class RegisterActivity extends AppCompatActivity {
     private void getUsernames() {
         CollectionReference cR = db.collection("userList");
 
-        cR.addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                if (value != null) {
-                    for (QueryDocumentSnapshot doc : value){
-                        String username = (String) doc.get("username");
-                        if (username != null) {
-                            usernames.add(username.toLowerCase());
-                        }
+        cR.addSnapshotListener((value, error) -> {
+            if (value != null) {
+                for (QueryDocumentSnapshot doc : value){
+                    String username = (String) doc.get("username");
+                    if (username != null) {
+                        usernames.add(username.toLowerCase());
                     }
                 }
-
-                Log.i(TAG, "onEvent: " + usernames.size());
             }
+
+            Log.i(TAG, "onEvent: " + usernames.size());
         });
     }
 }
