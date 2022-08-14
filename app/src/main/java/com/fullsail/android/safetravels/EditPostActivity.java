@@ -1,6 +1,7 @@
 package com.fullsail.android.safetravels;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -16,9 +17,12 @@ import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.fullsail.android.safetravels.objects.Post;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
@@ -62,7 +66,7 @@ public class EditPostActivity extends AppCompatActivity {
         setContentView(R.layout.activity_edit_post);
 
         Intent i = getIntent();
-        p = i.getParcelableExtra(HomeActivity.TAG);
+        p = i.getParcelableExtra(ViewPostActivity.TAG);
 
         post_Title_ETV = findViewById(R.id.post_Title_ETV);
 
@@ -106,7 +110,33 @@ public class EditPostActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.menu_delete_post){
-            deletePost();
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(EditPostActivity.this);
+            builder.setTitle(R.string.prompt_delete_post);
+            builder.setMessage(R.string.prompt_delete_post_confirmation);
+            builder.setPositiveButton(R.string.action_remove_post, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    cUser.delete()
+                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()) {
+
+                                        deletePost();
+
+                                        Log.d(TAG, "User account deleted.");
+                                    }
+                                }
+                            });
+                }
+
+            });
+
+            builder.setNegativeButton(R.string.action_cancel, null);
+
+            builder.show();
+
         }
         else if (item.getItemId() == R.id.menu_save_post){
             updatePost();
@@ -115,18 +145,23 @@ public class EditPostActivity extends AppCompatActivity {
     }
 
     private void updatePost() {
-        String id = cUser.getUid();
-        dR = db.collection("blogPosts").document(id).collection("posts").document(p.getPostId());
+        if(checkForEmptyFields()){
+            String id = cUser.getUid();
+            dR = db.collection("blogPosts").document(id).collection("posts").document(p.getPostId());
 
-        String post_Title = post_Title_ETV.getText().toString();
-        String post = post_ETV.getText().toString();
-        String location = location_ETV.getText().toString();
-        String date = date_ETV.getText().toString();
+            String post_Title = post_Title_ETV.getText().toString();
+            String post = post_ETV.getText().toString();
+            String location = location_ETV.getText().toString();
+            String date = date_ETV.getText().toString();
 
-        dR.update("date",date);
-        dR.update("location",post_Title);
-        dR.update("post",post);
-        dR.update("title",location);
+            dR.update("date",date);
+            dR.update("location",post_Title);
+            dR.update("post",post);
+            dR.update("title",location);
+        }
+        else{
+            
+        }
     }
 
     private void deletePost() {

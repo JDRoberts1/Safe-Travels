@@ -114,6 +114,13 @@
     <string name="warning_rejected_register">Email is banned and unable to create a new account.</string>
     <string name="warning_used_username">Username is already taken</string>
     <string name="label_sentmessage">sentMessage</string>
+    <string name="prompt_log_out">Log Out</string>
+    <string name="prompt_log_out_confirmation">Are you sure you want log out?</string>
+    <string name="prompt_delete_account_confirmation">Are you sure you wish to remove your account? This is a permanent action and cannot be undone.</string>
+    <string name="prompt_delete_account">Delete Account</string>
+    <string name="prompt_delete_post">Are you sure you want to delete this post?</string>
+    <string name="prompt_delete_post_confirmation">This action is permanent and cannot be undone.</string>
+    <string name="action_remove_post">Delet Post</string>
 
     <!-- App Just Added-->
 

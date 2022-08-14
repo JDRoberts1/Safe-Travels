@@ -1,6 +1,7 @@
 package com.fullsail.android.safetravels;
 
 import android.annotation.SuppressLint;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.menu.MenuBuilder;
 
@@ -91,26 +93,53 @@ public class UserProfileActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.logOut_Bttn){
-            FirebaseAuth.getInstance().signOut();
-            logOutIntent();
+
+            // Set up dialog options
+            final CharSequence[] items = {"Confirm", "Cancel"};
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(UserProfileActivity.this);
+            builder.setTitle(R.string.prompt_log_out_confirmation);
+            builder.setItems(items, (dialog, which) -> {
+                if (items[which].equals("Confirm")){
+                    FirebaseAuth.getInstance().signOut();
+                    logOutIntent();
+                }
+            });
+
+            builder.show();
+
         }
         else if (item.getItemId() == R.id.delete_acct_Bttn){
 
             String id = cUser.getUid();
 
-            cUser.delete()
-                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            if (task.isSuccessful()) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(UserProfileActivity.this);
+            builder.setTitle(R.string.prompt_delete_account);
+            builder.setIcon(R.drawable.ic_baseline_delete_24);
+            builder.setMessage(R.string.prompt_delete_account_confirmation);
+            builder.setPositiveButton(R.string.action_remove_account, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    cUser.delete()
+                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()) {
 
-                                removeUserInfo(id);
-                                logOutIntent();
+                                        removeUserInfo(id);
+                                        logOutIntent();
 
-                                Log.d(TAG, "User account deleted.");
-                            }
-                        }
-                    });
+                                        Log.d(TAG, "User account deleted.");
+                                    }
+                                }
+                            });
+                }
+            });
+
+            builder.setNegativeButton(R.string.action_cancel, null);
+
+            builder.show();
+
 
         }
         return super.onOptionsItemSelected(item);

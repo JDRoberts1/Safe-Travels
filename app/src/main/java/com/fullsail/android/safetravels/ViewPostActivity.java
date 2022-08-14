@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -36,7 +37,7 @@ public class ViewPostActivity extends AppCompatActivity {
     Post p = null;
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
     FirebaseUser cUser = mAuth.getCurrentUser();
-    private static final String TAG = "ViewPostActivity";
+    public static final String TAG = "ViewPostActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,12 +69,11 @@ public class ViewPostActivity extends AppCompatActivity {
 
     }
 
-    @SuppressLint("RestrictedApi")
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        
+
         if (p.getUid().equals(cUser.getUid())){
-            getMenuInflater().inflate(R.menu.edit_post_menu, menu);
+            getMenuInflater().inflate(R.menu.current_user_post_menu, menu);
         }
 
         return super.onCreateOptionsMenu(menu);
@@ -88,20 +88,37 @@ public class ViewPostActivity extends AppCompatActivity {
     }
 
     private void setUpImages() {
+        if (p.getProfileImgUri() != null){
+            profileImgView.setImageURI(p.getProfileImgUri());
+        }
+
         if (p.getUri1() != null){
             imageView1.setImageURI(p.getUri1());
+        }
+        else {
+            imageView1.setVisibility(View.GONE);
         }
 
         if (p.getUri2() != null){
             imageView2.setImageURI(p.getUri2());
         }
+        else{
+            imageView2.setVisibility(View.GONE);
+        }
 
         if (p.getUri3() != null){
+
             imageView3.setImageURI(p.getUri3());
+        }
+        else{
+            imageView3.setVisibility(View.GONE);
         }
 
         if (p.getUri4() != null){
             imageView4.setImageURI(p.getUri4());
+        }
+        else {
+            imageView4.setVisibility(View.GONE);
         }
     }
 
