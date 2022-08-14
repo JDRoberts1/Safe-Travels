@@ -25,7 +25,7 @@ public class UserValidationActivity extends AppCompatActivity {
         setContentView(R.layout.activity_user_verification);
 
         Intent statusIntent = getIntent();
-        status = (boolean) statusIntent.getBooleanExtra(RegisterActivity.TAG, true);
+        status = statusIntent.getBooleanExtra(RegisterActivity.TAG, true);
         Log.i(TAG, "onCreate: " + status);
 
         pendingView = findViewById(R.id.pendingView);
@@ -33,29 +33,23 @@ public class UserValidationActivity extends AppCompatActivity {
         rejectedView = findViewById(R.id.rejectedView);
 
         handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                // check if a user is currently logged in
-                if (status){
-                    pendingView.setVisibility(View.GONE);
-                    approvedView.setVisibility(View.VISIBLE);
-                }
-                else{
-                    pendingView.setVisibility(View.GONE);
-                    rejectedView.setVisibility(View.VISIBLE);
-                }
+        handler.postDelayed(() -> {
+            // check if a user is currently logged in
+            if (status){
+                pendingView.setVisibility(View.GONE);
+                approvedView.setVisibility(View.VISIBLE);
+            }
+            else{
+                pendingView.setVisibility(View.GONE);
+                rejectedView.setVisibility(View.VISIBLE);
             }
         }, 5000);
 
 
         handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                // check if a user is currently logged in
-                toLogInScreen();
-            }
+        handler.postDelayed(() -> {
+            // check if a user is currently logged in
+            toLogInScreen();
         }, 8000);
 
 
