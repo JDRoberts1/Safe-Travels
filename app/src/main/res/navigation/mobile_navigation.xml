@@ -7,7 +7,6 @@
 
     <fragment
         android:id="@+id/navigation_home"
-        android:name="com.fullsail.android.safetravels.fragments.HomeFragment"
         android:label="@string/title_home"
         tools:layout="@layout/activity_main" />
 

@@ -13,7 +13,6 @@ import com.fullsail.android.safetravels.R;
 import com.fullsail.android.safetravels.objects.Post;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 

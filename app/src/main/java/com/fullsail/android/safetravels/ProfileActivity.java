@@ -126,7 +126,7 @@ public class ProfileActivity extends AppCompatActivity {
                     if (!doc.getId().equals("sample")) {
 
                         Post newUserPost;
-                        String date = (String) doc.get("date");;
+                        String date = (String) doc.get("date");
                         String datePosted = (String) doc.get("datePosted");
                         String location = (String) doc.get("location");
                         String post = (String) doc.get("post");

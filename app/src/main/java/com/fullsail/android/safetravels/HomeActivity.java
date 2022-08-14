@@ -157,7 +157,7 @@ public class HomeActivity extends AppCompatActivity {
                         Log.i(TAG, "onEvent: " + (String) doc.get("uri1"));
 
                         Post newUserPost;
-                        String date = (String) doc.get("date");;
+                        String date = (String) doc.get("date");
                         String datePosted = (String) doc.get("datePosted");
                         String location = (String) doc.get("location");
                         String post = (String) doc.get("post");

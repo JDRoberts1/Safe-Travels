@@ -1,8 +1,6 @@
 package com.fullsail.android.safetravels.adapters;
 
 import android.content.Context;
-import android.content.Intent;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +9,6 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
-import com.fullsail.android.safetravels.ProfileActivity;
 import com.fullsail.android.safetravels.R;
 import com.fullsail.android.safetravels.objects.Post;
 

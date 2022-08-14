@@ -2,10 +2,12 @@ package com.fullsail.android.safetravels;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -13,8 +15,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -35,6 +35,8 @@ public class LoginActivity extends AppCompatActivity {
     TextView errorLabel;
     EditText emailETV;
     EditText passwordETV;
+    ProgressBar pb;
+
     ArrayList<String> bannedList = new ArrayList<>();
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     CollectionReference cR = db.collection("bannedEmails");
@@ -55,6 +57,7 @@ public class LoginActivity extends AppCompatActivity {
         createAccountTV.setOnClickListener(createAcctClick);
         emailETV = findViewById(R.id.email_login_etv);
         passwordETV = findViewById(R.id.password_login_etv);
+        pb = findViewById(R.id.loginProgressBar);
 
         getBannedEmails();
     }
@@ -147,13 +150,22 @@ public class LoginActivity extends AppCompatActivity {
     private void updateUI(FirebaseUser user) {
         // TODO: Create Intent to take user to the main screen
         if (user != null){
-            Intent mainScreenIntent = new Intent(this, HomeActivity.class);
-            mainScreenIntent.putExtra(TAG, user);
-            startActivity(mainScreenIntent);
+
+            signInBttn.setVisibility(View.GONE);
+            forgotPasswordTV.setVisibility(View.GONE);
+            createAccountTV.setVisibility(View.GONE);
+            pb.setVisibility(View.VISIBLE);
+
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    Intent mainScreenIntent = new Intent(LoginActivity.this, HomeActivity.class);
+                    mainScreenIntent.putExtra(TAG, user);
+                    startActivity(mainScreenIntent);
+                }
+            }, 3000);
         }
     }
-
-
-
 }
 

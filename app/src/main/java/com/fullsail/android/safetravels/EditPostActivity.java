@@ -62,7 +62,7 @@ public class EditPostActivity extends AppCompatActivity {
         setContentView(R.layout.activity_edit_post);
 
         Intent i = getIntent();
-        p = (Post) i.getParcelableExtra(HomeActivity.TAG);
+        p = i.getParcelableExtra(HomeActivity.TAG);
 
         post_Title_ETV = findViewById(R.id.post_Title_ETV);
 

@@ -1,18 +1,22 @@
 package com.fullsail.android.safetravels;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.view.menu.MenuBuilder;
 
 import com.fullsail.android.safetravels.objects.Post;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -30,7 +34,8 @@ public class ViewPostActivity extends AppCompatActivity {
     BottomNavigationView navView;
 
     Post p = null;
-
+    FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    FirebaseUser cUser = mAuth.getCurrentUser();
     private static final String TAG = "ViewPostActivity";
 
     @Override
@@ -61,6 +66,25 @@ public class ViewPostActivity extends AppCompatActivity {
         setUpImages();
         setUpBottomNav();
 
+    }
+
+    @SuppressLint("RestrictedApi")
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        
+        if (p.getUid().equals(cUser.getUid())){
+            getMenuInflater().inflate(R.menu.edit_post_menu, menu);
+        }
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        Intent editIntent = new Intent(this, EditPostActivity.class);
+        editIntent.putExtra(TAG, p);
+        startActivity(editIntent);
+        return super.onOptionsItemSelected(item);
     }
 
     private void setUpImages() {

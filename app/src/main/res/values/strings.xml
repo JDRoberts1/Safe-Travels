@@ -113,6 +113,7 @@
     <string name="warning_rejected_account">Account Rejected. Unable to log in.</string>
     <string name="warning_rejected_register">Email is banned and unable to create a new account.</string>
     <string name="warning_used_username">Username is already taken</string>
+    <string name="label_sentmessage">sentMessage</string>
 
     <!-- App Just Added-->
 
