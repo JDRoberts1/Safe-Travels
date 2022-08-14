@@ -11,6 +11,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SafeTravels.Starting.Fullscreen">
         <activity
+            android:name=".UserPasswordActivity"
+            android:exported="false" />
+        <activity
             android:name=".UserValidationActivity"
             android:exported="false"
             android:label="@string/title_activity_approved_user"

@@ -1,31 +1,23 @@
 package com.fullsail.android.safetravels;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.MenuItem;
-import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.fullsail.android.safetravels.adapters.HomePostListAdapter;
 import com.fullsail.android.safetravels.objects.Post;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.navigation.NavigationBarView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 
@@ -43,7 +35,6 @@ public class HomeActivity extends AppCompatActivity {
     CollectionReference cR;
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
     FirebaseUser cUser = mAuth.getCurrentUser();
-    CircleImageView otherUserProfile;
 
     ArrayList<Post> posts = new ArrayList<>();
 
@@ -62,16 +53,14 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     // OnItemClickListener for when a user taps on a post
-    AdapterView.OnItemClickListener itemClick = new AdapterView.OnItemClickListener() {
-        @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            Post selectedPost = posts.get(position);
-            Intent i = new Intent(HomeActivity.this, ViewPostActivity.class);
-            i.putExtra(TAG, selectedPost);
-            startActivity(i);
-        }
+    AdapterView.OnItemClickListener itemClick = (parent, view, position, id) -> {
+        Post selectedPost = posts.get(position);
+        Intent i = new Intent(HomeActivity.this, ViewPostActivity.class);
+        i.putExtra(TAG, selectedPost);
+        startActivity(i);
     };
 
+    // Method to display all travel posts in blogPOst collection.
     private void displayPosts() {
         blogLV = findViewById(R.id.recent_Posts_LV);
         adapter = new HomePostListAdapter(this.getApplicationContext(), R.layout.post_rcv_item, posts);
@@ -103,58 +92,53 @@ public class HomeActivity extends AppCompatActivity {
     public void setUpBottomNav(){
         navView.setSelectedItemId(R.id.navigation_home);
 
-        navView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                // Check if selected item is the page user is already on
-                if (item.getItemId() != navView.getSelectedItemId()){
+        navView.setOnItemSelectedListener(item -> {
+            // Check if selected item is the page user is already on
+            if (item.getItemId() != navView.getSelectedItemId()){
 
-                    // Check selected item id and start activity intent
-                    if (item.getItemId() == R.id.navigation_messages){
-                        Intent i = new Intent(getApplicationContext(), ConversationListActivity.class);
-                        startActivity(i);
-                    }
-                    else if (item.getItemId() == R.id.navigation_new_post){
-                        Intent i = new Intent(getApplicationContext(), NewPostActivity.class);
-                        startActivity(i);
-                    }
-                    else if (item.getItemId() == R.id.navigation_friends){
-                        Intent i = new Intent(getApplicationContext(), FriendsActivity.class);
-                        startActivity(i);
-                    }
-                    else if (item.getItemId() == R.id.navigation_profile){
-                        Intent i = new Intent(getApplicationContext(), UserProfileActivity.class);
-                        startActivity(i);
-                    }
-                    overridePendingTransition(0,0);
-                    return true;
+                // Check selected item id and start activity intent
+                if (item.getItemId() == R.id.navigation_messages){
+                    Intent i = new Intent(getApplicationContext(), ConversationListActivity.class);
+                    startActivity(i);
                 }
-                return false;
+                else if (item.getItemId() == R.id.navigation_new_post){
+                    Intent i = new Intent(getApplicationContext(), NewPostActivity.class);
+                    startActivity(i);
+                }
+                else if (item.getItemId() == R.id.navigation_friends){
+                    Intent i = new Intent(getApplicationContext(), FriendsActivity.class);
+                    startActivity(i);
+                }
+                else if (item.getItemId() == R.id.navigation_profile){
+                    Intent i = new Intent(getApplicationContext(), UserProfileActivity.class);
+                    startActivity(i);
+                }
+                overridePendingTransition(0,0);
+                return true;
             }
+            return false;
         });
 
     }
 
-    // TODO: Set up Blog Post Recycle View (Display All Blog Post)
+    // Set up Blog Post ListView (Display All Blog Post)
     private void savePosts(){
         // Get User List collection
         db = FirebaseFirestore.getInstance();
         cR = db.collection("blogPosts");
 
-        cR.addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                if (error != null) {
-                    Log.w(TAG, "Listen failed.", error);
-                    return;
-                }
+        cR.addSnapshotListener((value, error) -> {
+            if (error != null) {
+                Log.w(TAG, "Listen failed.", error);
+                return;
+            }
 
+            if (value != null) {
                 for (QueryDocumentSnapshot doc : value) {
 
                     Log.i(TAG, "onEvent: " + doc);
 
                     if (!doc.getId().equals("sample")) {
-                        Log.i(TAG, "onEvent: " + (String) doc.get("uri1"));
 
                         Post newUserPost;
                         String date = (String) doc.get("date");
@@ -210,11 +194,11 @@ public class HomeActivity extends AppCompatActivity {
                         posts.add(newUserPost);
                     }
                 }
-
-                Log.i(TAG, "onEvent: " + posts.size());
-                displayPosts();
-
             }
+
+            Log.i(TAG, "onEvent: " + posts.size());
+            displayPosts();
+
         });
     }
 

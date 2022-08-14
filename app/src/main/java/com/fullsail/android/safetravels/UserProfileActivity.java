@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -70,14 +71,6 @@ public class UserProfileActivity extends AppCompatActivity {
         displayInfo();
         setUpBottomNav();
     }
-
-    View.OnClickListener editClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            // Intent to edit profile activity
-            startActivity(new Intent(UserProfileActivity.this, EditProfileActivity.class));
-        }
-    };
 
     // Menu Set Up
     @SuppressLint("RestrictedApi")
@@ -144,6 +137,21 @@ public class UserProfileActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
+    View.OnClickListener editClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            // Intent to edit profile activity
+            startActivity(new Intent(UserProfileActivity.this, EditProfileActivity.class));
+        }
+    };
+
+    AdapterView.OnItemClickListener itemClick = new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+        }
+    };
 
     private void removeUserInfo(String id) {
         dR = db.collection("users").document(id);
