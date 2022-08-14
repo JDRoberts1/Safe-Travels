@@ -3,7 +3,6 @@ package com.fullsail.android.safetravels;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -16,7 +15,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.fullsail.android.safetravels.adapters.HomePostListAdapter;
-import com.fullsail.android.safetravels.adapters.PostListAdapter;
 import com.fullsail.android.safetravels.objects.Post;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
@@ -35,7 +33,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class HomeActivity extends AppCompatActivity {
 
-    private static final String TAG = "HomeActivity";
+    public static final String TAG = "HomeActivity";
     BottomNavigationView navView;
     TextView welcomeLabel;
     CircleImageView iv;
@@ -56,34 +54,29 @@ public class HomeActivity extends AppCompatActivity {
 
         welcomeLabel = findViewById(R.id.welcomeLabel);
         iv = findViewById(R.id.profile_img_main);
-        navView = findViewById(R.id.nav_view);
+        navView = findViewById(R.id.navView);
 
         savePosts();
         displayInfo();
         setUpBottomNav();
     }
 
-    // OnItemSelectedListener for when a user taps on a post
-    AdapterView.OnItemSelectedListener itemClick = new AdapterView.OnItemSelectedListener() {
+    // OnItemClickListener for when a user taps on a post
+    AdapterView.OnItemClickListener itemClick = new AdapterView.OnItemClickListener() {
         @Override
-        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             Post selectedPost = posts.get(position);
             Intent i = new Intent(HomeActivity.this, ViewPostActivity.class);
             i.putExtra(TAG, selectedPost);
             startActivity(i);
         }
-
-        @Override
-        public void onNothingSelected(AdapterView<?> parent) {
-
-        }
     };
 
     private void displayPosts() {
         blogLV = findViewById(R.id.recent_Posts_LV);
-        blogLV.setOnItemSelectedListener(itemClick);
         adapter = new HomePostListAdapter(this.getApplicationContext(), R.layout.post_rcv_item, posts);
         blogLV.setAdapter(adapter);
+        blogLV.setOnItemClickListener(itemClick);
         Log.i(TAG, "displayPosts: " + posts.size());
     }
 
@@ -158,7 +151,10 @@ public class HomeActivity extends AppCompatActivity {
 
                 for (QueryDocumentSnapshot doc : value) {
 
+                    Log.i(TAG, "onEvent: " + doc);
+
                     if (!doc.getId().equals("sample")) {
+                        Log.i(TAG, "onEvent: " + (String) doc.get("uri1"));
 
                         Post newUserPost;
                         String date = (String) doc.get("date");;
@@ -177,28 +173,40 @@ public class HomeActivity extends AppCompatActivity {
                         String uid = (String) doc.get("uid");
                         String username = (String) doc.get("username");
 
-                        Uri uri1 = null;
-                        Uri uri2 = null;
-                        Uri uri3 = null;
-                        Uri uri4 = null;
+                        String uriString1 = (String) doc.get("uri1");
+                        String uriString2 = (String) doc.get("uri2");
+                        String uriString3 = (String) doc.get("uri3");
+                        String uriString4 = (String) doc.get("uri3");
 
-//                        if (uri1 != null){
-//                            newUserPost = new Post(uid, title, post, date, location, username, datePosted, profileImgUri, null, null, null, null);
-//                        }
-//                        else if(uri2 == null){
-//                            newUserPost = new Post(uid, title, post, date, location, username, datePosted, profileImgUri, uri1, null, null, null);
-//                        }
-//                        else if(uri3 == null){
-//                            newUserPost = new Post(uid, title, post, date, location, username, datePosted, profileImgUri, uri1, uri2, null, null);
-//                        }
-//                        else if(uri4 == null){
-//                            newUserPost = new Post(uid, title, post, date, location, username, datePosted, profileImgUri, uri1, uri2, uri3, null);
-//                        }
-//                        else {
-//                            newUserPost = new Post(uid, title, post, date, location, username, datePosted, profileImgUri, uri1, uri2, uri3, uri4);
-//                        }
 
-                        newUserPost = new Post(uid, title, post, date, location, username, datePosted, profileImgUri, null, null, null, null);
+
+                        if (uriString1 != null && uriString2 == null && uriString3 == null && uriString4 == null){
+                            Uri uri1 = Uri.parse(uriString1);
+                            newUserPost = new Post(uid, title, post, date, location, username, datePosted, profileImgUri, uri1, null, null, null);
+                        }
+                        else if(uriString1 != null && uriString2 != null && uriString3 == null && uriString4 == null){
+                            Uri uri1 = Uri.parse(uriString1);
+                            Uri uri2 = Uri.parse(uriString2);
+                            newUserPost = new Post(uid, title, post, date, location, username, datePosted, profileImgUri, uri1, uri2, null, null);
+                        }
+                        else if( uriString1 != null && uriString2 != null && uriString3 != null && uriString4 == null){
+                            Uri uri1 = Uri.parse(uriString1);
+                            Uri uri2 = Uri.parse(uriString2);
+                            Uri uri3 = Uri.parse(uriString3);
+                            newUserPost = new Post(uid, title, post, date, location, username, datePosted, profileImgUri, uri1, uri2, uri3, null);
+                        }
+                        else if(uriString1 != null && uriString2 != null && uriString3 != null && uriString4 != null){
+                            Uri uri1 = Uri.parse(uriString1);
+                            Uri uri2 = Uri.parse(uriString2);
+                            Uri uri3 = Uri.parse(uriString3);
+                            Uri uri4 = Uri.parse(uriString4);
+                            newUserPost = new Post(uid, title, post, date, location, username, datePosted, profileImgUri, uri1, uri2, uri3, uri4);
+                        }
+                        else{
+                            newUserPost = new Post(uid, title, post, date, location, username, datePosted, profileImgUri, null, null, null, null);
+                        }
+
+                        newUserPost.setPostId(doc.getId());
                         posts.add(newUserPost);
                     }
                 }

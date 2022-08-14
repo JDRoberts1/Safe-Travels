@@ -1,187 +1,218 @@
 package com.fullsail.android.safetravels;
 
-import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
+import android.os.Bundle;
+import android.provider.MediaStore;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
 
-import androidx.appcompat.app.ActionBar;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.os.Build;
-import android.os.Bundle;
-import android.os.Handler;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.WindowInsets;
+import com.fullsail.android.safetravels.objects.Post;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
-import com.fullsail.android.safetravels.databinding.ActivityEditPostBinding;
+import java.io.ByteArrayOutputStream;
 
-/**
- * An example full-screen activity that shows and hides the system UI (i.e.
- * status bar and navigation/system bar) with user interaction.
- */
 public class EditPostActivity extends AppCompatActivity {
-    /**
-     * Whether or not the system UI should be auto-hidden after
-     * {@link #AUTO_HIDE_DELAY_MILLIS} milliseconds.
-     */
-    private static final boolean AUTO_HIDE = true;
 
-    /**
-     * If {@link #AUTO_HIDE} is set, the number of milliseconds to wait after
-     * user interaction before hiding the system UI.
-     */
-    private static final int AUTO_HIDE_DELAY_MILLIS = 3000;
+    private static final String TAG = "EditPostActivity";
+    EditText post_Title_ETV;
+    EditText post_ETV;
+    EditText location_ETV;
+    EditText date_ETV;
+    ImageView imageView1, imageView2, imageView3, imageView4;
+    Uri uri1, uri2, uri3, uri4;
+    Button cancel_Post_Bttn;
 
-    /**
-     * Some older devices needs a small delay between UI widget updates
-     * and a change of the status and navigation bar.
-     */
-    private static final int UI_ANIMATION_DELAY = 300;
-    private final Handler mHideHandler = new Handler();
-    private View mContentView;
-    private final Runnable mHidePart2Runnable = new Runnable() {
-        @SuppressLint("InlinedApi")
-        @Override
-        public void run() {
-            // Delayed removal of status and navigation bar
-            if (Build.VERSION.SDK_INT >= 30) {
-                mContentView.getWindowInsetsController().hide(
-                        WindowInsets.Type.statusBars() | WindowInsets.Type.navigationBars());
-            } else {
-                // Note that some of these constants are new as of API 16 (Jelly Bean)
-                // and API 19 (KitKat). It is safe to use them, as they are inlined
-                // at compile-time and do nothing on earlier devices.
-                mContentView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
-                        | View.SYSTEM_UI_FLAG_FULLSCREEN
-                        | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                        | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
-            }
-        }
-    };
-    private View mControlsView;
-    private final Runnable mShowPart2Runnable = new Runnable() {
-        @Override
-        public void run() {
-            // Delayed display of UI elements
-            ActionBar actionBar = getSupportActionBar();
-            if (actionBar != null) {
-                actionBar.show();
-            }
-            mControlsView.setVisibility(View.VISIBLE);
-        }
-    };
-    private boolean mVisible;
-    private final Runnable mHideRunnable = new Runnable() {
-        @Override
-        public void run() {
-            hide();
-        }
-    };
-    /**
-     * Touch listener to use for in-layout UI controls to delay hiding the
-     * system UI. This is to prevent the jarring behavior of controls going away
-     * while interacting with activity UI.
-     */
-    private final View.OnTouchListener mDelayHideTouchListener = new View.OnTouchListener() {
-        @Override
-        public boolean onTouch(View view, MotionEvent motionEvent) {
-            switch (motionEvent.getAction()) {
-                case MotionEvent.ACTION_DOWN:
-                    if (AUTO_HIDE) {
-                        delayedHide(AUTO_HIDE_DELAY_MILLIS);
-                    }
-                    break;
-                case MotionEvent.ACTION_UP:
-                    view.performClick();
-                    break;
-                default:
-                    break;
-            }
-            return false;
-        }
-    };
-    private ActivityEditPostBinding binding;
+    Post p = null;
+
+    CollectionReference cR;
+    DocumentReference dR;
+    FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    FirebaseUser cUser = mAuth.getCurrentUser();
+    Bitmap imageBitmap = null;
+    FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
+    static final int REQUEST_IMAGE_CAPTURE = 1;
+    static final int REQUEST_IMAGE_GALLERY = 2;
+    Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+    Intent galleryIntent = new Intent(Intent.ACTION_GET_CONTENT);
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_edit_post);
 
-        binding = ActivityEditPostBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
+        Intent i = getIntent();
+        p = (Post) i.getParcelableExtra(HomeActivity.TAG);
 
-        mVisible = true;
-        mControlsView = binding.fullscreenContentControls;
-        mContentView = binding.fullscreenContent;
+        post_Title_ETV = findViewById(R.id.post_Title_ETV);
 
-        // Set up the user interaction to manually show or hide the system UI.
-        mContentView.setOnClickListener(new View.OnClickListener() {
+        post_ETV = findViewById(R.id.new_Post_ETV);
+        location_ETV = findViewById(R.id.location_Post_ETV);
+        date_ETV = findViewById(R.id.date_Post_ETV);
+
+        imageView1 = findViewById(R.id.post_Img_1);
+        imageView1.setOnClickListener(imgClick);
+
+        imageView2 = findViewById(R.id.post_Img_2);
+        imageView2.setOnClickListener(imgClick);
+
+        imageView3 = findViewById(R.id.post_Img_3);
+        imageView3.setOnClickListener(imgClick);
+
+        imageView4 = findViewById(R.id.post_Img_4);
+        imageView4.setOnClickListener(imgClick);
+
+        cancel_Post_Bttn = findViewById(R.id.cancel_Post_Bttn);
+        cancel_Post_Bttn.setOnClickListener(cancelClick);
+
+        setUpImages();
+
+    }
+
+
+    View.OnClickListener imgClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+
+        }
+    };
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu){
+        getMenuInflater().inflate(R.menu.edit_post_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.menu_delete_post){
+            deletePost();
+        }
+        else if (item.getItemId() == R.id.menu_save_post){
+            updatePost();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void updatePost() {
+        String id = cUser.getUid();
+        dR = db.collection("blogPosts").document(id).collection("posts").document(p.getPostId());
+
+        String post_Title = post_Title_ETV.getText().toString();
+        String post = post_ETV.getText().toString();
+        String location = location_ETV.getText().toString();
+        String date = date_ETV.getText().toString();
+
+        dR.update("date",date);
+        dR.update("location",post_Title);
+        dR.update("post",post);
+        dR.update("title",location);
+    }
+
+    private void deletePost() {
+        String id = cUser.getUid();
+        dR = db.collection("blogPosts").document(id).collection("posts").document(p.getPostId());
+        dR.delete();
+
+        cR = db.collection("users").document(cUser.getUid()).collection("posts");
+        cR.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
-            public void onClick(View view) {
-                toggle();
+            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                if (error != null) {
+                    Log.w(TAG, "Listen failed.", error);
+                    return;
+                }
+
+                for (QueryDocumentSnapshot doc : value){
+
+                    String ts = p.getDatePosted();
+                    String title = p.getTitle();
+
+                    String docTS = (String) doc.get("datePosted");
+                    String docTitle = (String) doc.get("title");
+
+                    if (docTS != null && docTitle != null) {
+                        if (docTS.equals(ts) && docTitle.equals(title)) {
+                            dR = cR.document(doc.getId());
+                            dR.delete();
+                        }
+                    }
+                }
             }
         });
-
-        // Upon interacting with UI controls, delay any scheduled hide()
-        // operations to prevent the jarring behavior of controls going away
-        // while interacting with the UI.
-        binding.dummyButton.setOnTouchListener(mDelayHideTouchListener);
     }
 
-    @Override
-    protected void onPostCreate(Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
+    View.OnClickListener cancelClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            backToProfile();
+        }
+    };
 
-        // Trigger the initial hide() shortly after the activity has been
-        // created, to briefly hint to the user that UI controls
-        // are available.
-        delayedHide(100);
-    }
+    // Method to set not null images
+    private void setUpImages() {
+        if (p.getUri1() != null){
+            imageView1.setImageURI(p.getUri1());
+        }
 
-    private void toggle() {
-        if (mVisible) {
-            hide();
-        } else {
-            show();
+        if (p.getUri2() != null){
+            imageView2.setImageURI(p.getUri2());
+        }
+
+        if (p.getUri3() != null){
+            imageView3.setImageURI(p.getUri3());
+        }
+
+        if (p.getUri4() != null){
+            imageView4.setImageURI(p.getUri4());
         }
     }
 
-    private void hide() {
-        // Hide UI first
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.hide();
-        }
-        mControlsView.setVisibility(View.GONE);
-        mVisible = false;
-
-        // Schedule a runnable to remove the status and navigation bar after a delay
-        mHideHandler.removeCallbacks(mShowPart2Runnable);
-        mHideHandler.postDelayed(mHidePart2Runnable, UI_ANIMATION_DELAY);
+    // Method to retrieve the image uri string and return URI
+    public Uri getImgUri(Context c, Bitmap bitmapImg, String uuid){
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        bitmapImg.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(c.getContentResolver(), bitmapImg, uuid, null);
+        return Uri.parse(path);
     }
 
-    private void show() {
-        // Show the system bar
-        if (Build.VERSION.SDK_INT >= 30) {
-            mContentView.getWindowInsetsController().show(
-                    WindowInsets.Type.statusBars() | WindowInsets.Type.navigationBars());
-        } else {
-            mContentView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
+    // Method to validate user entries for blanks and whitespace
+    private boolean checkForEmptyFields(){
+        // Check if any fiends are empty or only contain whitespace
+        if (post_Title_ETV.getText().toString().isEmpty() || post_Title_ETV.getText().toString().trim().isEmpty()){
+            return true;
         }
-        mVisible = true;
-
-        // Schedule a runnable to display UI elements after a delay
-        mHideHandler.removeCallbacks(mHidePart2Runnable);
-        mHideHandler.postDelayed(mShowPart2Runnable, UI_ANIMATION_DELAY);
+        else if (post_ETV.getText().toString().isEmpty() || post_ETV.getText().toString().trim().isEmpty()){
+            return true;
+        }
+        else if (location_ETV.getText().toString().isEmpty() || location_ETV.getText().toString().trim().isEmpty()){
+            return true;
+        }
+        else return date_ETV.getText().toString().isEmpty() || date_ETV.getText().toString().trim().isEmpty();
     }
 
-    /**
-     * Schedules a call to hide() in delay milliseconds, canceling any
-     * previously scheduled calls.
-     */
-    private void delayedHide(int delayMillis) {
-        mHideHandler.removeCallbacks(mHideRunnable);
-        mHideHandler.postDelayed(mHideRunnable, delayMillis);
+    // Intent method to Send the user back to home screen
+    private void backToProfile(){
+        startActivity(new Intent(EditPostActivity.this, UserProfileActivity.class));
     }
 }

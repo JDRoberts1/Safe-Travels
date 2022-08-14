@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -24,15 +25,23 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -48,7 +57,10 @@ public class RegisterActivity extends AppCompatActivity {
     TextView errorLabel;
     Button uploadTV;
     ImageView profileImage;
+    Spinner spinner;
 
+    ArrayList<String> bannedEmails = new ArrayList<>();
+    ArrayList<String> usernames = new ArrayList<>();
     Bitmap imageBitmap = null;
     boolean imgUploaded = false;
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
@@ -58,11 +70,17 @@ public class RegisterActivity extends AppCompatActivity {
     Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
     Intent galleryIntent = new Intent(Intent.ACTION_GET_CONTENT);
 
+    boolean approvalStatus;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         setTheme(R.style.Theme_SafeTravels_Fullscreen);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
+
+        Intent bannedIntent = getIntent();
+        bannedEmails = bannedIntent.getStringArrayListExtra(LoginActivity.TAG);
+        getUsernames();
 
         errorLabel = findViewById(R.id.error_label_regis);
 
@@ -79,6 +97,8 @@ public class RegisterActivity extends AppCompatActivity {
 
         uploadTV = findViewById(R.id.upload_bttn);
         uploadTV.setOnClickListener(uploadClick);
+
+        spinner = findViewById(R.id.spinner);
 
         profileImage = findViewById(R.id.profile_picture_iv_etv);
     }
@@ -106,19 +126,18 @@ public class RegisterActivity extends AppCompatActivity {
 
         profileImage.setImageBitmap(imageBitmap);
         imgUploaded = true;
-
     }
 
     // Activity Contracts
-
     // Contract to Request Permission if not granted
     public ActivityResultLauncher<String> requestPerms = registerForActivityResult(new ActivityResultContracts.RequestPermission(), result -> Log.i(TAG, "onActivityResult: " + result));
 
     // Intent to take user to the Log In activity
-    private void logInScreenIntent() {
+    private void verificationIntent() {
         // Intent to Main screen
-        Intent logInScreenIntent = new Intent(RegisterActivity.this, LoginActivity.class);
-        startActivity(logInScreenIntent);
+        Intent verificationIntent = new Intent(RegisterActivity.this, UserValidationActivity.class);
+        verificationIntent.putExtra(TAG, approvalStatus);
+        startActivity(verificationIntent);
     }
 
     // Intent for Taking a Photo with Camera
@@ -246,7 +265,7 @@ public class RegisterActivity extends AppCompatActivity {
     // OnClickListener for Sign-In textview
     View.OnClickListener signInClick = v -> {
         // Create Intent to take user to sign in screen
-        logInScreenIntent();
+        verificationIntent();
     };
 
     // OnClickListener for Upload Image button
@@ -286,31 +305,99 @@ public class RegisterActivity extends AppCompatActivity {
             if (checkForEmptyFields()){
                 final String email = emailETV.getText().toString();
                 final String password = passwordETV.getText().toString();
+                String sex = spinner.getSelectedItem().toString();
+                String username = uName.getText().toString();
 
-                mAuth.createUserWithEmailAndPassword(email, password)
-                        .addOnCompleteListener(RegisterActivity.this, task -> {
-                            if (task.isSuccessful()) {
-                                // Sign in success, update UI with the signed-in user's information
-                                Log.d(TAG, "createUserWithEmail:success");
-                                FirebaseUser user = mAuth.getCurrentUser();
+                if (bannedEmails.contains(email.toLowerCase())){
+                    errorLabel.setText(R.string.warning_rejected_register);
+                }
+                else if (usernames.contains(username.toLowerCase())){
+                    errorLabel.setText(R.string.warning_used_username);
+                }
+                else {
+                    if (sex.equals("Female")){
 
-                                if (user != null) {
-                                    updateUI(user);
-                                }
+                        // Update status for Intent that will be sent to validation screen
+                        approvalStatus = true;
 
-                                logInScreenIntent();
+                        // Create users account
+                        mAuth.createUserWithEmailAndPassword(email, password)
+                                .addOnCompleteListener(RegisterActivity.this, task -> {
+                                    if (task.isSuccessful()) {
+                                        // Sign in success, update UI with the signed-in user's information
+                                        Log.d(TAG, "createUserWithEmail:success");
+                                        FirebaseUser user = mAuth.getCurrentUser();
 
-                            }
-                            else {
-                                // If sign in fails, display a message to the user.
-                                Log.w(TAG, "createUserWithEmail:failure", task.getException());
-                            }
-                        })
-                        .addOnFailureListener(e -> errorLabel.setText(e.getLocalizedMessage()));
+                                        if (user != null) {
+                                            updateUI(user);
+                                        }
+
+
+
+                                        verificationIntent();
+
+                                    }
+                                    else {
+                                        // If sign in fails, display a message to the user.
+                                        Log.w(TAG, "createUserWithEmail:failure", task.getException());
+                                    }
+                                })
+                                .addOnFailureListener(e -> errorLabel.setText(e.getLocalizedMessage()));
+                    }
+                    else if(sex.equals("Male")){
+                        // Add user to list of banned emails
+                        approvalStatus = false;
+                        banEmail(email);
+                        verificationIntent();
+                    }
+                    else{
+                        Log.i(TAG, "onClick: ");
+                    }
+                }
+
             }
             else{
                 errorLabel.setText(R.string.warning_empty_field);
             }
         }
     };
+
+    private void banEmail(String email) {
+        Map<String, Object> newUser = new HashMap<>();
+        newUser.put("email", email);
+
+
+        db.collection("bannedEmails")
+                .document()
+                .set(newUser)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        // TODO: Display Rejected Screen
+
+
+                    }
+                });
+    }
+
+    // Method to retrieve user emails from database and place them in a String ArrayList
+    private void getUsernames() {
+        CollectionReference cR = db.collection("userList");
+
+        cR.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                if (value != null) {
+                    for (QueryDocumentSnapshot doc : value){
+                        String username = (String) doc.get("username");
+                        if (username != null) {
+                            usernames.add(username.toLowerCase());
+                        }
+                    }
+                }
+
+                Log.i(TAG, "onEvent: " + usernames.size());
+            }
+        });
+    }
 }

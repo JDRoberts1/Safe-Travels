@@ -17,6 +17,11 @@
     <string name="action_view_favorites">Favorites</string>
     <string name="action_create_new_message">Create New Message</string>
     <string name="action_post">Post</string>
+    <string name="action_delete_post">Delete POst</string>
+    <string name="action_save_post">Update</string>
+    <string name="action_send_message">send message</string>
+    <string name="action_add_new_friend">add new friend</string>
+    <string name="action_decline_friend">decline friend</string>
 
     <!-- App Labels -->
     <string name="label_chat_list">Chat List</string>
@@ -28,6 +33,21 @@
     <string name="label_recent_posts">Recent Posts</string>
     <string name="label_pending_friend_requests">Pending Friend Requests</string>
     <string name="label_friends_list">Friends List</string>
+    <string name="default_counter_label">(0)</string>
+    <string name="label_conversation">Conversation</string>
+    <string name="label_edit_post">Edit Post</string>
+    <string name="label_image_view_1">image view 1</string>
+    <string name="label_image_view_2">image view 2</string>
+    <string name="label_image_view_3">image view 3</string>
+    <string name="label_image_view_4">image view 4</string>
+    <string name="label_recmessage">recMessage</string>
+    <string name="label_post_title">Post Title</string>
+    <string name="label_male">Male</string>
+    <string name="label_female">Female</string>
+    <string name="label_sex">Sex</string>
+    <string name="label_verification_pending">Verification Pending</string>
+    <string name="label_profile_approved">Profile Approved</string>
+    <string name="label_rejected">Profile Rejected</string>
 
     <!-- App Prompts -->
     <string name="prompt_email">Email</string>
@@ -47,13 +67,22 @@
     <string name="prompt_location_hint">Enter trip location</string>
     <string name="prompt_post_date">When did you go?</string>
     <string name="prompt_profile_updated">User profile updated.</string>
-
+    <string name="prompt_type_message">Type Message . . .</string>
+    <string name="prompt_enter_post_title">Enter Post Title</string>
+    <string name="prompt_pending_verification">Verification can take up to 30 seconds. You will have access to the app once account is approved.</string>
+    <string name="label_approved_profile">Verification has been rejected. Please review the email sent from our team for rejection reason.</string>
+    <string name="prompt_rejected_profile">Verification has been rejected. Please review the email sent from our team for rejection reason.</string>
 
     <!-- App String Arrays -->
     <string-array name="actions_image">
         <item>Take a Photo</item>
         <item>Choose from Library</item>
         <item>Cancel</item>
+    </string-array>
+
+    <string-array name="prompt_sex">
+        <item>Male</item>
+        <item>Female</item>
     </string-array>
 
     <!-- App Titles -->
@@ -68,33 +97,22 @@
     <string name="title_activity_main2">MainActivity2</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
+    <string name="title_activity_edit_post">EditPostActivity</string>
+    <string name="title_edit_profile">Edit Profile</string>
+    <string name="title_conversation">Conversation</string>
+    <string name="title_view_post">Post</string>
+    <string name="title_edit_post">Edit Post</string>
+    <string name="title_activity_approved_user">ApprovedUserActivity</string>
+    <string name="title_activity_rejected_user">RejectedUserActivity</string>
 
     <!-- App Warnings -->
     <string name="warning_invalid_email">Not a valid email</string>
     <string name="warning_invalid_password">Password must be >5 characters</string>
     <string name="warning_login_failed">"Login failed"</string>
     <string name="warning_empty_field">All fields are required</string>
-    <string name="default_counter_label">(0)</string>
-    <string name="label_conversation">Conversation</string>
-    <string name="prompt_type_message">Type Message . . .</string>
-    <string name="action_send_message">send message</string>
-    <string name="title_activity_edit_post">EditPostActivity</string>
-    <string name="dummy_button">Dummy Button</string>
-    <string name="dummy_content">DUMMY\nCONTENT</string>
-    <string name="prompt_enter_post_title">Enter Post Title</string>
-    <string name="label_edit_post">Edit Post</string>
-    <string name="action_add_new_friend">add new friend</string>
-    <string name="action_decline_friend">decline friend</string>
-    <string name="label_image_view_1">image view 1</string>
-    <string name="label_image_view_2">image view 2</string>
-    <string name="label_image_view_3">image view 3</string>
-    <string name="label_image_view_4">image view 4</string>
-    <string name="label_recmessage">recMessage</string>
-    <string name="label_post_title">Post Title</string>
-    <string name="title_edit_profile">Edit Profile</string>
-    <string name="title_conversation">Conversation</string>
-    <string name="title_view_post">Post</string>
-    <string name="title_edit_post">Edit Post</string>
+    <string name="warning_rejected_account">Account Rejected. Unable to log in.</string>
+    <string name="warning_rejected_register">Email is banned and unable to create a new account.</string>
+    <string name="warning_used_username">Username is already taken</string>
 
     <!-- App Just Added-->
 

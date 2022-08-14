@@ -26,6 +26,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -59,7 +60,7 @@ public class UserProfileActivity extends AppCompatActivity {
 
         usernameLabel = findViewById(R.id.username_Profile_Label);
         iv = findViewById(R.id.profile_img_main);
-        navView = findViewById(R.id.nav_view);
+        navView = findViewById(R.id.navView);
         editBttn = findViewById(R.id.edit_Profile_Bttn);
         editBttn.setClickable(true);
         editBttn.setOnClickListener(editClick);
@@ -121,7 +122,47 @@ public class UserProfileActivity extends AppCompatActivity {
         dR.delete();
 
         dR = db.collection("userList").document(id);
+
+        cR = dR.collection("posts");
+        cR.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                if (error != null) {
+                    Log.w(TAG, "Listen failed.", error);
+                    return;
+                }
+
+                for (QueryDocumentSnapshot doc : value){
+                    String docId = doc.getId();
+                    DocumentReference dr = cR.document(docId);
+                    dr.delete();
+                }
+            }
+        });
+
         dR.delete();
+
+        cR = db.collection("blogPosts");
+        cR.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                if (error != null) {
+                    Log.w(TAG, "Listen failed.", error);
+                    return;
+                }
+
+                for (QueryDocumentSnapshot doc : value){
+
+                    String uid = (String) doc.get("uid");
+                    String docId = doc.getId();
+
+                    if (uid != null && uid.equals(cUser.getUid())) {
+                        dR = cR.document(docId);
+                        dR.delete();
+                    }
+                }
+            }
+        });
     }
 
     // Intent to send the user back to Log In Screen
@@ -149,7 +190,7 @@ public class UserProfileActivity extends AppCompatActivity {
     }
 
     public void setUpBottomNav(){
-        navView = findViewById(R.id.nav_view);
+        navView = findViewById(R.id.navView);
         navView.setSelectedItemId(R.id.navigation_profile);
 
         navView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
@@ -208,6 +249,7 @@ public class UserProfileActivity extends AppCompatActivity {
                         String datePosted = (String) doc.get("datePosted");
                         String location = (String) doc.get("location");
                         String post = (String) doc.get("post");
+                        String postId = (String) doc.getId();
 
                         String uriString = (String) doc.get("profileImgUri");
                         Uri profileImgUri = null;

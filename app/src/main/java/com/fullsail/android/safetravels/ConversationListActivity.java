@@ -45,7 +45,7 @@ public class ConversationListActivity extends AppCompatActivity {
 
     // Method to set up bottom nav bar
     public void setUpBottomNav(){
-        navView = findViewById(R.id.nav_view);
+        navView = findViewById(R.id.navView);
         navView.setSelectedItemId(R.id.navigation_messages);
 
         navView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {

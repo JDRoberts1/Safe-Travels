@@ -8,10 +8,21 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+
+import java.util.ArrayList;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -21,11 +32,12 @@ public class LoginActivity extends AppCompatActivity {
     Button signInBttn;
     TextView forgotPasswordTV;
     TextView createAccountTV;
-
     TextView errorLabel;
     EditText emailETV;
     EditText passwordETV;
-
+    ArrayList<String> bannedList = new ArrayList<>();
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
+    CollectionReference cR = db.collection("bannedEmails");
 
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.Theme_SafeTravels_Fullscreen);
@@ -43,6 +55,24 @@ public class LoginActivity extends AppCompatActivity {
         createAccountTV.setOnClickListener(createAcctClick);
         emailETV = findViewById(R.id.email_login_etv);
         passwordETV = findViewById(R.id.password_login_etv);
+
+        getBannedEmails();
+    }
+
+    // Method to retrieve banned emails from database and place them in a String ArrayList
+    private void getBannedEmails() {
+        cR.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                if (value != null) {
+                    for (QueryDocumentSnapshot doc : value){
+                        String email = (String) doc.get("email");
+                        bannedList.add(email);
+                    }
+                }
+                Log.i(TAG, "onEvent: " + bannedList);
+            }
+        });
     }
 
     // OnClickListener for Sign-In textview
@@ -53,7 +83,10 @@ public class LoginActivity extends AppCompatActivity {
             String email = emailETV.getText().toString();
             String password = passwordETV.getText().toString();
 
-            if (nullCheck(email, password)){
+            if(bannedList.contains(email.toLowerCase())) {
+                errorLabel.setText(R.string.warning_rejected_account);
+            }
+            else if (nullCheck(email, password)){
                 logInUser(email, password);
             }
             else {
@@ -77,6 +110,7 @@ public class LoginActivity extends AppCompatActivity {
     // Intent method to take user to Register activity
     private void registerIntent() {
         Intent logInScreenIntent = new Intent(this, RegisterActivity.class);
+        logInScreenIntent.putExtra(TAG, bannedList);
         startActivity(logInScreenIntent);
     }
 
@@ -118,6 +152,8 @@ public class LoginActivity extends AppCompatActivity {
             startActivity(mainScreenIntent);
         }
     }
+
+
 
 }
 

@@ -75,14 +75,6 @@ public class HomePostListAdapter extends ArrayAdapter<Post> {
             holder.userImageView.setImageResource(R.drawable.default_img);
         }
 
-        holder.userImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String username = p.getUsername();
-                Intent i = new Intent(v.getContext(), ProfileActivity.class);
-                i.putExtra(TAG, username);
-            }
-        });
 
         holder.username_CV.setText(p.getUsername());
         holder.title_CV.setText(p.getTitle());

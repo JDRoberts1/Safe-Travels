@@ -14,9 +14,10 @@ public class Post implements Parcelable {
     String username;
     String datePosted;
     Uri profileImgUri, uri1, uri2, uri3, uri4;
+    String postId;
 
-    public Post(String uID, String title, String post, String date, String location, String username, String datePosted, Uri profileImgUri, Uri uri1, Uri uri2, Uri uri3, Uri uri4) {
-        this.uid = uID;
+    public Post(String uid, String title, String post, String date, String location, String username, String datePosted, Uri profileImgUri, Uri uri1, Uri uri2, Uri uri3, Uri uri4) {
+        this.uid = uid;
         this.title = title;
         this.post = post;
         this.date = date;
@@ -43,6 +44,7 @@ public class Post implements Parcelable {
         uri2 = in.readParcelable(Uri.class.getClassLoader());
         uri3 = in.readParcelable(Uri.class.getClassLoader());
         uri4 = in.readParcelable(Uri.class.getClassLoader());
+        postId = in.readString();
     }
 
     public static final Creator<Post> CREATOR = new Creator<Post>() {
@@ -56,6 +58,12 @@ public class Post implements Parcelable {
             return new Post[size];
         }
     };
+
+    public String getPostId() { return postId; }
+
+    public void setPostId(String postId) {
+        this.postId = postId;
+    }
 
     public String getUid() {
         return uid;
@@ -112,6 +120,7 @@ public class Post implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+
         dest.writeString(uid);
         dest.writeString(title);
         dest.writeString(post);
@@ -124,5 +133,7 @@ public class Post implements Parcelable {
         dest.writeParcelable(uri2, flags);
         dest.writeParcelable(uri3, flags);
         dest.writeParcelable(uri4, flags);
+        dest.writeString(postId);
     }
+
 }

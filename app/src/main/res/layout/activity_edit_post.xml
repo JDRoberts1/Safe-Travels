@@ -27,14 +27,15 @@
         android:id="@+id/cancel_Post_Bttn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="159dp"
+        android:layout_marginEnd="159dp"
+        android:layout_marginBottom="120dp"
         android:elevation="5dp"
         android:text="@string/action_cancel"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/post_Bttn"
-        app:layout_constraintHorizontal_bias="0.527"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/post_Bttn"
-        app:layout_constraintVertical_bias="0.0"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout4"
         tools:ignore="TextContrastCheck" />
 
     <TextView
@@ -124,18 +125,6 @@
             app:srcCompat="@drawable/ic_baseline_add_box_24"
             tools:ignore="ImageContrastCheck" />
     </LinearLayout>
-
-    <Button
-        android:id="@+id/post_Bttn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="84dp"
-        android:elevation="5dp"
-        android:text="@string/action_post"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout4"
-        tools:ignore="TextContrastCheck" />
 
     <EditText
         android:id="@+id/location_Post_ETV"

@@ -35,7 +35,7 @@ public class FriendsActivity extends AppCompatActivity {
     };
 
     public void setUpBottomNav(){
-        navView = findViewById(R.id.nav_view);
+        navView = findViewById(R.id.navView);
         navView.setSelectedItemId(R.id.navigation_friends);
 
         navView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
