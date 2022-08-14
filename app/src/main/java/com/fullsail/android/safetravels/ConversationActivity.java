@@ -46,7 +46,7 @@ public class ConversationActivity extends AppCompatActivity {
 
         Intent i = getIntent();
         if (i != null){
-            user = (User) i.getParcelableExtra(UserMessageSearchActivity.TAG);
+            user = i.getParcelableExtra(UserMessageSearchActivity.TAG);
         }
 
         setUpUi();
