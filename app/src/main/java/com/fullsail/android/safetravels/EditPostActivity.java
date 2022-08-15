@@ -180,23 +180,23 @@ public class EditPostActivity extends AppCompatActivity {
                     return;
                 }
 
-//                for (QueryDocumentSnapshot doc : value){
-//
-//                    String ts = p.getDatePosted();
-//                    String title = p.getTitle();
-//
-//                    String docTS = (String) doc.get("datePosted");
-//                    String docTitle = (String) doc.get("title");
-//
-//                    if (docTS != null && docTitle != null) {
-//                        if (docTS.equals(ts) && docTitle.equals(title)) {
-//                            dR = cR.document(doc.getId());
-//                            dR.delete();
-//
-//
-//                        }
-//                    }
-//                }
+                for (QueryDocumentSnapshot doc : value){
+
+                    String ts = p.getDatePosted();
+                    String title = p.getTitle();
+
+                    String docTS = (String) doc.get("datePosted");
+                    String docTitle = (String) doc.get("title");
+
+                    if (docTS != null && docTitle != null) {
+                        if (docTS.equals(ts) && docTitle.equals(title)) {
+                            dR = cR.document(doc.getId());
+                            dR.delete();
+
+
+                        }
+                    }
+                }
 
                 backToProfile();
             }
