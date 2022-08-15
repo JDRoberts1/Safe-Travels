@@ -348,7 +348,7 @@ public class RegisterActivity extends AppCompatActivity {
                 .document()
                 .set(newUser)
                 .addOnCompleteListener(task -> {
-                    // TODO: Display Rejected Screen
+
 
 
                 });

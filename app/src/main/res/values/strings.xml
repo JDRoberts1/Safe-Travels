@@ -17,7 +17,7 @@
     <string name="action_view_favorites">Favorites</string>
     <string name="action_create_new_message">Create New Message</string>
     <string name="action_post">Post</string>
-    <string name="action_delete_post">Delete POst</string>
+    <string name="action_delete_post">Delete Post</string>
     <string name="action_save_post">Update</string>
     <string name="action_send_message">send message</string>
     <string name="action_add_new_friend">add new friend</string>
@@ -70,8 +70,8 @@
     <string name="prompt_type_message">Type Message . . .</string>
     <string name="prompt_enter_post_title">Enter Post Title</string>
     <string name="prompt_pending_verification">Verification can take up to 30 seconds. You will have access to the app once account is approved.</string>
-    <string name="label_approved_profile">Verification has been rejected. Please review the email sent from our team for rejection reason.</string>
-    <string name="prompt_rejected_profile">Verification has been rejected. Please review the email sent from our team for rejection reason.</string>
+    <string name="label_approved_profile">Verification has been approved! PYou are now able to log in and have full access to the app.</string>
+    <string name="prompt_rejected_profile">Verification has been rejected. We apologize currently SafeTravels is only available for women.</string>
 
     <!-- App String Arrays -->
     <string-array name="actions_image">
@@ -120,7 +120,7 @@
     <string name="prompt_delete_account">Delete Account</string>
     <string name="prompt_delete_post">Are you sure you want to delete this post?</string>
     <string name="prompt_delete_post_confirmation">This action is permanent and cannot be undone.</string>
-    <string name="action_remove_post">Delet Post</string>
+    <string name="action_remove_post">Delete Post</string>
 
     <!-- App Just Added-->
 

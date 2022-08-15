@@ -70,7 +70,9 @@ public class LoginActivity extends AppCompatActivity {
                 if (value != null) {
                     for (QueryDocumentSnapshot doc : value){
                         String email = (String) doc.get("email");
-                        bannedList.add(email);
+                        if (email != null) {
+                            bannedList.add(email.toLowerCase());
+                        }
                     }
                 }
                 Log.i(TAG, "onEvent: " + bannedList);

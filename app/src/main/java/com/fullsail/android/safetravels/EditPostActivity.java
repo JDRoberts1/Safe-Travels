@@ -71,8 +71,13 @@ public class EditPostActivity extends AppCompatActivity {
         post_Title_ETV = findViewById(R.id.post_Title_ETV);
 
         post_ETV = findViewById(R.id.new_Post_ETV);
+        post_ETV.setText(p.getPost());
+
         location_ETV = findViewById(R.id.location_Post_ETV);
+        location_ETV.setText(p.getLocation());
+
         date_ETV = findViewById(R.id.date_Post_ETV);
+        date_ETV.setText(p.getDate());
 
         imageView1 = findViewById(R.id.post_Img_1);
         imageView1.setOnClickListener(imgClick);
@@ -145,7 +150,7 @@ public class EditPostActivity extends AppCompatActivity {
     }
 
     private void updatePost() {
-        if(checkForEmptyFields()){
+        if(!checkForEmptyFields()){
             String id = cUser.getUid();
             dR = db.collection("blogPosts").document(id).collection("posts").document(p.getPostId());
 
@@ -158,9 +163,6 @@ public class EditPostActivity extends AppCompatActivity {
             dR.update("location",post_Title);
             dR.update("post",post);
             dR.update("title",location);
-        }
-        else{
-            
         }
     }
 
@@ -178,23 +180,29 @@ public class EditPostActivity extends AppCompatActivity {
                     return;
                 }
 
-                for (QueryDocumentSnapshot doc : value){
+//                for (QueryDocumentSnapshot doc : value){
+//
+//                    String ts = p.getDatePosted();
+//                    String title = p.getTitle();
+//
+//                    String docTS = (String) doc.get("datePosted");
+//                    String docTitle = (String) doc.get("title");
+//
+//                    if (docTS != null && docTitle != null) {
+//                        if (docTS.equals(ts) && docTitle.equals(title)) {
+//                            dR = cR.document(doc.getId());
+//                            dR.delete();
+//
+//
+//                        }
+//                    }
+//                }
 
-                    String ts = p.getDatePosted();
-                    String title = p.getTitle();
-
-                    String docTS = (String) doc.get("datePosted");
-                    String docTitle = (String) doc.get("title");
-
-                    if (docTS != null && docTitle != null) {
-                        if (docTS.equals(ts) && docTitle.equals(title)) {
-                            dR = cR.document(doc.getId());
-                            dR.delete();
-                        }
-                    }
-                }
+                backToProfile();
             }
         });
+
+
     }
 
     View.OnClickListener cancelClick = new View.OnClickListener() {
