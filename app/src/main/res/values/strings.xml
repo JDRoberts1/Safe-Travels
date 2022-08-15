@@ -70,7 +70,7 @@
     <string name="prompt_type_message">Type Message . . .</string>
     <string name="prompt_enter_post_title">Enter Post Title</string>
     <string name="prompt_pending_verification">Verification can take up to 30 seconds. You will have access to the app once account is approved.</string>
-    <string name="label_approved_profile">Verification has been approved! PYou are now able to log in and have full access to the app.</string>
+    <string name="label_approved_profile">Verification has been approved! You are now able to log in and have full access to the app.</string>
     <string name="prompt_rejected_profile">Verification has been rejected. We apologize currently SafeTravels is only available for women.</string>
 
     <!-- App String Arrays -->
