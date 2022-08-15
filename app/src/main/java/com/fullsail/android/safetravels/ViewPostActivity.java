@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.fullsail.android.safetravels.objects.Post;
+import com.fullsail.android.safetravels.objects.User;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -46,6 +47,7 @@ public class ViewPostActivity extends AppCompatActivity {
 
 
         profileImgView = findViewById(R.id.poster_ImgView);
+        profileImgView.setOnClickListener(imgClick);
         titleTV = findViewById(R.id.title_Post_TV);
         postTV = findViewById(R.id.post_View_TV);
         imageView1 = findViewById(R.id.imageView1);
@@ -83,6 +85,24 @@ public class ViewPostActivity extends AppCompatActivity {
         startActivity(editIntent);
         return super.onOptionsItemSelected(item);
     }
+
+    View.OnClickListener imgClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Intent i;
+            if (p.getUid().equals(cUser.getUid())){
+                i = new Intent(ViewPostActivity.this, UserProfileActivity.class);
+            }
+            else{
+                i = new Intent(ViewPostActivity.this, ProfileActivity.class);
+                User user = new User(p.getUsername(), p.getUid(), p.getProfileImgUri().toString());
+                i.putExtra(TAG, user);
+            }
+
+            startActivity(i);
+
+        }
+    };
 
     private void setUpImages() {
         if (p.getProfileImgUri() != null){

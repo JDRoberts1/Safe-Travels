@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -11,7 +12,9 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.fullsail.android.safetravels.adapters.HomePostListAdapter;
+import com.fullsail.android.safetravels.adapters.PostListAdapter;
 import com.fullsail.android.safetravels.objects.Post;
+import com.fullsail.android.safetravels.objects.User;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -23,7 +26,7 @@ import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class HomeActivity extends AppCompatActivity {
+public class HomeActivity extends AppCompatActivity{
 
     public static final String TAG = "HomeActivity";
     BottomNavigationView navView;
@@ -35,8 +38,10 @@ public class HomeActivity extends AppCompatActivity {
     CollectionReference cR;
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
     FirebaseUser cUser = mAuth.getCurrentUser();
+    CircleImageView userIV;
 
     ArrayList<Post> posts = new ArrayList<>();
+    ArrayList<User> users = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +64,16 @@ public class HomeActivity extends AppCompatActivity {
         i.putExtra(TAG, selectedPost);
         startActivity(i);
     };
+    
+    View.OnClickListener imgClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            userIV = findViewById(R.id.user_ListView_Img);
 
+        }
+    };
+            
+            
     // Method to display all travel posts in blogPOst collection.
     private void displayPosts() {
         blogLV = findViewById(R.id.recent_Posts_LV);
@@ -123,7 +137,7 @@ public class HomeActivity extends AppCompatActivity {
 
     // Set up Blog Post ListView (Display All Blog Post)
     private void savePosts(){
-        // Get User List collection
+        // Get Post List collection
         db = FirebaseFirestore.getInstance();
         cR = db.collection("blogPosts");
 
@@ -162,9 +176,11 @@ public class HomeActivity extends AppCompatActivity {
                         String uriString3 = (String) doc.get("uri3");
                         String uriString4 = (String) doc.get("uri3");
 
-
-
-                        if (uriString1 != null && uriString2 == null && uriString3 == null && uriString4 == null){
+                        // Check for empty URI's and set non-null fields
+                        if(uriString1 == null && uriString2 == null && uriString3 == null && uriString4 == null){
+                            newUserPost = new Post(uid, title, post, date, location, username, datePosted, profileImgUri, null, null, null, null);
+                        }
+                        else if (uriString1 != null && uriString2 == null && uriString3 == null && uriString4 == null){
                             Uri uri1 = Uri.parse(uriString1);
                             newUserPost = new Post(uid, title, post, date, location, username, datePosted, profileImgUri, uri1, null, null, null);
                         }
@@ -179,18 +195,18 @@ public class HomeActivity extends AppCompatActivity {
                             Uri uri3 = Uri.parse(uriString3);
                             newUserPost = new Post(uid, title, post, date, location, username, datePosted, profileImgUri, uri1, uri2, uri3, null);
                         }
-                        else if(uriString1 != null && uriString2 != null && uriString3 != null && uriString4 != null){
+                        else{
                             Uri uri1 = Uri.parse(uriString1);
                             Uri uri2 = Uri.parse(uriString2);
                             Uri uri3 = Uri.parse(uriString3);
                             Uri uri4 = Uri.parse(uriString4);
                             newUserPost = new Post(uid, title, post, date, location, username, datePosted, profileImgUri, uri1, uri2, uri3, uri4);
                         }
-                        else{
-                            newUserPost = new Post(uid, title, post, date, location, username, datePosted, profileImgUri, null, null, null, null);
-                        }
 
+                        // Add post ID
                         newUserPost.setPostId(doc.getId());
+
+                        // Add Post object to ArrList
                         posts.add(newUserPost);
                     }
                 }
@@ -201,5 +217,4 @@ public class HomeActivity extends AppCompatActivity {
 
         });
     }
-
 }

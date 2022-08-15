@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.fullsail.android.safetravels.adapters.HomePostListAdapter;
 import com.fullsail.android.safetravels.adapters.PostListAdapter;
 import com.fullsail.android.safetravels.objects.Post;
 import com.fullsail.android.safetravels.objects.User;
@@ -34,13 +35,11 @@ public class ProfileActivity extends AppCompatActivity {
     BottomNavigationView navView;
     private static final String TAG = "ProfileActivity";
     TextView usernameLabel;
-    TextView editBttn;
     CircleImageView iv;
     ListView userBlogRCV;
-    PostListAdapter adapter;
+    HomePostListAdapter adapter;
     FirebaseFirestore db;
     CollectionReference cR;
-    FirebaseAuth mAuth = FirebaseAuth.getInstance();
     User user;
 
     ArrayList<Post> posts = new ArrayList<>();
@@ -49,27 +48,38 @@ public class ProfileActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
+
+        Intent userIntent = getIntent();
+        user = userIntent.getParcelableExtra(ViewPostActivity.TAG);
+
+        usernameLabel = findViewById(R.id.username_Profile_Label);
+        iv = findViewById(R.id.profile_img_main);
+        userBlogRCV = findViewById(R.id.user_Posts_LV);
+
         navView = findViewById(R.id.navView);
         setUpBottomNav();
+        savePosts();
+        displayInfo();
     }
 
     // Method to display selected users profile information
     private void displayInfo(){
-//        if (cUser != null) {
-//            String profileString = cUser.getDisplayName() + " Profile";
-//            usernameLabel.setText(profileString);
-//        }
-//        else{
-//            String welcomeString = "Profile";
-//            usernameLabel.setText(welcomeString);
-//        }
-//
-//        if (cUser.getPhotoUrl() != null) {
-//            iv.setImageURI(cUser.getPhotoUrl());
-//        }
-//        else{
-//            iv.setImageResource(R.drawable.default_img);
-//        }
+        if (user != null) {
+            String profileString = user.getUsername() + " Profile";
+            usernameLabel.setText(profileString);
+        }
+        else{
+            String welcomeString = "Profile";
+            usernameLabel.setText(welcomeString);
+        }
+
+        if (user.getUri() != null) {
+            Uri imgUri = Uri.parse(user.getUri());
+            iv.setImageURI(imgUri);
+        }
+        else{
+            iv.setImageResource(R.drawable.default_img);
+        }
     }
 
     public void setUpBottomNav(){
@@ -109,9 +119,9 @@ public class ProfileActivity extends AppCompatActivity {
 
     // TODO: Set up Blog Post Recycle View (Display Current users Blog Posts)
     private void savePosts(){
-        // Get User List collection
+        // Get User Post collection
         db = FirebaseFirestore.getInstance();
-        // cR = db.collection("users").document(cUser.getUid()).collection("posts");
+        cR = db.collection("users").document(user.getUid()).collection("posts");
 
         cR.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
@@ -121,50 +131,64 @@ public class ProfileActivity extends AppCompatActivity {
                     return;
                 }
 
-                for (QueryDocumentSnapshot doc : value) {
+                if (value != null) {
+                    for (QueryDocumentSnapshot doc : value) {
 
-                    if (!doc.getId().equals("sample")) {
+                        if (!doc.getId().equals("sample")) {
 
-                        Post newUserPost;
-                        String date = (String) doc.get("date");
-                        String datePosted = (String) doc.get("datePosted");
-                        String location = (String) doc.get("location");
-                        String post = (String) doc.get("post");
+                            Post newUserPost;
+                            String date = (String) doc.get("date");
+                            String datePosted = (String) doc.get("datePosted");
+                            String location = (String) doc.get("location");
+                            String post = (String) doc.get("post");
 
-                        String uriString = (String) doc.get("profileImgUri");
-                        Uri profileImgUri = null;
-                        if (uriString != null){
-                            profileImgUri = Uri.parse(uriString);
+                            String uriString = (String) doc.get("profileImgUri");
+                            Uri profileImgUri = null;
+                            if (uriString != null){
+                                profileImgUri = Uri.parse(uriString);
+                            }
+
+                            String title = (String) doc.get("title");
+                            Log.i(TAG, "onEvent: " + title);
+                            String uid = (String) doc.get("uid");
+                            String username = (String) doc.get("username");
+
+                            String uriString1 = (String) doc.get("uri1");
+                            String uriString2 = (String) doc.get("uri2");
+                            String uriString3 = (String) doc.get("uri3");
+                            String uriString4 = (String) doc.get("uri3");
+
+                            // Check for empty URI's and set non-null fields
+                            if(uriString1 == null && uriString2 == null && uriString3 == null && uriString4 == null){
+                                newUserPost = new Post(uid, title, post, date, location, username, datePosted, profileImgUri, null, null, null, null);
+                            }
+                            else if (uriString1 != null && uriString2 == null && uriString3 == null && uriString4 == null){
+                                Uri uri1 = Uri.parse(uriString1);
+                                newUserPost = new Post(uid, title, post, date, location, username, datePosted, profileImgUri, uri1, null, null, null);
+                            }
+                            else if(uriString1 != null && uriString2 != null && uriString3 == null && uriString4 == null){
+                                Uri uri1 = Uri.parse(uriString1);
+                                Uri uri2 = Uri.parse(uriString2);
+                                newUserPost = new Post(uid, title, post, date, location, username, datePosted, profileImgUri, uri1, uri2, null, null);
+                            }
+                            else if( uriString1 != null && uriString2 != null && uriString3 != null && uriString4 == null){
+                                Uri uri1 = Uri.parse(uriString1);
+                                Uri uri2 = Uri.parse(uriString2);
+                                Uri uri3 = Uri.parse(uriString3);
+                                newUserPost = new Post(uid, title, post, date, location, username, datePosted, profileImgUri, uri1, uri2, uri3, null);
+                            }
+                            else{
+                                Uri uri1 = Uri.parse(uriString1);
+                                Uri uri2 = Uri.parse(uriString2);
+                                Uri uri3 = Uri.parse(uriString3);
+                                Uri uri4 = Uri.parse(uriString4);
+                                newUserPost = new Post(uid, title, post, date, location, username, datePosted, profileImgUri, uri1, uri2, uri3, uri4);
+                            }
+
+                            // Add post ID
+                            newUserPost.setPostId(doc.getId());
+                            posts.add(newUserPost);
                         }
-
-                        String title = (String) doc.get("title");
-                        Log.i(TAG, "onEvent: " + title);
-                        String uid = (String) doc.get("uid");
-                        String username = (String) doc.get("username");
-
-                        Uri uri1 = null;
-                        Uri uri2 = null;
-                        Uri uri3 = null;
-                        Uri uri4 = null;
-
-//                        if (uri1 != null){
-//                            newUserPost = new Post(uid, title, post, date, location, username, datePosted, profileImgUri, null, null, null, null);
-//                        }
-//                        else if(uri2 == null){
-//                            newUserPost = new Post(uid, title, post, date, location, username, datePosted, profileImgUri, uri1, null, null, null);
-//                        }
-//                        else if(uri3 == null){
-//                            newUserPost = new Post(uid, title, post, date, location, username, datePosted, profileImgUri, uri1, uri2, null, null);
-//                        }
-//                        else if(uri4 == null){
-//                            newUserPost = new Post(uid, title, post, date, location, username, datePosted, profileImgUri, uri1, uri2, uri3, null);
-//                        }
-//                        else {
-//                            newUserPost = new Post(uid, title, post, date, location, username, datePosted, profileImgUri, uri1, uri2, uri3, uri4);
-//                        }
-
-                        newUserPost = new Post(uid, title, post, date, location, username, datePosted, profileImgUri, null, null, null, null);
-                        posts.add(newUserPost);
                     }
                 }
 
@@ -176,8 +200,7 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void displayPosts() {
-        userBlogRCV = findViewById(R.id.user_Posts_LV);
-        adapter = new PostListAdapter(this.getApplicationContext(),R.layout.post_rcv_item ,posts);
+        adapter = new HomePostListAdapter(this.getApplicationContext(),R.layout.user_listview_item ,posts);
         userBlogRCV.setAdapter(adapter);
         Log.i(TAG, "displayPosts: " + posts.size());
     }
