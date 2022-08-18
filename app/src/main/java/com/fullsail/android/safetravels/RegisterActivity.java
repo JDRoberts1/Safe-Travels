@@ -19,17 +19,25 @@ import android.widget.TextView;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -55,8 +63,11 @@ public class RegisterActivity extends AppCompatActivity {
     ArrayList<String> usernames = new ArrayList<>();
     Bitmap imageBitmap = null;
     boolean imgUploaded = false;
+
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
     FirebaseFirestore db = FirebaseFirestore.getInstance();
+    StorageReference storageReference;
+
     static final int REQUEST_IMAGE_CAPTURE = 1;
     static final int REQUEST_IMAGE_GALLERY = 2;
     Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -121,7 +132,8 @@ public class RegisterActivity extends AppCompatActivity {
             }
         }
 
-        profileImage.setImageBitmap(imageBitmap);
+        Uri imgUri = getNewImageUri(this, imageBitmap);
+        Picasso.get().load(imgUri).into(profileImage);
         imgUploaded = true;
     }
 
@@ -155,28 +167,10 @@ public class RegisterActivity extends AppCompatActivity {
         }
     }
 
-    // Method used to retrieve the users profile image uri
-    public Uri getImgUri(Context c, Bitmap bitmapImg, String uuid){
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        bitmapImg.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
-        String path = MediaStore.Images.Media.insertImage(c.getContentResolver(), bitmapImg, uuid, null);
-        return Uri.parse(path);
-    }
-
-    // Method to validate user entries for blanks and whitespace
-    private boolean checkForEmptyFields(){
-        // Check if any fiends are empty or only contain whitespace
-        if (uName.getText().toString().isEmpty() || uName.getText().toString().trim().isEmpty()){
-            return false;
-        }
-        else if (emailETV.getText().toString().isEmpty() || emailETV.getText().toString().trim().isEmpty()){
-            return false;
-        }
-        else return !passwordETV.getText().toString().isEmpty() && !passwordETV.getText().toString().trim().isEmpty();
-    }
-
     // Method to update UI and take the user to the log in screen
     private void updateUI(FirebaseUser user) {
+
+        storageReference = FirebaseStorage.getInstance().getReference(user.getUid());
 
         String userName = uName.getText().toString();
         String password = passwordETV.getText().toString();
@@ -192,19 +186,14 @@ public class RegisterActivity extends AppCompatActivity {
         if (imgUploaded){
             imgUri = getImgUri(this, imageBitmap, user.getUid());
 
-            profileUpdates = new UserProfileChangeRequest.Builder()
-                    .setDisplayName(userName)
-                    .setPhotoUri(imgUri)
-                    .build();
+            StorageReference reference = storageReference.child(user.getUid());
+            reference.putFile(imgUri);
 
-            newUser.put("profileImg", imgUri);
-
-        } else{
-
-            profileUpdates = new UserProfileChangeRequest.Builder()
-                    .setDisplayName(userName)
-                    .build();
         }
+
+        profileUpdates = new UserProfileChangeRequest.Builder()
+                .setDisplayName(userName)
+                .build();
 
         // Update profile call
         user.updateProfile(profileUpdates)
@@ -228,7 +217,6 @@ public class RegisterActivity extends AppCompatActivity {
         Map<String, Object> userListIem = new HashMap<>();
         userListIem.put("username", userName);
         userListIem.put("userId", user.getUid());
-        userListIem.put("profileImg", imgUri);
 
         // Add a new user to userList with a user ID
         db.collection("userList")
@@ -371,4 +359,33 @@ public class RegisterActivity extends AppCompatActivity {
             Log.i(TAG, "onEvent: " + usernames.size());
         });
     }
+
+    // Method used to retrieve the users profile image uri
+    public Uri getImgUri(Context c, Bitmap bitmapImg, String uuid){
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        bitmapImg.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(c.getContentResolver(), bitmapImg, uuid, null);
+        return Uri.parse(path);
+    }
+
+    // Method to validate user entries for blanks and whitespace
+    private boolean checkForEmptyFields(){
+        // Check if any fiends are empty or only contain whitespace
+        if (uName.getText().toString().isEmpty() || uName.getText().toString().trim().isEmpty()){
+            return false;
+        }
+        else if (emailETV.getText().toString().isEmpty() || emailETV.getText().toString().trim().isEmpty()){
+            return false;
+        }
+        else return !passwordETV.getText().toString().isEmpty() && !passwordETV.getText().toString().trim().isEmpty();
+    }
+
+    // Get New URI Method
+    public Uri getNewImageUri(Context c, Bitmap bmp){
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        bmp.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(c.getContentResolver(), bmp, "uid", null);
+        return Uri.parse(path);
+    }
+
 }

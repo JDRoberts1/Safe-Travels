@@ -10,7 +10,7 @@
 
     <LinearLayout
         android:id="@+id/linearLayout"
-        android:layout_width="match_parent"
+        android:layout_width="413dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
         android:gravity="center"
@@ -19,20 +19,13 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <FrameLayout
-            android:id="@+id/frameLayout_img"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_marginStart="44dp">
-
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/profile_img_main"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:contentDescription="@string/prompt_profile_image"
-                android:src="@drawable/default_img"
-                tools:ignore="ImageContrastCheck" />
-        </FrameLayout>
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/profile_img_main"
+            android:layout_width="133dp"
+            android:layout_height="111dp"
+            android:contentDescription="@string/prompt_profile_image"
+            android:src="@drawable/default_img"
+            tools:ignore="ImageContrastCheck" />
 
         <TextView
             android:id="@+id/welcomeLabel"

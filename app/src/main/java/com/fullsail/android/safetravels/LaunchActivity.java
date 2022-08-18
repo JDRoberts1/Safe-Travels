@@ -18,8 +18,8 @@ public class LaunchActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        setTheme(R.style.Theme_SafeTravels_Fullscreen);
         SplashScreen.installSplashScreen(this);
+        setTheme(R.style.Theme_SafeTravels_Fullscreen);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_launch);
 

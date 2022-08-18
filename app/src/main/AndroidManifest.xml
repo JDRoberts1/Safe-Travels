@@ -9,7 +9,7 @@
         android:label="@string/app_name"
         android:roundIcon="@drawable/playstore_icon"
         android:supportsRtl="true"
-        android:theme="@style/Theme.SafeTravels.Starting.Fullscreen">
+        android:theme="@style/Theme.SafeTravels.Starting">
         <activity
             android:name=".UserValidationActivity"
             android:exported="false"

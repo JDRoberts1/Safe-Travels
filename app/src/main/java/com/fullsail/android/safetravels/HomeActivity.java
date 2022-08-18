@@ -1,6 +1,8 @@
 package com.fullsail.android.safetravels;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,16 +14,21 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.fullsail.android.safetravels.adapters.HomePostListAdapter;
-import com.fullsail.android.safetravels.adapters.PostListAdapter;
 import com.fullsail.android.safetravels.objects.Post;
 import com.fullsail.android.safetravels.objects.User;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -35,10 +42,11 @@ public class HomeActivity extends AppCompatActivity{
     ListView blogLV;
     HomePostListAdapter adapter;
     FirebaseFirestore db;
+    StorageReference storageReference;
     CollectionReference cR;
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
-    FirebaseUser cUser = mAuth.getCurrentUser();
-    CircleImageView userIV;
+    FirebaseUser user = mAuth.getCurrentUser();
+
 
     ArrayList<Post> posts = new ArrayList<>();
     ArrayList<User> users = new ArrayList<>();
@@ -52,7 +60,9 @@ public class HomeActivity extends AppCompatActivity{
         iv = findViewById(R.id.profile_img_main);
         navView = findViewById(R.id.navView);
 
-        savePosts();
+        storageReference = FirebaseStorage.getInstance().getReference(user.getUid());
+
+        //savePosts();
         displayInfo();
         setUpBottomNav();
     }
@@ -64,16 +74,7 @@ public class HomeActivity extends AppCompatActivity{
         i.putExtra(TAG, selectedPost);
         startActivity(i);
     };
-    
-    View.OnClickListener imgClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            userIV = findViewById(R.id.user_ListView_Img);
 
-        }
-    };
-            
-            
     // Method to display all travel posts in blogPOst collection.
     private void displayPosts() {
         blogLV = findViewById(R.id.recent_Posts_LV);
@@ -85,8 +86,8 @@ public class HomeActivity extends AppCompatActivity{
 
     // Method to display current users profile information
     private void displayInfo(){
-        if (cUser.getDisplayName() != null) {
-            String welcomeString = "Welcome, "+ cUser.getDisplayName();
+        if (user.getDisplayName() != null) {
+            String welcomeString = "Welcome, "+ user.getDisplayName();
             welcomeLabel.setText(welcomeString);
         }
         else{
@@ -94,12 +95,21 @@ public class HomeActivity extends AppCompatActivity{
             welcomeLabel.setText(welcomeString);
         }
 
-        if (cUser.getPhotoUrl() != null) {
-            iv.setImageURI(cUser.getPhotoUrl());
-        }
-        else{
-            iv.setImageResource(R.drawable.default_img);
-        }
+        StorageReference imgReference = storageReference.child(user.getUid());
+        final long MEGABYTE = 1024 * 1024;
+        imgReference.getBytes(MEGABYTE)
+                .addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                    @Override
+                    public void onSuccess(byte[] bytes) {
+                        if (bytes.length > 0){
+                            InputStream is = new ByteArrayInputStream(bytes);
+                            Bitmap bmp = BitmapFactory.decodeStream(is);
+                            iv.setImageBitmap(bmp);
+                        }
+                    }
+                });
+
+
     }
 
     // Method to set up bottom nav bar
