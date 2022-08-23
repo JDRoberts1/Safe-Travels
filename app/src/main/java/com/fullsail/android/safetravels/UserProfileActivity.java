@@ -3,6 +3,8 @@ package com.fullsail.android.safetravels;
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -22,10 +24,10 @@ import androidx.appcompat.view.menu.MenuBuilder;
 import com.fullsail.android.safetravels.adapters.PostListAdapter;
 import com.fullsail.android.safetravels.objects.Post;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
-import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
@@ -35,12 +37,12 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.Locale;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -57,7 +59,7 @@ public class UserProfileActivity extends AppCompatActivity {
     CollectionReference cR;
     DocumentReference dR;
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
-    FirebaseUser cUser = mAuth.getCurrentUser();
+    FirebaseUser user = mAuth.getCurrentUser();
     ArrayList<Post> posts = new ArrayList<>();
 
     @Override
@@ -109,7 +111,7 @@ public class UserProfileActivity extends AppCompatActivity {
         }
         else if (item.getItemId() == R.id.delete_acct_Bttn){
 
-            String id = cUser.getUid();
+            String id = user.getUid();
 
             AlertDialog.Builder builder = new AlertDialog.Builder(UserProfileActivity.this);
             builder.setTitle(R.string.prompt_delete_account);
@@ -118,7 +120,7 @@ public class UserProfileActivity extends AppCompatActivity {
             builder.setPositiveButton(R.string.action_remove_account, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    cUser.delete()
+                    user.delete()
                             .addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
@@ -179,7 +181,7 @@ public class UserProfileActivity extends AppCompatActivity {
                     String uid = (String) doc.get("uid");
                     String docId = doc.getId();
 
-                    if (uid != null && uid.equals(cUser.getUid())) {
+                    if (uid != null && uid.equals(user.getUid())) {
                         dR = cR.document(docId);
                         dR.delete();
                     }
@@ -195,8 +197,8 @@ public class UserProfileActivity extends AppCompatActivity {
 
     // Method to display current users profile information
     private void displayInfo(){
-        if (cUser.getDisplayName() != null) {
-            String profileString = cUser.getDisplayName() + " Profile";
+        if (user.getDisplayName() != null) {
+            String profileString = user.getDisplayName() + " Profile";
             usernameLabel.setText(profileString);
         }
         else{
@@ -204,12 +206,20 @@ public class UserProfileActivity extends AppCompatActivity {
             usernameLabel.setText(welcomeString);
         }
 
-        if (cUser.getPhotoUrl() != null) {
-            iv.setImageURI(cUser.getPhotoUrl());
-        }
-        else{
-            iv.setImageResource(R.drawable.default_img);
-        }
+        StorageReference storageReference = FirebaseStorage.getInstance().getReference(user.getUid());
+        StorageReference imgReference = storageReference.child(user.getUid());
+        final long MEGABYTE = 1024 * 1024;
+        imgReference.getBytes(MEGABYTE)
+                .addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                    @Override
+                    public void onSuccess(byte[] bytes) {
+                        if (bytes.length > 0){
+                            InputStream is = new ByteArrayInputStream(bytes);
+                            Bitmap bmp = BitmapFactory.decodeStream(is);
+                            iv.setImageBitmap(bmp);
+                        }
+                    }
+                });
     }
 
     public void setUpBottomNav(){
@@ -267,7 +277,7 @@ public class UserProfileActivity extends AppCompatActivity {
 
                     String uId = doc.getString("uid");
 
-                    if (uId != null && uId.equals(cUser.getUid())) {
+                    if (uId != null && uId.equals(user.getUid())) {
 
                         Post newUserPost;
                         String date = (String) doc.get("date");

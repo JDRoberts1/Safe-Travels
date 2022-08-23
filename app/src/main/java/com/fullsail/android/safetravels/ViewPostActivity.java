@@ -129,30 +129,77 @@ public class ViewPostActivity extends AppCompatActivity {
                     }
                 });
 
+
+        StorageReference pathReference = storageReference.child("postImages");
         if (p.getUri1() != null){
-            imageView1.setImageURI(p.getUri1());
+            imgReference = pathReference.child(p.getTitle() + "1");
+            imgReference.getBytes(MEGABYTE)
+                    .addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                        @Override
+                        public void onSuccess(byte[] bytes) {
+                            if (bytes.length > 0){
+                                InputStream is = new ByteArrayInputStream(bytes);
+                                Bitmap bmp = BitmapFactory.decodeStream(is);
+                                imageView1.setImageBitmap(bmp);
+                            }
+                        }
+                    });
         }
         else {
             imageView1.setVisibility(View.GONE);
         }
 
+
         if (p.getUri2() != null){
-            imageView2.setImageURI(p.getUri2());
+            imgReference = pathReference.child(p.getTitle() + "2");
+            imgReference.getBytes(MEGABYTE)
+                    .addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                        @Override
+                        public void onSuccess(byte[] bytes) {
+                            if (bytes.length > 0){
+                                InputStream is = new ByteArrayInputStream(bytes);
+                                Bitmap bmp = BitmapFactory.decodeStream(is);
+                                imageView2.setImageBitmap(bmp);
+                            }
+                        }
+                    });
         }
-        else{
+        else {
             imageView2.setVisibility(View.GONE);
         }
 
-        if (p.getUri3() != null){
 
-            imageView3.setImageURI(p.getUri3());
+        if (p.getUri3() != null){
+            imgReference = pathReference.child(p.getTitle() + "3");
+            imgReference.getBytes(MEGABYTE)
+                    .addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                        @Override
+                        public void onSuccess(byte[] bytes) {
+                            if (bytes.length > 0){
+                                InputStream is = new ByteArrayInputStream(bytes);
+                                Bitmap bmp = BitmapFactory.decodeStream(is);
+                                imageView3.setImageBitmap(bmp);
+                            }
+                        }
+                    });
         }
-        else{
+        else {
             imageView3.setVisibility(View.GONE);
         }
 
         if (p.getUri4() != null){
-            imageView4.setImageURI(p.getUri4());
+            imgReference = pathReference.child(p.getTitle() + "4");
+            imgReference.getBytes(MEGABYTE)
+                    .addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                        @Override
+                        public void onSuccess(byte[] bytes) {
+                            if (bytes.length > 0){
+                                InputStream is = new ByteArrayInputStream(bytes);
+                                Bitmap bmp = BitmapFactory.decodeStream(is);
+                                imageView4.setImageBitmap(bmp);
+                            }
+                        }
+                    });
         }
         else {
             imageView4.setVisibility(View.GONE);
