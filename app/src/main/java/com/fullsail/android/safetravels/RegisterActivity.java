@@ -191,7 +191,6 @@ public class RegisterActivity extends AppCompatActivity {
 
             StorageReference reference = storageReference.child(user.getUid());
             reference.putFile(imgUri);
-            newUser.put("imgUri", imgUri);
 
         }
         else{

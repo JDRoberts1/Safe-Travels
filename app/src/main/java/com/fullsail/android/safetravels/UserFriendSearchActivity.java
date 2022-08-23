@@ -45,7 +45,7 @@ public class UserFriendSearchActivity extends AppCompatActivity {
 
         // Get User List collection
         db = FirebaseFirestore.getInstance();
-        cR = db.collection("userList");
+        cR = db.collection("user");
 
         searchView = findViewById(R.id.searchView);
         searchView.setOnQueryTextListener(query);
