@@ -1,6 +1,8 @@
 package com.fullsail.android.safetravels;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -13,9 +15,15 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.fullsail.android.safetravels.objects.Post;
 import com.fullsail.android.safetravels.objects.User;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -105,9 +113,21 @@ public class ViewPostActivity extends AppCompatActivity {
     };
 
     private void setUpImages() {
-        if (p.getProfileImgUri() != null){
-            profileImgView.setImageURI(p.getProfileImgUri());
-        }
+
+        StorageReference storageReference = FirebaseStorage.getInstance().getReference(p.getUid());
+        StorageReference imgReference = storageReference.child(p.getUid());
+        final long MEGABYTE = 1024 * 1024;
+        imgReference.getBytes(MEGABYTE)
+                .addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                    @Override
+                    public void onSuccess(byte[] bytes) {
+                        if (bytes.length > 0){
+                            InputStream is = new ByteArrayInputStream(bytes);
+                            Bitmap bmp = BitmapFactory.decodeStream(is);
+                            profileImgView.setImageBitmap(bmp);
+                        }
+                    }
+                });
 
         if (p.getUri1() != null){
             imageView1.setImageURI(p.getUri1());

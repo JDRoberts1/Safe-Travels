@@ -99,7 +99,8 @@
         <activity
             android:name=".UserFriendSearchActivity"
             android:exported="true"
-            android:theme="@style/Theme.SafeTravels.Fullscreen" />
+            android:theme="@style/Theme.SafeTravels"
+            android:parentActivityName=".FriendsActivity"/>
         <activity
             android:name=".EditProfileActivity"
             android:exported="true"

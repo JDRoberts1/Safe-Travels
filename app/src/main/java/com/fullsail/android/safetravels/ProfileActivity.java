@@ -54,7 +54,7 @@ public class ProfileActivity extends AppCompatActivity {
         setContentView(R.layout.activity_profile);
 
         Intent userIntent = getIntent();
-        user = userIntent.getParcelableExtra(ViewPostActivity.TAG);
+        user = userIntent.getParcelableExtra(UserFriendSearchActivity.TAG);
 
         usernameLabel = findViewById(R.id.username_Profile_Label);
         iv = findViewById(R.id.profile_img_main);

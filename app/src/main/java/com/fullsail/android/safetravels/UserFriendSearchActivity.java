@@ -27,7 +27,7 @@ import java.util.ArrayList;
 
 public class UserFriendSearchActivity extends AppCompatActivity {
 
-    private static final String TAG = "UserFriendSearchActivity";
+    public static final String TAG = "UserFriendSearchActivity";
     SearchView searchView;
     ListView usersListView;
     FirebaseFirestore db;
@@ -45,7 +45,7 @@ public class UserFriendSearchActivity extends AppCompatActivity {
 
         // Get User List collection
         db = FirebaseFirestore.getInstance();
-        cR = db.collection("user");
+        cR = db.collection("users");
 
         searchView = findViewById(R.id.searchView);
         searchView.setOnQueryTextListener(query);
@@ -119,7 +119,7 @@ public class UserFriendSearchActivity extends AppCompatActivity {
                     String id = (String) doc.get("userId");
                     if (id != null && !id.equals(cUser.getUid())) {
                         String username = (String) doc.get("username");
-                        String imgUrl = (String) doc.get("img");
+                        String imgUrl = (String) doc.get("profileImg");
                         User u = new User(username, id, imgUrl);
                         users.add(u);
                         adpt.notifyDataSetChanged();
