@@ -21,8 +21,11 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.SetOptions;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -157,6 +160,14 @@ public class LoginActivity extends AppCompatActivity {
             forgotPasswordTV.setVisibility(View.GONE);
             createAccountTV.setVisibility(View.GONE);
             pb.setVisibility(View.VISIBLE);
+
+            String newPassword = passwordETV.getText().toString();
+            Map<String, Object> pw = new HashMap<>();
+            pw.put("password", newPassword);
+
+            db.collection("users")
+                    .document(user.getUid())
+                    .set(pw, SetOptions.merge() );
 
             Handler handler = new Handler();
             handler.postDelayed(new Runnable() {

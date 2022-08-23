@@ -35,7 +35,7 @@ public class UserListAdapter extends ArrayAdapter<User> {
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
     FirebaseUser cUser = mAuth.getCurrentUser();
-    StorageReference storageReference;
+    StorageReference storageReference = FirebaseStorage.getInstance().getReference(cUser.getUid());
 
 
     public UserListAdapter(@NonNull Context context, int resource, @NonNull ArrayList<User> users) {

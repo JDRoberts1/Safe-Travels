@@ -207,25 +207,6 @@ public class NewPostActivity extends AppCompatActivity {
                                 }
                             });
 
-                    // Add new post to user's blogPosts collection
-                    db.collection("users")
-                            .document(currentUser.getUid())
-                            .collection("posts")
-                            .document()
-                            .set(newUserPost)
-                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                @Override
-                                public void onSuccess(Void aVoid) {
-                                    Log.d(TAG, "DocumentSnapshot successfully written!");
-                                }
-                            })
-                            .addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    Log.w(TAG, "Error writing document", e);
-                                }
-                            });
-
                     backToHome();
                 }
 

@@ -29,8 +29,16 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -55,7 +63,8 @@ public class EditProfileActivity extends AppCompatActivity {
     Button updateProfileBttn;
     Button uploadBttn;
     ImageView profileImage;
-
+    CollectionReference cR;
+    StorageReference storageReference;
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
     FirebaseUser user = mAuth.getCurrentUser();
     FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -64,6 +73,7 @@ public class EditProfileActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_profile);
+        storageReference = FirebaseStorage.getInstance().getReference(user.getUid());
 
         uName = findViewById(R.id.username_Edit_ETV);
         emailETV = findViewById(R.id.email_Edit_ETV);
@@ -134,6 +144,10 @@ public class EditProfileActivity extends AppCompatActivity {
         startActivity(logInIntent);
     }
 
+    private void backToProfile(){
+        startActivity(new Intent(EditProfileActivity.this, UserProfileActivity.class));
+    }
+
     // Method to validate user entries for blanks and whitespace
     private boolean nullCheck(String email, String username){
 
@@ -173,9 +187,6 @@ public class EditProfileActivity extends AppCompatActivity {
                                 .document(user.getUid())
                                 .set(data, SetOptions.merge() );
 
-                        db.collection("userList")
-                                .document(user.getUid())
-                                .set(data, SetOptions.merge() );
 
                         Log.d(TAG, "User email address updated.");
                         logOutIntent();
@@ -196,7 +207,7 @@ public class EditProfileActivity extends AppCompatActivity {
     View.OnClickListener cancelClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            startActivity(new Intent(EditProfileActivity.this, UserProfileActivity.class));
+            backToProfile();
         }
     };
 
@@ -234,14 +245,12 @@ public class EditProfileActivity extends AppCompatActivity {
                                             .document(user.getUid())
                                             .set(data, SetOptions.merge() );
 
-                                    db.collection("userList")
-                                            .document(user.getUid())
-                                            .set(data, SetOptions.merge() );
-
-
                                     // TODO: UPDATE USERNAME IN BLOG POSTS
+                                    updateBlogPosts(newUserName);
 
                                     Log.d(TAG, "User profile updated.");
+                                    backToProfile();
+
                                 }
                             })
                     .addOnFailureListener(e -> errorLabel.setText(e.getLocalizedMessage()));
@@ -258,6 +267,7 @@ public class EditProfileActivity extends AppCompatActivity {
                     user.updateProfile(profileUpdates)
                             .addOnCompleteListener(task -> {
                                 if (task.isSuccessful()) {
+
                                     Map<String, Object> data = new HashMap<>();
                                     data.put("profileImg", imgUri);
 
@@ -265,12 +275,13 @@ public class EditProfileActivity extends AppCompatActivity {
                                             .document(user.getUid())
                                             .set(data, SetOptions.merge() );
 
-                                    db.collection("userList")
-                                            .document(user.getUid())
-                                            .set(data, SetOptions.merge() );
-
                                     Log.d(TAG, "User profile updated.");
+
+                                    StorageReference reference = storageReference.child(user.getUid());
+                                    reference.putFile(imgUri);
                                 }
+
+                                backToProfile();
                             })
                             .addOnFailureListener(e -> errorLabel.setText(e.getLocalizedMessage()));
                 }
@@ -290,9 +301,6 @@ public class EditProfileActivity extends AppCompatActivity {
                                                 .document(user.getUid())
                                                 .set(pw, SetOptions.merge() );
 
-                                        db.collection("userList")
-                                                .document(user.getUid())
-                                                .set(pw, SetOptions.merge() );
 
                                         Log.d(TAG, "User password updated.");
                                         logOutIntent();
@@ -311,16 +319,41 @@ public class EditProfileActivity extends AppCompatActivity {
         }
     };
 
+    private void updateBlogPosts(String newUserName) {
+        // Get User List collection
+        db = FirebaseFirestore.getInstance();
+        cR = db.collection("blogPosts");
+
+        cR.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                if (error != null) {
+                    Log.w(TAG, "Listen failed.", error);
+                    return;
+                }
+
+                for (QueryDocumentSnapshot doc : value) {
+                    String uId = doc.getString("uid");
+
+                    if (uId != null && uId.equals(user.getUid())) {
+                        DocumentReference dR = db.collection("blogPosts").document(doc.getId());
+                        dR.update("username", user.getDisplayName());
+                    }
+                }
+            }
+        });
+
+    }
+
     // OnClickListener for Image upload button
     View.OnClickListener uploadClick = v -> {
 
-        // TODO: Request Permission
+        // Request Permission
         if (ActivityCompat.checkSelfPermission(EditProfileActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
 
             requestPerms.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE);
         }
 
-        // TODO: SET UP CAMERA code
         final CharSequence[] items = {"Take A Photo", "Choose from Gallery", "Cancel"};
 
         AlertDialog.Builder builder = new AlertDialog.Builder(EditProfileActivity.this);

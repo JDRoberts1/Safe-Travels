@@ -7,8 +7,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.icu.util.Calendar;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -31,7 +29,6 @@ import androidx.core.app.ActivityCompat;
 
 import com.fullsail.android.safetravels.objects.Post;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -46,13 +43,8 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
+import java.io.IOException;
 
 public class EditPostActivity extends AppCompatActivity {
 
@@ -83,6 +75,7 @@ public class EditPostActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_post);
+        storageReference = FirebaseStorage.getInstance().getReference(cUser.getUid());
 
         Intent i = getIntent();
         p = i.getParcelableExtra(ViewPostActivity.TAG);
@@ -124,6 +117,35 @@ public class EditPostActivity extends AppCompatActivity {
     // Contract to Request Permission if not granted
     public ActivityResultLauncher<String> requestPerms = registerForActivityResult(new ActivityResultContracts.RequestPermission(), result -> Log.i(TAG, "onActivityResult: " + result));
 
+    // onActivityResult method to handle img results
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            Bundle extras = null;
+            if (data != null) {
+                extras = data.getExtras();
+            }
+            if (extras != null) {
+                imageBitmap = (Bitmap) extras.get("data");
+            }
+        }
+        else if (requestCode == REQUEST_IMAGE_GALLERY && resultCode == RESULT_OK){
+
+            if (data != null) {
+                try {
+                    imageBitmap = (Bitmap) MediaStore.Images.Media.getBitmap(getApplicationContext().getContentResolver(), data.getData());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        Uri imgUri = getImgUri(this, imageBitmap, cUser.getUid());
+        saveAndDisplayImg(imgUri);
+
+    }
 
     View.OnClickListener imgClick = new View.OnClickListener() {
         @Override
@@ -215,7 +237,12 @@ public class EditPostActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+
     private void updatePost() {
+
+        StorageReference reference = storageReference.child("postImages");
+
+        // Check for null or empty fields
         if(!checkForEmptyFields()){
 
             String id = cUser.getUid();
@@ -228,15 +255,44 @@ public class EditPostActivity extends AppCompatActivity {
                 dR = db.collection("blogPosts").document(p.getPostId());
 
                 dR.update("date", date);
-                dR.update("location",post_Title);
+                dR.update("location",location);
                 dR.update("post",post);
-                dR.update("title",location);
+                dR.update("title",post_Title);
+                dR.update("username", cUser.getDisplayName());
+
+                if (uri1 != null){
+                    dR.update("uri1", uri1);
+                    StorageReference ref = reference.child(post_Title + "1");
+                    ref.putFile(uri1);
+                }
+
+                if(uri2 != null){
+                    dR.update("uri2", uri2);
+                    StorageReference ref = reference.child(post_Title + "2");
+                    ref.putFile(uri2);
+                }
+
+                if(uri3 != null){
+                    dR.update("uri3", uri3);
+                    StorageReference ref = reference.child(post_Title + "3");
+                    ref.putFile(uri3);
+                }
+
+                if(uri4 != null){
+                    dR.update("uri4", uri4);
+                    StorageReference ref = reference.child(post_Title + "4");
+                    ref.putFile(uri3);
+                }
+
+                backToProfile();
             }
             else{
                 Toast.makeText(this, "Please enter a valid date ie. 01/01/2022", Toast.LENGTH_SHORT).show();
             }
         }
-        backToProfile();
+        else {
+            Toast.makeText(this, "All fields must be filled out", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void deletePost() {
@@ -300,24 +356,44 @@ public class EditPostActivity extends AppCompatActivity {
     // Method to set not null images
     private void setUpImages() {
         if (p.getUri1() != null){
-            imageView1.setImageURI(p.getUri1());
+            Picasso.get().load(p.getUri1()).into(imageView1);
         }
 
         if (p.getUri2() != null){
-            imageView2.setImageURI(p.getUri2());
+            Picasso.get().load(p.getUri2()).into(imageView2);
         }
 
 
         if (p.getUri3() != null){
-
-            imageView3.setImageURI(p.getUri3());
+            Picasso.get().load(p.getUri3()).into(imageView3);
         }
 
 
         if (p.getUri4() != null){
-            imageView4.setImageURI(p.getUri4());
+            Picasso.get().load(p.getUri4()).into(imageView4);
         }
 
+    }
+
+    // saveAndDisplayImg Method
+    // Method to determine next empty imageview and place the image.
+    private void saveAndDisplayImg(Uri imgUri) {
+        if (uri1 == null){
+            uri1 = imgUri;
+            Picasso.get().load(uri1).into(imageView1);
+        }
+        else if(uri2 == null){
+            uri2 = imgUri;
+            Picasso.get().load(uri2).into(imageView2);
+        }
+        else if(uri3 == null){
+            uri3 = imgUri;
+            Picasso.get().load(uri3).into(imageView3);
+        }
+        else if(uri4 == null){
+            uri4 = imgUri;
+            Picasso.get().load(uri4).into(imageView4);
+        }
     }
 
     // Method to validate the Date entry submitted by the user
