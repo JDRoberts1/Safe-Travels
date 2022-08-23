@@ -1,5 +1,6 @@
 package com.fullsail.android.safetravels.objects;
 
+import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -7,18 +8,18 @@ public class User implements Parcelable {
 
     String username;
     String uid;
-    String uri;
+    Uri uri;
 
-    public User(String username, String uid, String uri) {
+    public User(String username, String uid, Uri uri) {
         this.username = username;
         this.uid = uid;
         this.uri = uri;
     }
-
+    
     protected User(Parcel in) {
         username = in.readString();
         uid = in.readString();
-        uri = in.readString();
+        uri = in.readParcelable(Uri.class.getClassLoader());
     }
 
     public static final Creator<User> CREATOR = new Creator<User>() {
@@ -41,9 +42,10 @@ public class User implements Parcelable {
         return uid;
     }
 
-    public String getUri() {
+    public Uri getUri() {
         return uri;
     }
+
 
     @Override
     public int describeContents() {
@@ -54,6 +56,6 @@ public class User implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(username);
         dest.writeString(uid);
-        dest.writeString(uri);
+        dest.writeParcelable(uri, flags);
     }
 }

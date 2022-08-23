@@ -4,6 +4,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -118,7 +119,7 @@ public class UserMessageSearchActivity extends AppCompatActivity {
                     if (id != null && !id.equals(cUser.getUid())) {
                         String username = (String) doc.get("username");
                         String imgUrl = (String) doc.get("img");
-                        User u = new User(username, id, imgUrl);
+                        User u = new User(username, id, Uri.parse(imgUrl));
                         users.add(u);
                         adpt.notifyDataSetChanged();
                         Log.i(TAG, "Snapshot: " + users.size());

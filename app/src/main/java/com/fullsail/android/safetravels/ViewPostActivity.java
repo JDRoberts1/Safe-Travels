@@ -103,8 +103,8 @@ public class ViewPostActivity extends AppCompatActivity {
             }
             else{
                 i = new Intent(ViewPostActivity.this, ProfileActivity.class);
-                User user = new User(p.getUsername(), p.getUid(), p.getProfileImgUri().toString());
-                i.putExtra(TAG, user);
+                User user = new User(p.getUsername(), p.getUid(), p.getProfileImgUri());
+                i.putExtra(ProfileActivity.TAG, user);
             }
 
             startActivity(i);

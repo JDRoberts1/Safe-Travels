@@ -5,6 +5,8 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,6 +18,7 @@ import com.fullsail.android.safetravels.adapters.HomePostListAdapter;
 import com.fullsail.android.safetravels.adapters.PostListAdapter;
 import com.fullsail.android.safetravels.objects.Post;
 import com.fullsail.android.safetravels.objects.User;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -25,7 +28,11 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -37,7 +44,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class ProfileActivity extends AppCompatActivity {
 
     BottomNavigationView navView;
-    private static final String TAG = "ProfileActivity";
+    public static final String TAG = "ProfileActivity";
     TextView usernameLabel;
     CircleImageView iv;
     ListView userBlogRCV;
@@ -54,7 +61,10 @@ public class ProfileActivity extends AppCompatActivity {
         setContentView(R.layout.activity_profile);
 
         Intent userIntent = getIntent();
-        user = userIntent.getParcelableExtra(UserFriendSearchActivity.TAG);
+        if (userIntent.getParcelableExtra(TAG) != null){
+            user = userIntent.getParcelableExtra(TAG);
+        }
+
 
         usernameLabel = findViewById(R.id.username_Profile_Label);
         iv = findViewById(R.id.profile_img_main);
@@ -77,12 +87,21 @@ public class ProfileActivity extends AppCompatActivity {
             usernameLabel.setText(welcomeString);
         }
 
-        if (user.getUri() != null) {
-            Uri imgUri = Uri.parse(user.getUri());
-            iv.setImageURI(imgUri);
-        }
-        else{
-            iv.setImageResource(R.drawable.default_img);
+        if (user.getUri() != null){
+            StorageReference storageReference = FirebaseStorage.getInstance().getReference(user.getUid());
+            StorageReference imgReference = storageReference.child(user.getUid());
+            final long MEGABYTE = 1024 * 1024;
+            imgReference.getBytes(MEGABYTE)
+                    .addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                        @Override
+                        public void onSuccess(byte[] bytes) {
+                            if (bytes.length > 0){
+                                InputStream is = new ByteArrayInputStream(bytes);
+                                Bitmap bmp = BitmapFactory.decodeStream(is);
+                                iv.setImageBitmap(bmp);
+                            }
+                        }
+                    });
         }
     }
 
@@ -125,7 +144,7 @@ public class ProfileActivity extends AppCompatActivity {
     private void savePosts(){
         // Get User Post collection
         db = FirebaseFirestore.getInstance();
-        cR = db.collection("users").document(user.getUid()).collection("posts");
+        cR = db.collection("blogPosts");
 
         cR.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
@@ -138,7 +157,9 @@ public class ProfileActivity extends AppCompatActivity {
                 if (value != null) {
                     for (QueryDocumentSnapshot doc : value) {
 
-                        if (!doc.getId().equals("sample")) {
+                        String uId = doc.getString("uid");
+
+                        if (uId != null && uId.equals(user.getUid())) {
 
                             Post newUserPost;
                             String date = (String) doc.get("date");

@@ -8,8 +8,8 @@
 
     <FrameLayout
         android:id="@+id/frameLayout_img"
-        android:layout_width="120dp"
-        android:layout_height="120dp"
+        android:layout_width="145dp"
+        android:layout_height="138dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="32dp"
         app:layout_constraintStart_toStartOf="parent"
@@ -46,17 +46,6 @@
         app:layout_constraintTop_toTopOf="@+id/frameLayout_img" />
 
     <TextView
-        android:id="@+id/age_Profile_Label"
-        style="@style/Label_TV_Style"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.502"
-        app:layout_constraintStart_toEndOf="@+id/frameLayout_img"
-        app:layout_constraintTop_toBottomOf="@+id/username_Profile_Label" />
-
-    <TextView
         android:id="@+id/recent_Profile_Label"
         style="@style/Title_TV_Style"
         android:layout_width="wrap_content"
@@ -83,13 +72,15 @@
         android:id="@+id/add_Bttn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
         android:backgroundTint="#00FFFFFF"
         android:contentDescription="@string/action_add_new_friend"
         android:minHeight="48dp"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/recent_Profile_Label"
+        app:layout_constraintEnd_toStartOf="@+id/Message_Bttn"
+        app:layout_constraintHorizontal_bias="0.484"
         app:layout_constraintStart_toEndOf="@+id/frameLayout_img"
-        app:layout_constraintTop_toBottomOf="@+id/age_Profile_Label"
+        app:layout_constraintTop_toTopOf="@+id/Message_Bttn"
+        app:layout_constraintVertical_bias="0.012"
         app:srcCompat="@drawable/ic_baseline_person_add_alt_1_24"
         tools:ignore="ImageContrastCheck" />
 
@@ -103,18 +94,34 @@
         app:layout_constraintTop_toBottomOf="@+id/divider" />
 
     <ImageButton
-        android:id="@+id/imageButton2"
+        android:id="@+id/remove_bttn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginStart="48dp"
+        android:layout_marginBottom="76dp"
         android:backgroundTint="#00FFFFFF"
         android:contentDescription="@string/action_decline_friend"
         android:minHeight="48dp"
+        android:visibility="invisible"
         app:layout_constraintBottom_toTopOf="@+id/recent_Profile_Label"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/frameLayout_img"
-        app:layout_constraintTop_toBottomOf="@+id/add_Bttn"
+        app:layout_constraintTop_toTopOf="@+id/Message_Bttn"
         app:srcCompat="@drawable/ic_baseline_person_remove_alt_1_24"
         tools:ignore="ImageContrastCheck,ImageContrastCheck" />
+
+    <ImageButton
+        android:id="@+id/Message_Bttn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="56dp"
+        android:layout_marginBottom="52dp"
+        android:backgroundTint="#00BF1A1A"
+        android:contentDescription="@string/label_approved_profile"
+        android:minHeight="48dp"
+        app:layout_constraintBottom_toTopOf="@+id/recent_Profile_Label"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/username_Profile_Label"
+        app:srcCompat="@drawable/ic_baseline_message_24_blue"
+        tools:ignore="ImageContrastCheck,SpeakableTextPresentCheck" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

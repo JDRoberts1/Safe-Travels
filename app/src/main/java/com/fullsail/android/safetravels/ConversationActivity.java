@@ -54,8 +54,8 @@ public class ConversationActivity extends AppCompatActivity {
 
     // TODO: Set up conversation activity
     private void setUpUi() {
-        if (!user.getUri().isEmpty()){
-            Uri imgUri = Uri.parse(user.getUri());
+        if (user.getUri() != null){
+            Uri imgUri = user.getUri();
             messageImg.setImageURI(imgUri);
         }
         else {

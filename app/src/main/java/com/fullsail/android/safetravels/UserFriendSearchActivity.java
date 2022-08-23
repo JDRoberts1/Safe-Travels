@@ -1,6 +1,7 @@
 package com.fullsail.android.safetravels;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -67,7 +68,7 @@ public class UserFriendSearchActivity extends AppCompatActivity {
             // Intent to users profile
             User selectedUser = users.get(position);
             Intent i = new Intent(UserFriendSearchActivity.this, ProfileActivity.class);
-            i.putExtra(TAG, selectedUser);
+            i.putExtra(ProfileActivity.TAG, selectedUser);
             startActivity(i);
             overridePendingTransition(0,0);
         }
@@ -120,7 +121,7 @@ public class UserFriendSearchActivity extends AppCompatActivity {
                     if (id != null && !id.equals(cUser.getUid())) {
                         String username = (String) doc.get("username");
                         String imgUrl = (String) doc.get("profileImg");
-                        User u = new User(username, id, imgUrl);
+                        User u = new User(username, id, Uri.parse(imgUrl));
                         users.add(u);
                         adpt.notifyDataSetChanged();
                         Log.i(TAG, "Snapshot: " + users.size());
