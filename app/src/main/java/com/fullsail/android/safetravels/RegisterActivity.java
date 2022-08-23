@@ -58,7 +58,7 @@ public class RegisterActivity extends AppCompatActivity {
     Button uploadTV;
     ImageView profileImage;
     Spinner spinner;
-
+    Uri imgUri = null;
     ArrayList<String> bannedEmails = new ArrayList<>();
     ArrayList<String> usernames = new ArrayList<>();
     Bitmap imageBitmap = null;
@@ -182,18 +182,23 @@ public class RegisterActivity extends AppCompatActivity {
         newUser.put("password", password);
 
         UserProfileChangeRequest profileUpdates;
-        Uri imgUri = null;
         if (imgUploaded){
             imgUri = getImgUri(this, imageBitmap, user.getUid());
+            profileUpdates = new UserProfileChangeRequest.Builder()
+                    .setDisplayName(userName)
+                    .setPhotoUri(imgUri)
+                    .build();
 
             StorageReference reference = storageReference.child(user.getUid());
             reference.putFile(imgUri);
+            newUser.put("imgUri", imgUri);
 
         }
-
-        profileUpdates = new UserProfileChangeRequest.Builder()
-                .setDisplayName(userName)
-                .build();
+        else{
+            profileUpdates = new UserProfileChangeRequest.Builder()
+                    .setDisplayName(userName)
+                    .build();
+        }
 
         // Update profile call
         user.updateProfile(profileUpdates)
@@ -211,19 +216,6 @@ public class RegisterActivity extends AppCompatActivity {
                 .set(newUser)
                 .addOnSuccessListener(aVoid -> Log.d(TAG, "DocumentSnapshot successfully written!"))
                 .addOnFailureListener(e -> Log.w(TAG, "Error writing document", e));
-
-        // Create a new user document with a user ID
-        // userList Collection is used to keep track of all users for user search
-        Map<String, Object> userListIem = new HashMap<>();
-        userListIem.put("username", userName);
-        userListIem.put("userId", user.getUid());
-
-        // Add a new user to userList with a user ID
-        db.collection("userList")
-                .document(user.getUid())
-                .set(userListIem)
-                .addOnSuccessListener(aVoid -> Log.d(TAG, "DocumentSnapshot successfully written!"))
-                .addOnFailureListener(e -> Log.w(TAG, "Error writing document: ", e));
 
     }
 
@@ -344,7 +336,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     // Method to retrieve user emails from database and place them in a String ArrayList
     private void getUsernames() {
-        CollectionReference cR = db.collection("userList");
+        CollectionReference cR = db.collection("user");
 
         cR.addSnapshotListener((value, error) -> {
             if (value != null) {

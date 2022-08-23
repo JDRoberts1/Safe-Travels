@@ -1,6 +1,8 @@
 package com.fullsail.android.safetravels.adapters;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,10 +15,15 @@ import androidx.annotation.NonNull;
 
 import com.fullsail.android.safetravels.R;
 import com.fullsail.android.safetravels.objects.User;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 
 public class UserListAdapter extends ArrayAdapter<User> {
@@ -28,6 +35,8 @@ public class UserListAdapter extends ArrayAdapter<User> {
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
     FirebaseUser cUser = mAuth.getCurrentUser();
+    StorageReference storageReference;
+
 
     public UserListAdapter(@NonNull Context context, int resource, @NonNull ArrayList<User> users) {
         super(context, resource, users);
@@ -73,14 +82,25 @@ public class UserListAdapter extends ArrayAdapter<User> {
 
         if (u != null){
             vh._usernameLabel.setText(u.getUsername());
-        }
 
-        if (u.getUri() != null){
-            Uri imgUri = Uri.parse(u.getUri());
-            vh._userImg.setImageURI(imgUri);
-        }
-        else {
-            vh._userImg.setImageResource(R.drawable.default_img);
+            storageReference = FirebaseStorage.getInstance().getReference(u.getUid());
+
+            StorageReference imgReference = storageReference.child(u.getUid());
+            final long MEGABYTE = 1024 * 1024;
+            imgReference.getBytes(MEGABYTE)
+                    .addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                        @Override
+                        public void onSuccess(byte[] bytes) {
+                            if (bytes.length > 0){
+                                InputStream is = new ByteArrayInputStream(bytes);
+                                Bitmap bmp = BitmapFactory.decodeStream(is);
+                                vh._userImg.setImageBitmap(bmp);
+                            }
+                            else {
+                                vh._userImg.setImageResource(R.drawable.default_img);
+                            }
+                        }
+                    });
         }
 
         return convertView;

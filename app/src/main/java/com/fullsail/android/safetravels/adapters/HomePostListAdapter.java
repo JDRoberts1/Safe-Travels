@@ -11,6 +11,8 @@ import androidx.annotation.NonNull;
 
 import com.fullsail.android.safetravels.R;
 import com.fullsail.android.safetravels.objects.Post;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 
@@ -22,6 +24,8 @@ public class HomePostListAdapter extends ArrayAdapter<Post> {
     Context mContext;
     private static final long BASE_ID = 0x1011;
     public static final String TAG = "HomePostListAdapter";
+    StorageReference storageReference;
+
 
 
     public HomePostListAdapter(@NonNull Context context, int resource, @NonNull ArrayList<Post> posts) {
@@ -56,6 +60,7 @@ public class HomePostListAdapter extends ArrayAdapter<Post> {
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder;
         Post p = posts.get(position);
+        storageReference = FirebaseStorage.getInstance().getReference(p.getUid());
 
         if (convertView == null){
             convertView = LayoutInflater.from(mContext).inflate(R.layout.post_rcv_item, parent, false);

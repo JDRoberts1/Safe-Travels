@@ -1,9 +1,14 @@
 package com.fullsail.android.safetravels;
 
+import android.Manifest;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.icu.util.Calendar;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -14,14 +19,19 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
 import com.fullsail.android.safetravels.objects.Post;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -32,8 +42,17 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Picasso;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 public class EditPostActivity extends AppCompatActivity {
 
@@ -50,10 +69,10 @@ public class EditPostActivity extends AppCompatActivity {
 
     CollectionReference cR;
     DocumentReference dR;
+    StorageReference storageReference;
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
     FirebaseUser cUser = mAuth.getCurrentUser();
     Bitmap imageBitmap = null;
-    FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     static final int REQUEST_IMAGE_CAPTURE = 1;
     static final int REQUEST_IMAGE_GALLERY = 2;
@@ -69,15 +88,10 @@ public class EditPostActivity extends AppCompatActivity {
         p = i.getParcelableExtra(ViewPostActivity.TAG);
 
         post_Title_ETV = findViewById(R.id.post_Title_ETV);
-
         post_ETV = findViewById(R.id.new_Post_ETV);
-        post_ETV.setText(p.getPost());
-
         location_ETV = findViewById(R.id.location_Post_ETV);
-        location_ETV.setText(p.getLocation());
-
         date_ETV = findViewById(R.id.date_Post_ETV);
-        date_ETV.setText(p.getDate());
+
 
         imageView1 = findViewById(R.id.post_Img_1);
         imageView1.setOnClickListener(imgClick);
@@ -94,17 +108,69 @@ public class EditPostActivity extends AppCompatActivity {
         cancel_Post_Bttn = findViewById(R.id.cancel_Post_Bttn);
         cancel_Post_Bttn.setOnClickListener(cancelClick);
 
+        displayInfo();
         setUpImages();
 
     }
+
+    private void displayInfo(){
+        post_Title_ETV.setText(p.getTitle());
+        post_ETV.setText(p.getPost());
+        location_ETV.setText(p.getLocation());
+        date_ETV.setText(p.getDate());
+    }
+
+    // Activity Contracts
+    // Contract to Request Permission if not granted
+    public ActivityResultLauncher<String> requestPerms = registerForActivityResult(new ActivityResultContracts.RequestPermission(), result -> Log.i(TAG, "onActivityResult: " + result));
 
 
     View.OnClickListener imgClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            // Request Permission
+            if (ActivityCompat.checkSelfPermission(EditPostActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
 
+                requestPerms.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            }
+
+            // Set up camera code
+            final CharSequence[] items = {"Take A Photo", "Choose from Gallery", "Cancel"};
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(EditPostActivity.this);
+            builder.setTitle(R.string.prompt_photo);
+            builder.setItems(items, (dialog, which) -> {
+                if (items[which].equals("Take A Photo")){
+
+                    dispatchTakePictureIntent(cameraIntent);
+                }
+                else if (items[which].equals("Choose from Gallery")){
+                    galleryIntent.setType("image/*");
+                    dispatchGetPictureIntent(galleryIntent);
+                }
+            });
+
+            builder.show();
         }
     };
+
+    // Intent for Taking a Photo with Camera
+    private void dispatchTakePictureIntent(Intent i) {
+        try {
+            startActivityForResult(i, REQUEST_IMAGE_CAPTURE);
+        } catch (ActivityNotFoundException e) {
+            // display error state to the user
+        }
+    }
+
+    // Intent for choosing image from gallery
+    private void dispatchGetPictureIntent(Intent i) {
+        try {
+            startActivityForResult(i, REQUEST_IMAGE_GALLERY);
+        } catch (ActivityNotFoundException e) {
+            // display error state to the user
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
@@ -151,19 +217,26 @@ public class EditPostActivity extends AppCompatActivity {
 
     private void updatePost() {
         if(!checkForEmptyFields()){
-            String id = cUser.getUid();
-            dR = db.collection("blogPosts").document(id).collection("posts").document(p.getPostId());
 
+            String id = cUser.getUid();
             String post_Title = post_Title_ETV.getText().toString();
             String post = post_ETV.getText().toString();
             String location = location_ETV.getText().toString();
             String date = date_ETV.getText().toString();
 
-            dR.update("date",date);
-            dR.update("location",post_Title);
-            dR.update("post",post);
-            dR.update("title",location);
+            if(validateDate(date)){
+                dR = db.collection("blogPosts").document(p.getPostId());
+
+                dR.update("date", date);
+                dR.update("location",post_Title);
+                dR.update("post",post);
+                dR.update("title",location);
+            }
+            else{
+                Toast.makeText(this, "Please enter a valid date ie. 01/01/2022", Toast.LENGTH_SHORT).show();
+            }
         }
+        backToProfile();
     }
 
     private void deletePost() {
@@ -180,21 +253,33 @@ public class EditPostActivity extends AppCompatActivity {
                     return;
                 }
 
-                for (QueryDocumentSnapshot doc : value){
+                if (value != null) {
+                    for (QueryDocumentSnapshot doc : value){
 
-                    String ts = p.getDatePosted();
-                    String title = p.getTitle();
+                        String ts = p.getDatePosted();
+                        String title = p.getTitle();
 
-                    String docTS = (String) doc.get("datePosted");
-                    String docTitle = (String) doc.get("title");
+                        String docTS = (String) doc.get("datePosted");
+                        String docTitle = (String) doc.get("title");
 
-                    if (docTS != null && docTitle != null) {
-                        if (docTS.equals(ts) && docTitle.equals(title)) {
-                            dR = cR.document(doc.getId());
-                            dR.delete();
+                        if (docTS != null && docTitle != null) {
+                            if (docTS.equals(ts) && docTitle.equals(title)) {
+                                dR = cR.document(doc.getId());
+                                dR.delete();
 
+                                // Delete images from storage
+                                storageReference = FirebaseStorage.getInstance().getReference(cUser.getUid());
+                                int index = 1;
+                                while (index < 4){
+                                    String imgTitle = docTitle + index;
+                                    StorageReference  ref = storageReference.child("postImages").child(imgTitle);
+                                    ref.delete();
+                                    index++;
+                                }
 
+                            }
                         }
+
                     }
                 }
 
@@ -222,13 +307,29 @@ public class EditPostActivity extends AppCompatActivity {
             imageView2.setImageURI(p.getUri2());
         }
 
+
         if (p.getUri3() != null){
+
             imageView3.setImageURI(p.getUri3());
         }
+
 
         if (p.getUri4() != null){
             imageView4.setImageURI(p.getUri4());
         }
+
+    }
+
+    // Method to validate the Date entry submitted by the user
+    private boolean validateDate(String d){
+
+        if (d.matches("([0-9]{2})/([0-9]{2})/([0-9]{4})")){
+            return true;
+        }
+        else {
+            return false;
+        }
+
     }
 
     // Method to retrieve the image uri string and return URI

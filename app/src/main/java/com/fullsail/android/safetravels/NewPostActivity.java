@@ -25,16 +25,24 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import com.fullsail.android.safetravels.objects.Post;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 public class NewPostActivity extends AppCompatActivity {
 
@@ -47,6 +55,7 @@ public class NewPostActivity extends AppCompatActivity {
     Uri uri1, uri2, uri3, uri4;
     Button post_Bttn;
     Button cancel_Post_Bttn;
+    StorageReference storageReference;
 
     Bitmap imageBitmap = null;
     FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -83,6 +92,8 @@ public class NewPostActivity extends AppCompatActivity {
 
         cancel_Post_Bttn = findViewById(R.id.cancel_Post_Bttn);
         cancel_Post_Bttn.setOnClickListener(cancelClick);
+
+        storageReference = FirebaseStorage.getInstance().getReference(currentUser.getUid());
     }
 
     // Activity Contracts
@@ -114,28 +125,29 @@ public class NewPostActivity extends AppCompatActivity {
             }
         }
 
-        saveAndDisplayImg(imageBitmap);
+        Uri imgUri = getImgUri(this, imageBitmap, currentUser.getUid());
+        saveAndDisplayImg(imgUri);
 
     }
 
     // saveAndDisplayImg Method
     // Method to determine next empty imageview and place the image.
-    private void saveAndDisplayImg(Bitmap imageBitmap) {
+    private void saveAndDisplayImg(Uri imgUri) {
         if (uri1 == null){
-            uri1 = getImgUri(this.getApplicationContext(), imageBitmap, currentUser.getUid());
-            post_Img_1.setImageURI(uri1);
+            uri1 = imgUri;
+            Picasso.get().load(uri1).into(post_Img_1);
         }
         else if(uri2 == null){
-            uri2 = getImgUri(this.getApplicationContext(), imageBitmap, currentUser.getUid());
-            post_Img_2.setImageURI(uri2);
+            uri2 = imgUri;
+            Picasso.get().load(uri2).into(post_Img_2);
         }
         else if(uri3 == null){
-            uri3 = getImgUri(this.getApplicationContext(), imageBitmap, currentUser.getUid());
-            post_Img_3.setImageURI(uri3);
+            uri3 = imgUri;
+            Picasso.get().load(uri3).into(post_Img_3);
         }
         else if(uri4 == null){
-            uri4 = getImgUri(this.getApplicationContext(), imageBitmap, currentUser.getUid());
-            post_Img_4.setImageURI(uri4);
+            uri4 = imgUri;
+            Picasso.get().load(uri4).into(post_Img_4);
         }
     }
 
@@ -152,47 +164,71 @@ public class NewPostActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
 
+            StorageReference reference = storageReference.child("postImages");
+
+
             // Check for null or empty fields
             if (!checkForEmptyFields()){
                 Post newUserPost = createPost();
 
-                // Add new post to blogPosts collection
-                db.collection("blogPosts")
-                        .document()
-                        .set(newUserPost)
-                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                Log.d(TAG, "DocumentSnapshot successfully written!");
-                            }
-                        })
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Log.w(TAG, "Error writing document", e);
-                            }
-                        });
+                if (newUserPost != null){
+                    if (newUserPost.getUri1() != null){
+                        StorageReference ref = reference.child(newUserPost.getTitle() + "1");
+                        ref.putFile(newUserPost.getUri1());
+                    }
+                    if (newUserPost.getUri2() != null){
+                        StorageReference ref = reference.child(newUserPost.getTitle() + "2");
+                        ref.putFile(newUserPost.getUri2());
+                    }
+                    if (newUserPost.getUri3() != null){
+                        StorageReference ref = reference.child(newUserPost.getTitle() + "3");
+                        ref.putFile(newUserPost.getUri3());
+                    }
+                    if (newUserPost.getUri4() != null){
+                        StorageReference ref = reference.child(newUserPost.getTitle() + "4");
+                        ref.putFile(newUserPost.getUri4());
+                    }
 
-                // Add new post to user's blogPosts collection
-                db.collection("users")
-                        .document(currentUser.getUid())
-                        .collection("posts")
-                        .document()
-                        .set(newUserPost)
-                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                Log.d(TAG, "DocumentSnapshot successfully written!");
-                            }
-                        })
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Log.w(TAG, "Error writing document", e);
-                            }
-                        });
+                    // Add new post to blogPosts collection
+                    db.collection("blogPosts")
+                            .document()
+                            .set(newUserPost)
+                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    Log.d(TAG, "DocumentSnapshot successfully written!");
 
-                backToHome();
+                                }
+                            })
+                            .addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Log.w(TAG, "Error writing document", e);
+                                }
+                            });
+
+                    // Add new post to user's blogPosts collection
+                    db.collection("users")
+                            .document(currentUser.getUid())
+                            .collection("posts")
+                            .document()
+                            .set(newUserPost)
+                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    Log.d(TAG, "DocumentSnapshot successfully written!");
+                                }
+                            })
+                            .addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Log.w(TAG, "Error writing document", e);
+                                }
+                            });
+
+                    backToHome();
+                }
+
             }
             else{
                 Toast.makeText(NewPostActivity.this, "All fields must be filled out", Toast.LENGTH_SHORT).show();
@@ -206,7 +242,7 @@ public class NewPostActivity extends AppCompatActivity {
         String uid = currentUser.getUid();
         String title = post_Title_ETV.getText().toString();
         String post = post_ETV.getText().toString();
-        String date = date_ETV.getText().toString() ;
+        String date = date_ETV.getText().toString();
         String location = location_ETV.getText().toString();
         String username = currentUser.getDisplayName();
         Uri imgUri = null;
@@ -214,31 +250,39 @@ public class NewPostActivity extends AppCompatActivity {
         // Create timestamp for the date user posted the entry
         Date dateTS = new Date();
         Timestamp tS = new Timestamp(dateTS.getTime());
-        String datePosted = tS.toString() ;
+        String datePosted = tS.toString();
         Post newUserPost;
 
-        // TODO: Add images to post
-        if (currentUser.getPhotoUrl() != null){
-            imgUri = currentUser.getPhotoUrl();
-        }
+        if (validateDate(date)){
 
-        if (uri1 == null){
-            newUserPost = new Post(uid, title, post, date, location, username, datePosted, imgUri, null, null, null, null);
-        }
-        else if(uri2 == null){
-            newUserPost = new Post(uid, title, post, date, location, username, datePosted, imgUri, uri1, null, null, null);
-        }
-        else if(uri3 == null){
-            newUserPost = new Post(uid, title, post, date, location, username, datePosted, imgUri, uri1, uri2, null, null);
-        }
-        else if(uri4 == null){
-            newUserPost = new Post(uid, title, post, date, location, username, datePosted, imgUri, uri1, uri2, uri3, null);
+            // TODO: Add images to post
+            if (currentUser.getPhotoUrl() != null){
+                imgUri = currentUser.getPhotoUrl();
+            }
+
+            if (uri1 == null){
+                newUserPost = new Post(uid, title, post, date, location, username, datePosted, imgUri, null, null, null, null);
+            }
+            else if(uri2 == null){
+                newUserPost = new Post(uid, title, post, date, location, username, datePosted, imgUri, uri1, null, null, null);
+            }
+            else if(uri3 == null){
+                newUserPost = new Post(uid, title, post, date, location, username, datePosted, imgUri, uri1, uri2, null, null);
+            }
+            else if(uri4 == null){
+                newUserPost = new Post(uid, title, post, date, location, username, datePosted, imgUri, uri1, uri2, uri3, null);
+            }
+            else {
+                newUserPost = new Post(uid, title, post, date, location, username, datePosted, imgUri, uri1, uri2, uri3, uri4);
+            }
+
+            return newUserPost;
         }
         else {
-            newUserPost = new Post(uid, title, post, date, location, username, datePosted, imgUri, uri1, uri2, uri3, uri4);
+            Toast.makeText(this, "Please enter a valid date ie. 01/01/2022", Toast.LENGTH_SHORT).show();
+            return null;
         }
 
-        return newUserPost;
     }
 
     // OnClickListener for when the user clicks the Img View button.
@@ -310,6 +354,18 @@ public class NewPostActivity extends AppCompatActivity {
             return true;
         }
         else return date_ETV.getText().toString().isEmpty() || date_ETV.getText().toString().trim().isEmpty();
+    }
+
+    // Method to validate the Date entry submitted by the user
+    private boolean validateDate(String d){
+
+        if (d.matches("([0-9]{2})/([0-9]{2})/([0-9]{4})")){
+            return true;
+        }
+        else {
+            return false;
+        }
+
     }
 
     // Intent method to Send the user back to home screen

@@ -26,7 +26,11 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -138,6 +142,8 @@ public class ProfileActivity extends AppCompatActivity {
 
                             Post newUserPost;
                             String date = (String) doc.get("date");
+
+
                             String datePosted = (String) doc.get("datePosted");
                             String location = (String) doc.get("location");
                             String post = (String) doc.get("post");

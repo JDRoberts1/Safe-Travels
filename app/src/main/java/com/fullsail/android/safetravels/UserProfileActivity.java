@@ -25,6 +25,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
@@ -35,7 +36,11 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -160,27 +165,6 @@ public class UserProfileActivity extends AppCompatActivity {
         dR = db.collection("users").document(id);
         dR.delete();
 
-        dR = db.collection("userList").document(id);
-
-        cR = dR.collection("posts");
-        cR.addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                if (error != null) {
-                    Log.w(TAG, "Listen failed.", error);
-                    return;
-                }
-
-                for (QueryDocumentSnapshot doc : value){
-                    String docId = doc.getId();
-                    DocumentReference dr = cR.document(docId);
-                    dr.delete();
-                }
-            }
-        });
-
-        dR.delete();
-
         cR = db.collection("blogPosts");
         cR.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
@@ -269,7 +253,7 @@ public class UserProfileActivity extends AppCompatActivity {
     private void savePosts(){
         // Get User List collection
         db = FirebaseFirestore.getInstance();
-        cR = db.collection("users").document(cUser.getUid()).collection("posts");
+        cR = db.collection("blogPosts");
 
         cR.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
@@ -281,14 +265,18 @@ public class UserProfileActivity extends AppCompatActivity {
 
                 for (QueryDocumentSnapshot doc : value) {
 
-                    if (!doc.getId().equals("sample")) {
+                    String uId = doc.getString("uid");
+
+                    if (uId != null && uId.equals(cUser.getUid())) {
 
                         Post newUserPost;
                         String date = (String) doc.get("date");
+                        Log.i(TAG, "onEvent: " + date);
+
                         String datePosted = (String) doc.get("datePosted");
                         String location = (String) doc.get("location");
                         String post = (String) doc.get("post");
-                        String postId = (String) doc.getId();
+                        String postId = doc.getId();
 
                         String uriString = (String) doc.get("profileImgUri");
                         Uri profileImgUri = null;
@@ -334,7 +322,7 @@ public class UserProfileActivity extends AppCompatActivity {
                         }
 
                         // Add post ID
-                        newUserPost.setPostId(doc.getId());
+                        newUserPost.setPostId(postId);
 
                         // Add Post object to ArrList
                         posts.add(newUserPost);

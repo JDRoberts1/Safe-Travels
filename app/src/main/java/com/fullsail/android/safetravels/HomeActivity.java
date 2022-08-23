@@ -29,7 +29,11 @@ import com.google.firebase.storage.StorageReference;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -60,9 +64,7 @@ public class HomeActivity extends AppCompatActivity{
         iv = findViewById(R.id.profile_img_main);
         navView = findViewById(R.id.navView);
 
-        storageReference = FirebaseStorage.getInstance().getReference(user.getUid());
-
-        //savePosts();
+        savePosts();
         displayInfo();
         setUpBottomNav();
     }
@@ -95,6 +97,7 @@ public class HomeActivity extends AppCompatActivity{
             welcomeLabel.setText(welcomeString);
         }
 
+        storageReference = FirebaseStorage.getInstance().getReference(user.getUid());
         StorageReference imgReference = storageReference.child(user.getUid());
         final long MEGABYTE = 1024 * 1024;
         imgReference.getBytes(MEGABYTE)
@@ -108,7 +111,6 @@ public class HomeActivity extends AppCompatActivity{
                         }
                     }
                 });
-
 
     }
 

@@ -4,6 +4,11 @@ import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 public class Post implements Parcelable {
 
     String uid;
@@ -30,6 +35,7 @@ public class Post implements Parcelable {
         this.uri3 = uri3;
         this.uri4 = uri4;
     }
+
 
     protected Post(Parcel in) {
         uid = in.readString();
@@ -113,6 +119,7 @@ public class Post implements Parcelable {
         return datePosted;
     }
 
+
     @Override
     public int describeContents() {
         return 0;
@@ -120,7 +127,6 @@ public class Post implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-
         dest.writeString(uid);
         dest.writeString(title);
         dest.writeString(post);
@@ -135,5 +141,4 @@ public class Post implements Parcelable {
         dest.writeParcelable(uri4, flags);
         dest.writeString(postId);
     }
-
 }
