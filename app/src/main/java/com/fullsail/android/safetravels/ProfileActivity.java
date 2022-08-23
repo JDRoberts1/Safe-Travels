@@ -11,6 +11,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -18,10 +20,12 @@ import com.fullsail.android.safetravels.adapters.HomePostListAdapter;
 import com.fullsail.android.safetravels.adapters.PostListAdapter;
 import com.fullsail.android.safetravels.objects.Post;
 import com.fullsail.android.safetravels.objects.User;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -37,7 +41,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -52,6 +58,11 @@ public class ProfileActivity extends AppCompatActivity {
     FirebaseFirestore db;
     CollectionReference cR;
     User user;
+    ImageButton addBttn;
+    ImageButton removeBttn;
+    ImageButton messageBttn;
+    FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    FirebaseUser currentUser = mAuth.getCurrentUser();
 
     ArrayList<Post> posts = new ArrayList<>();
 
@@ -65,10 +76,18 @@ public class ProfileActivity extends AppCompatActivity {
             user = userIntent.getParcelableExtra(TAG);
         }
 
-
         usernameLabel = findViewById(R.id.username_Profile_Label);
         iv = findViewById(R.id.profile_img_main);
         userBlogRCV = findViewById(R.id.user_Posts_LV);
+
+        addBttn = findViewById(R.id.add_Bttn);
+        addBttn.setOnClickListener(addClick);
+
+        removeBttn = findViewById(R.id.remove_Bttn);
+        removeBttn.setOnClickListener(removeClick);
+
+        messageBttn = findViewById(R.id.message_Bttn);
+        messageBttn.setOnClickListener(messageClick);
 
         navView = findViewById(R.id.navView);
         setUpBottomNav();
@@ -103,7 +122,56 @@ public class ProfileActivity extends AppCompatActivity {
                         }
                     });
         }
+        else{
+            iv.setImageResource(R.drawable.default_img);
+        }
     }
+
+    View.OnClickListener addClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+
+            // Add request to each users pending request
+            Map<String, Object> pendingFriend = new HashMap<>();
+            pendingFriend.put("username", currentUser.getDisplayName());
+            pendingFriend.put("userId", currentUser.getUid());
+            pendingFriend.put("img", currentUser.getPhotoUrl());
+
+            db.collection("users")
+                    .document(user.getUid())
+                    .collection("pendingFriends")
+                    .document(currentUser.getUid())
+                    .set(pendingFriend)
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void unused) {
+                            Log.i(TAG, "onSuccess: ");
+                        }
+                    })
+            .addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.i(TAG, "onFailure: " + e.getLocalizedMessage());
+                }
+            });
+
+        }
+    };
+
+    View.OnClickListener removeClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+
+        }
+    };
+
+    // TODO:: Set up message action
+    View.OnClickListener messageClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+
+        }
+    };
 
     public void setUpBottomNav(){
         navView.setSelectedItemId(R.id.navigation_profile);
@@ -140,7 +208,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     }
 
-    // TODO: Set up Blog Post Recycle View (Display Current users Blog Posts)
+    // Set up Blog Post Recycle View (Display Current users Blog Posts)
     private void savePosts(){
         // Get User Post collection
         db = FirebaseFirestore.getInstance();
