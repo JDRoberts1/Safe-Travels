@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/user_ListView_Img"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="24dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/default_img"
+        app:layout_constraintEnd_toStartOf="@+id/userName_LV_Label"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="ImageContrastCheck" />
+
+    <TextView
+        android:id="@+id/userName_LV_Label"
+        android:layout_width="201dp"
+        android:layout_height="61dp"
+        android:gravity="center"
+        android:textAlignment="center"
+        android:textColor="#546E7A"
+        app:layout_constraintEnd_toStartOf="@+id/acceptBttn"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageButton
+        android:id="@+id/acceptBttn"
+        android:layout_width="59dp"
+        android:layout_height="52dp"
+        android:layout_marginTop="8dp"
+        android:backgroundTint="#03FFFFFF"
+        android:contentDescription="@string/action_accept_button"
+        app:layout_constraintEnd_toStartOf="@+id/declineBttn"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_baseline_person_add_alt_1_24"
+        tools:ignore="ImageContrastCheck,RedundantDescriptionCheck" />
+
+    <ImageButton
+        android:id="@+id/declineBttn"
+        android:layout_width="59dp"
+        android:layout_height="52dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="24dp"
+        android:backgroundTint="#00FFFFFF"
+        android:contentDescription="@string/action_decline_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_baseline_person_remove_alt_1_24"
+        tools:ignore="ImageContrastCheck,RedundantDescriptionCheck" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

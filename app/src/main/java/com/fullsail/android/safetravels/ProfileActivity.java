@@ -63,6 +63,8 @@ public class ProfileActivity extends AppCompatActivity {
     ImageButton messageBttn;
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
     FirebaseUser currentUser = mAuth.getCurrentUser();
+    boolean friends = false;
+    boolean pending = false;
 
     ArrayList<Post> posts = new ArrayList<>();
 
@@ -97,6 +99,9 @@ public class ProfileActivity extends AppCompatActivity {
 
     // Method to display selected users profile information
     private void displayInfo(){
+        pendingCheck();
+        friendCheck();
+
         if (user != null) {
             String profileString = user.getUsername() + " Profile";
             usernameLabel.setText(profileString);
@@ -125,6 +130,8 @@ public class ProfileActivity extends AppCompatActivity {
         else{
             iv.setImageResource(R.drawable.default_img);
         }
+
+
     }
 
     View.OnClickListener addClick = new View.OnClickListener() {
@@ -146,6 +153,7 @@ public class ProfileActivity extends AppCompatActivity {
                         @Override
                         public void onSuccess(Void unused) {
                             Log.i(TAG, "onSuccess: ");
+                            addBttn.setVisibility(View.INVISIBLE);
                         }
                     })
             .addOnFailureListener(new OnFailureListener() {
@@ -161,7 +169,14 @@ public class ProfileActivity extends AppCompatActivity {
     View.OnClickListener removeClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            db.collection("users")
+                    .document(user.getUid())
+                    .collection("friends")
+                    .document(currentUser.getUid())
+                    .delete();
 
+            removeBttn.setVisibility(View.INVISIBLE);
+            addBttn.setVisibility(View.VISIBLE);
         }
     };
 
@@ -294,9 +309,73 @@ public class ProfileActivity extends AppCompatActivity {
         });
     }
 
+    // Display selected users posts
     private void displayPosts() {
         adapter = new HomePostListAdapter(this.getApplicationContext(),R.layout.user_listview_item ,posts);
         userBlogRCV.setAdapter(adapter);
         Log.i(TAG, "displayPosts: " + posts.size());
     }
+
+    // Determine button view
+    // Method to check if current user and selected user are friends
+    private void friendCheck(){
+        db.collection("users")
+                .document(currentUser.getUid())
+                .collection("friends")
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                        if (error != null) {
+                            Log.w(TAG, "Listen failed.", error);
+                            return;
+                        }
+
+                        for (QueryDocumentSnapshot doc : value){
+                            String uid = (String) doc.get("uid");
+                            if (uid != null && uid.equals(user.getUid())) {
+                                addBttn.setVisibility(View.INVISIBLE);
+                                removeBttn.setVisibility(View.VISIBLE);
+                                Log.i(TAG, "onEvent: FOUND FRIEND");
+                            }
+                            else {
+                                Log.i(TAG, "onEvent: NO FOUND FRIEND");
+                            }
+                        }
+
+                    }
+                });
+
+    }
+
+    // Method to check if current user and selected user have a pending request
+    private void pendingCheck(){
+        db.collection("users")
+                .document(user.getUid())
+                .collection("pendingFriends")
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                        if (error != null) {
+                            Log.w(TAG, "Listen failed.", error);
+                            return;
+                        }
+
+                        for (QueryDocumentSnapshot doc : value){
+                            String uid = (String) doc.get("userId");
+                            if (uid != null && uid.equals(currentUser.getUid())) {
+                                pending = true;
+                                Log.i(TAG, "onEvent: FOUND PENDING");
+                                addBttn.setVisibility(View.INVISIBLE);
+                            }
+                            else {
+                                pending = false;
+                                Log.i(TAG, "onEvent: NO FOUND PENDING");
+                            }
+                        }
+
+                    }
+                });
+
+    }
+
 }

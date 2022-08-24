@@ -83,7 +83,6 @@ public class HomeActivity extends AppCompatActivity{
         adapter = new HomePostListAdapter(this.getApplicationContext(), R.layout.post_rcv_item, posts);
         blogLV.setAdapter(adapter);
         blogLV.setOnItemClickListener(itemClick);
-        Log.i(TAG, "displayPosts: " + posts.size());
     }
 
     // Method to display current users profile information
