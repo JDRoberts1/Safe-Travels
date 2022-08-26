@@ -25,6 +25,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -132,9 +133,7 @@ public class EditProfileActivity extends AppCompatActivity {
             uName.setText(user.getDisplayName());
         }
 
-        if (user.getPhotoUrl() != null) {
-            profileImage.setImageURI(user.getPhotoUrl());
-        }
+
     }
 
     // Intent to send the user back to Log In Screen
@@ -189,7 +188,9 @@ public class EditProfileActivity extends AppCompatActivity {
 
 
                         Log.d(TAG, "User email address updated.");
-                        logOutIntent();
+                        FirebaseAuth.getInstance().signOut();
+                        Intent logoutIntent = new Intent(EditProfileActivity.this, LoginActivity.class);
+                        startActivity(logoutIntent);
                     }
                 })
                 .addOnFailureListener(e -> errorLabel.setText(e.getLocalizedMessage()));
@@ -288,32 +289,25 @@ public class EditProfileActivity extends AppCompatActivity {
 
                 // If username is different, Update the username
                 if (!passwordETV.getText().toString().isEmpty()){
+                    FirebaseUser u = FirebaseAuth.getInstance().getCurrentUser();
                     String newPassword = passwordETV.getText().toString();
-                    user.updatePassword(newPassword)
-                            .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    if (task.isSuccessful()) {
-                                        Map<String, Object> pw = new HashMap<>();
-                                        pw.put("password", newPassword);
-
-                                        db.collection("users")
-                                                .document(user.getUid())
-                                                .set(pw, SetOptions.merge() );
-
-
-                                        Log.d(TAG, "User password updated.");
-                                        logOutIntent();
+                    if (u != null) {
+                        u.updatePassword(newPassword)
+                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        FirebaseAuth.getInstance().signOut();
+                                        Intent logoutIntent = new Intent(EditProfileActivity.this, LoginActivity.class);
+                                        startActivity(logoutIntent);
                                     }
-                                }
-                            });
+                                })
+                                .addOnFailureListener(e -> errorLabel.setText(e.getLocalizedMessage()));;
+
+                    }
                 }
 
-                errorLabel.setText(R.string.prompt_profile_updated);
 
-            }
-            else {
-                errorLabel.setText(R.string.warning_empty_field);
+
             }
 
         }

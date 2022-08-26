@@ -7,6 +7,19 @@
     tools:layout_editor_absoluteX="0dp"
     tools:layout_editor_absoluteY="-27dp">
 
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="24dp"
+        android:text="@string/label_password_req"
+        android:textColor="#546E7A"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.777"
+        app:layout_constraintStart_toEndOf="@+id/password_register_label"
+        app:layout_constraintTop_toBottomOf="@+id/password_Edit_ETV" />
+
     <FrameLayout
         android:id="@+id/frameLayout"
         android:layout_width="169dp"
@@ -158,11 +171,11 @@
         style="@style/BttnStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="28dp"
         android:layout_marginEnd="60dp"
         android:text="@string/action_update_profile"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/password_Edit_ETV"
+        app:layout_constraintTop_toBottomOf="@+id/textView3"
         tools:ignore="TextContrastCheck" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -35,7 +36,16 @@ public class PendingFriendsListAdapter extends ArrayAdapter<User> {
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
     FirebaseUser cUser = mAuth.getCurrentUser();
     StorageReference storageReference = FirebaseStorage.getInstance().getReference(cUser.getUid());
+    buttonListener buttonListener;
 
+    public interface buttonListener{
+        public void onAcceptClick(int position);
+        public void onDeclineClick(int position);
+    }
+
+    public void setButtonListener(buttonListener listener){
+        this.buttonListener = listener;
+    }
 
     public PendingFriendsListAdapter(@NonNull Context context, int resource, @NonNull ArrayList<User> users) {
         super(context, resource, users);
@@ -100,7 +110,22 @@ public class PendingFriendsListAdapter extends ArrayAdapter<User> {
                             }
                         }
                     });
+
+            vh.addBttn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    buttonListener.onAcceptClick(position);
+                }
+            });
+
+            vh.declineBttn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    buttonListener.onDeclineClick(position);
+                }
+            });
         }
+
 
         return convertView;
     }
@@ -108,10 +133,14 @@ public class PendingFriendsListAdapter extends ArrayAdapter<User> {
     static class ViewHolder{
         TextView _usernameLabel;
         ImageView _userImg;
+        Button addBttn;
+        Button declineBttn;
 
         public ViewHolder(View layout){
             _usernameLabel = layout.findViewById(R.id.userName_LV_Label);
             _userImg = layout.findViewById(R.id.user_ListView_Img);
+            addBttn = layout.findViewById(R.id.accept_bttn);
+            declineBttn = layout.findViewById(R.id.decline_Bttn);
         }
     }
 }

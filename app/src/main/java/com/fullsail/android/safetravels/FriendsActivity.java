@@ -5,6 +5,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -12,7 +14,6 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.fullsail.android.safetravels.adapters.HomePostListAdapter;
 import com.fullsail.android.safetravels.adapters.PendingFriendsListAdapter;
 import com.fullsail.android.safetravels.adapters.UserListAdapter;
 import com.fullsail.android.safetravels.objects.User;
@@ -20,6 +21,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -27,8 +29,9 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Map;
 
-public class FriendsActivity extends AppCompatActivity {
+public class FriendsActivity extends AppCompatActivity implements PendingFriendsListAdapter.buttonListener {
 
     private static final String TAG = "FriendsActivity";
     ImageButton addBttn;
@@ -39,8 +42,11 @@ public class FriendsActivity extends AppCompatActivity {
     ListView friendsLV;
     FirebaseFirestore db = FirebaseFirestore.getInstance();;;
     CollectionReference cR;
+    DocumentReference dR;
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
     FirebaseUser currentUser = mAuth.getCurrentUser();
+    PendingFriendsListAdapter pendingFriendsListAdapter;
+    UserListAdapter userListAdapter;
 
     ArrayList<User> pendingFriends = new ArrayList<>();
     ArrayList<User> friends = new ArrayList<>();
@@ -49,6 +55,12 @@ public class FriendsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_friends);
+
+        pendingFriendsLV = findViewById(R.id.pending_Friends_LV);
+
+
+        friendsLV = findViewById(R.id.friends_LV);
+
 
         addBttn = findViewById(R.id.add_Friends_Button);
         addBttn.setOnClickListener(addClick);
@@ -59,6 +71,7 @@ public class FriendsActivity extends AppCompatActivity {
         friendCheck();
         pendingCheck();
         setUpBottomNav();
+
 
     }
 
@@ -114,24 +127,21 @@ public class FriendsActivity extends AppCompatActivity {
 
                 if (value != null){
                     for (QueryDocumentSnapshot doc : value){
-                        String uid = (String) doc.get("userId");
+                        String uid = (String) doc.get("uid");
                         if (uid!= null){
                             String username = (String) doc.get("username");
-                            String img = (String) doc.get("img");
+                            String img = (String) doc.get("uri");
 
                             User friend = new User(username, uid, Uri.parse(img));
                             friends.add(friend);
                         }
 
-                       if (!friends.isEmpty()){
-                           String count = String.valueOf(friends.size());
-                           friendCount.setText(count);
-                       }
                     }
                 }
+
+                updateFriendsCount();
             }
         });
-
 
     }
 
@@ -159,27 +169,97 @@ public class FriendsActivity extends AppCompatActivity {
                         User friend = new User(username, uid, Uri.parse(img));
                         pendingFriends.add(friend);
                     }
-                    String count = "(" + String.valueOf(pendingFriends.size()) + ")";
-                    pendingCount.setText( count );
                 }
+
+                updatePendingFriendsCount();
             }
         });
 
-        setUpPendingList();
-
     }
 
     // method to set up the Listview to display pending friend requests
-    public void setUpPendingList(){
-        pendingFriendsLV = findViewById(R.id.pending_Friends_LV);
-        PendingFriendsListAdapter adapter = new PendingFriendsListAdapter(this.getApplicationContext(), R.layout.friend_listview_item, pendingFriends);
-        pendingFriendsLV.setAdapter(adapter);
+    public void updatePendingFriendsCount(){
+        pendingFriendsListAdapter = new PendingFriendsListAdapter(this.getApplicationContext(), R.layout.friend_listview_item, pendingFriends);
+        pendingFriendsListAdapter.setButtonListener(this);
+        pendingFriendsLV.setAdapter(pendingFriendsListAdapter);
+        String count = "(" + String.valueOf(pendingFriends.size()) + ")";
+        pendingCount.setText( count );
     }
 
     // method to set up the Listview to display pending friend requests
-    public void setUpFriendList(){
-        friendsLV = findViewById(R.id.friends_LV);
-        UserListAdapter adapter = new UserListAdapter(this.getApplicationContext(), R.layout.post_rcv_item, friends);
-        pendingFriendsLV.setAdapter(adapter);
+    public void updateFriendsCount(){
+        userListAdapter = new UserListAdapter(this.getApplicationContext(), R.layout.post_rcv_item, friends);
+        friendsLV.setAdapter(userListAdapter);
+
+        if (!friends.isEmpty()){
+            String count = String.valueOf(friends.size());
+            friendCount.setText(count);
+        }
+
+    }
+
+    public void removeUser(User friend){
+        // Remove user from pending list
+        pendingFriends.remove(friend);
+
+        // Remove user from collection
+        cR = db.collection("users")
+                .document(currentUser.getUid())
+                .collection("pendingFriends");
+
+        dR = cR.document(friend.getUid());
+
+        dR.delete();
+
+        // Refresh Listview
+        // Update pending count
+        pendingCheck();
+
+    }
+
+    public void addToOtherUserFriend(User friend){
+       User newFriend = new User(currentUser.getDisplayName(), currentUser.getUid(), currentUser.getPhotoUrl());
+
+        // Add to other user Friends collection
+        cR = db.collection("users")
+                .document(friend.getUid())
+                .collection("friends");
+
+        cR.add(newFriend);
+    }
+
+    public void addToFriends(User friend){
+        // Add to current user's Friends collection
+        cR = db.collection("users")
+                .document(currentUser.getUid())
+                .collection("friends");
+
+        cR.add(friend);
+
+        // Add user to friends list
+        friends.add(friend);
+
+        // Update Listview
+        // Update friend count
+        friendCheck();
+
+
+    }
+
+    // onClickListener for Accept Bttn
+    @Override
+    public void onAcceptClick(int position) {
+        User newFriend = pendingFriends.get(position);
+        removeUser(newFriend);
+        addToFriends(newFriend);
+        addToOtherUserFriend(newFriend);
+    }
+
+    // onClickListener for Decline Bttn
+    @Override
+    public void onDeclineClick(int position) {
+        User declineFriend = pendingFriends.get(position);
+        // Remove user from pending list
+        removeUser(declineFriend);
     }
 }
