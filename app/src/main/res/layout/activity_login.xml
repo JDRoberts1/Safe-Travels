@@ -31,7 +31,7 @@
         style="@style/Button_TV_Style"
         android:layout_width="75dp"
         android:layout_height="35dp"
-        android:layout_marginTop="36dp"
+        android:layout_marginTop="16dp"
         android:clickable="true"
         android:focusable="true"
         android:minHeight="48dp"
@@ -41,7 +41,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/sign_in_bttn"
-        app:layout_constraintVertical_bias="0.026"
+        app:layout_constraintVertical_bias="0.0"
         tools:ignore="TextContrastCheck,TouchTargetSizeCheck" />
 
     <TextView

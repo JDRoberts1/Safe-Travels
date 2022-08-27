@@ -18,7 +18,6 @@ public class ResetPasswordActivity extends AppCompatActivity {
     Button sendResetLinkBttn;
     EditText email;
     TextView errorLabel;
-    FirebaseAuth auth = FirebaseAuth.getInstance();
 
 
     @Override
@@ -38,6 +37,7 @@ public class ResetPasswordActivity extends AppCompatActivity {
         public void onClick(View v) {
 
             String userEmail = email.getText().toString();
+            FirebaseAuth auth = FirebaseAuth.getInstance();
 
             if (userEmail.isEmpty() || userEmail.trim().isEmpty()){
 
