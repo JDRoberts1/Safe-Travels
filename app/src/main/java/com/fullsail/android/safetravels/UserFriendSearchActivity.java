@@ -130,10 +130,10 @@ public class UserFriendSearchActivity extends AppCompatActivity {
                             u = new User(username, id, null);
                         }
                         users.add(u);
-                        adpt.notifyDataSetChanged();
                         Log.i(TAG, "Snapshot: " + users.size());
                     }
                 }
+                adpt.notifyDataSetChanged();
 
             }
         });
