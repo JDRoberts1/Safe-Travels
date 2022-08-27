@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -41,8 +42,10 @@ import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -50,6 +53,7 @@ public class EditProfileActivity extends AppCompatActivity {
 
     private static final String TAG = "EditProfileActivity";
     boolean updatedImg = false;
+    boolean logOutNeeded = false;
     Bitmap imageBitmap = null;
     static final int REQUEST_IMAGE_CAPTURE = 1;
     static final int REQUEST_IMAGE_GALLERY = 2;
@@ -101,14 +105,17 @@ public class EditProfileActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            Bundle extras = data.getExtras();
-            imageBitmap = (Bitmap) extras.get("data");
+            Bundle extras;
+            if (data != null) {
+                extras = data.getExtras();
+                imageBitmap = (Bitmap) extras.get("data");
+            }
         }
         else if (requestCode == REQUEST_IMAGE_GALLERY && resultCode == RESULT_OK){
 
             if (data != null) {
                 try {
-                    imageBitmap = (Bitmap) MediaStore.Images.Media.getBitmap(getApplicationContext().getContentResolver(), data.getData());
+                    imageBitmap = MediaStore.Images.Media.getBitmap(getApplicationContext().getContentResolver(), data.getData());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -133,14 +140,22 @@ public class EditProfileActivity extends AppCompatActivity {
             uName.setText(user.getDisplayName());
         }
 
+        storageReference = FirebaseStorage.getInstance().getReference(user.getUid());
+        StorageReference imgReference = storageReference.child(user.getUid());
+        final long MEGABYTE = 1024 * 1024;
+        imgReference.getBytes(MEGABYTE)
+                .addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                    @Override
+                    public void onSuccess(byte[] bytes) {
+                        if (bytes.length > 0){
+                            InputStream is = new ByteArrayInputStream(bytes);
+                            Bitmap bmp = BitmapFactory.decodeStream(is);
+                            profileImage.setImageBitmap(bmp);
+                        }
+                    }
+                });
 
-    }
 
-    // Intent to send the user back to Log In Screen
-    private void logOutIntent(){
-        FirebaseAuth.getInstance().signOut();
-        Intent logInIntent = new Intent(EditProfileActivity.this, LoginActivity.class);
-        startActivity(logInIntent);
     }
 
     private void backToProfile(){
@@ -176,6 +191,7 @@ public class EditProfileActivity extends AppCompatActivity {
 
     // Method to update users email address
     private void updateEmail(String newEmail) {
+
         user.updateEmail(newEmail)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
@@ -186,11 +202,6 @@ public class EditProfileActivity extends AppCompatActivity {
                                 .document(user.getUid())
                                 .set(data, SetOptions.merge() );
 
-
-                        Log.d(TAG, "User email address updated.");
-                        FirebaseAuth.getInstance().signOut();
-                        Intent logoutIntent = new Intent(EditProfileActivity.this, LoginActivity.class);
-                        startActivity(logoutIntent);
                     }
                 })
                 .addOnFailureListener(e -> errorLabel.setText(e.getLocalizedMessage()));
@@ -223,14 +234,8 @@ public class EditProfileActivity extends AppCompatActivity {
             // Check for empty fields
             if (nullCheck(newEmail, newUserName)){
 
-                // If the user email has been changed update the email
-                if (!user.getEmail().equals(newEmail)){
-
-                    updateEmail(newEmail);
-                }
-
                 // If username is different, Update the username
-                if (!user.getDisplayName().equals(newUserName)){
+                if (user.getDisplayName() != null && !user.getDisplayName().equals(newUserName)){
 
                     UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
                             .setDisplayName(newUserName)
@@ -246,11 +251,11 @@ public class EditProfileActivity extends AppCompatActivity {
                                             .document(user.getUid())
                                             .set(data, SetOptions.merge() );
 
-                                    // TODO: UPDATE USERNAME IN BLOG POSTS
+                                    // UPDATE USERNAME IN BLOG POSTS
                                     updateBlogPosts(newUserName);
+                                    logOutNeeded = false;
 
                                     Log.d(TAG, "User profile updated.");
-                                    backToProfile();
 
                                 }
                             })
@@ -280,38 +285,58 @@ public class EditProfileActivity extends AppCompatActivity {
 
                                     StorageReference reference = storageReference.child(user.getUid());
                                     reference.putFile(imgUri);
+                                    logOutNeeded = false;
                                 }
 
-                                backToProfile();
                             })
                             .addOnFailureListener(e -> errorLabel.setText(e.getLocalizedMessage()));
                 }
 
-                // If username is different, Update the username
-                if (!passwordETV.getText().toString().isEmpty()){
-                    FirebaseUser u = FirebaseAuth.getInstance().getCurrentUser();
-                    String newPassword = passwordETV.getText().toString();
-                    if (u != null) {
-                        u.updatePassword(newPassword)
-                                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
-                                        FirebaseAuth.getInstance().signOut();
-                                        Intent logoutIntent = new Intent(EditProfileActivity.this, LoginActivity.class);
-                                        startActivity(logoutIntent);
-                                    }
-                                })
-                                .addOnFailureListener(e -> errorLabel.setText(e.getLocalizedMessage()));;
+                // If the user email has been changed update the email
+                if (user.getEmail() != null && !user.getEmail().equals(newEmail)){
 
-                    }
+                    updateEmail(newEmail);
+                    logOutNeeded = true;
+
                 }
 
+                // If username is different, Update the username
+                if (!passwordETV.getText().toString().isEmpty()){
+                    String newPassword = passwordETV.getText().toString();
+                    updatePassword(newPassword);
+                    logOutNeeded = true;
+                }
 
+                if (!logOutNeeded){
+                    backToProfile();
+                }
+                else{
+                    FirebaseAuth.getInstance().signOut();
+                    Intent logoutIntent = new Intent(EditProfileActivity.this, LoginActivity.class);
+                    startActivity(logoutIntent);
+                }
 
+            }
+            else {
+                errorLabel.setText(R.string.warning_empty_field);
             }
 
         }
     };
+
+    private void updatePassword(String newPassword) {
+        FirebaseUser u = FirebaseAuth.getInstance().getCurrentUser();
+        if (u != null) {
+            u.updatePassword(newPassword)
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            logOutNeeded = true;
+                        }
+                    })
+                    .addOnFailureListener(e -> errorLabel.setText(e.getLocalizedMessage()));
+        }
+    }
 
     private void updateBlogPosts(String newUserName) {
         // Get User List collection
@@ -326,12 +351,14 @@ public class EditProfileActivity extends AppCompatActivity {
                     return;
                 }
 
-                for (QueryDocumentSnapshot doc : value) {
-                    String uId = doc.getString("uid");
+                if (value != null) {
+                    for (QueryDocumentSnapshot doc : value) {
+                        String uId = doc.getString("uid");
 
-                    if (uId != null && uId.equals(user.getUid())) {
-                        DocumentReference dR = db.collection("blogPosts").document(doc.getId());
-                        dR.update("username", user.getDisplayName());
+                        if (uId != null && uId.equals(user.getUid())) {
+                            DocumentReference dR = db.collection("blogPosts").document(doc.getId());
+                            dR.update("username", newUserName);
+                        }
                     }
                 }
             }

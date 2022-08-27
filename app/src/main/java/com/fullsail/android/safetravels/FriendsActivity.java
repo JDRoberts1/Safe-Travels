@@ -137,11 +137,12 @@ public class FriendsActivity extends AppCompatActivity implements PendingFriends
                         }
 
                     }
-                }
 
-                updateFriendsCount();
+                    updateFriendsCount();
+                }
             }
         });
+
 
     }
 
@@ -213,7 +214,7 @@ public class FriendsActivity extends AppCompatActivity implements PendingFriends
 
         // Refresh Listview
         // Update pending count
-        pendingCheck();
+        pendingFriendsListAdapter.notifyDataSetChanged();
 
     }
 
@@ -241,8 +242,7 @@ public class FriendsActivity extends AppCompatActivity implements PendingFriends
 
         // Update Listview
         // Update friend count
-        friendCheck();
-
+        userListAdapter.notifyDataSetChanged();
 
     }
 
@@ -253,6 +253,8 @@ public class FriendsActivity extends AppCompatActivity implements PendingFriends
         removeUser(newFriend);
         addToFriends(newFriend);
         addToOtherUserFriend(newFriend);
+        updateFriendsCount();
+        updatePendingFriendsCount();
     }
 
     // onClickListener for Decline Bttn
@@ -261,5 +263,6 @@ public class FriendsActivity extends AppCompatActivity implements PendingFriends
         User declineFriend = pendingFriends.get(position);
         // Remove user from pending list
         removeUser(declineFriend);
+        updateFriendsCount();
     }
 }
