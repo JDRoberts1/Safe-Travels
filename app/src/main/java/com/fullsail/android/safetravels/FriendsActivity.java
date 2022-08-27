@@ -60,6 +60,7 @@ public class FriendsActivity extends AppCompatActivity implements PendingFriends
 
 
         friendsLV = findViewById(R.id.friends_LV);
+        friendsLV.setOnItemClickListener(friendSelect);
 
 
         addBttn = findViewById(R.id.add_Friends_Button);
@@ -138,6 +139,8 @@ public class FriendsActivity extends AppCompatActivity implements PendingFriends
 
                     }
 
+                    userListAdapter = new UserListAdapter(FriendsActivity.this.getApplicationContext(), R.layout.post_rcv_item, friends);
+                    friendsLV.setAdapter(userListAdapter);
                     updateFriendsCount();
                 }
             }
@@ -172,6 +175,9 @@ public class FriendsActivity extends AppCompatActivity implements PendingFriends
                     }
                 }
 
+                pendingFriendsListAdapter = new PendingFriendsListAdapter(FriendsActivity.this.getApplicationContext(), R.layout.friend_listview_item, pendingFriends);
+                pendingFriendsListAdapter.setButtonListener(FriendsActivity.this);
+                pendingFriendsLV.setAdapter(pendingFriendsListAdapter);
                 updatePendingFriendsCount();
             }
         });
@@ -180,17 +186,12 @@ public class FriendsActivity extends AppCompatActivity implements PendingFriends
 
     // method to set up the Listview to display pending friend requests
     public void updatePendingFriendsCount(){
-        pendingFriendsListAdapter = new PendingFriendsListAdapter(this.getApplicationContext(), R.layout.friend_listview_item, pendingFriends);
-        pendingFriendsListAdapter.setButtonListener(this);
-        pendingFriendsLV.setAdapter(pendingFriendsListAdapter);
         String count = "(" + String.valueOf(pendingFriends.size()) + ")";
         pendingCount.setText( count );
     }
 
     // method to set up the Listview to display pending friend requests
     public void updateFriendsCount(){
-        userListAdapter = new UserListAdapter(this.getApplicationContext(), R.layout.post_rcv_item, friends);
-        friendsLV.setAdapter(userListAdapter);
 
         if (!friends.isEmpty()){
             String count = String.valueOf(friends.size());
@@ -218,6 +219,16 @@ public class FriendsActivity extends AppCompatActivity implements PendingFriends
 
     }
 
+    AdapterView.OnItemClickListener friendSelect = new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            User f = friends.get(position);
+            Intent i = new Intent(FriendsActivity.this, ProfileActivity.class);
+            i.putExtra(ProfileActivity.TAG, f);
+            startActivity(i);
+        }
+    };
+
     public void addToOtherUserFriend(User friend){
        User newFriend = new User(currentUser.getDisplayName(), currentUser.getUid(), currentUser.getPhotoUrl());
 
@@ -226,7 +237,7 @@ public class FriendsActivity extends AppCompatActivity implements PendingFriends
                 .document(friend.getUid())
                 .collection("friends");
 
-        cR.add(newFriend);
+        cR.document(currentUser.getUid()).set(newFriend);
     }
 
     public void addToFriends(User friend){
@@ -235,7 +246,7 @@ public class FriendsActivity extends AppCompatActivity implements PendingFriends
                 .document(currentUser.getUid())
                 .collection("friends");
 
-        cR.add(friend);
+       cR.document(friend.getUid()).set(friend);
 
         // Add user to friends list
         friends.add(friend);

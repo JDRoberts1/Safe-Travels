@@ -120,8 +120,15 @@ public class UserFriendSearchActivity extends AppCompatActivity {
                     String id = (String) doc.get("userId");
                     if (id != null && !id.equals(cUser.getUid())) {
                         String username = (String) doc.get("username");
-                        String imgUrl = (String) doc.get("profileImg");
-                        User u = new User(username, id, Uri.parse(imgUrl));
+
+                        User u;
+                        if (doc.get("profileImg") != null){
+                            String imgUrl = (String) doc.get("profileImg");
+                            u = new User(username, id, Uri.parse(imgUrl));
+                        }
+                        else {
+                            u = new User(username, id, null);
+                        }
                         users.add(u);
                         adpt.notifyDataSetChanged();
                         Log.i(TAG, "Snapshot: " + users.size());

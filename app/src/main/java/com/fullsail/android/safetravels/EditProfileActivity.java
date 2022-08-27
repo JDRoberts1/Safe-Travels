@@ -191,20 +191,22 @@ public class EditProfileActivity extends AppCompatActivity {
 
     // Method to update users email address
     private void updateEmail(String newEmail) {
+        FirebaseUser u = FirebaseAuth.getInstance().getCurrentUser();
+        if (u != null) {
+            u.updateEmail(newEmail)
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            Map<String, Object> data = new HashMap<>();
+                            data.put("email", newEmail);
 
-        user.updateEmail(newEmail)
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        Map<String, Object> data = new HashMap<>();
-                        data.put("email", newEmail);
+                            db.collection("users")
+                                    .document(user.getUid())
+                                    .set(data, SetOptions.merge() );
 
-                        db.collection("users")
-                                .document(user.getUid())
-                                .set(data, SetOptions.merge() );
-
-                    }
-                })
-                .addOnFailureListener(e -> errorLabel.setText(e.getLocalizedMessage()));
+                        }
+                    })
+                    .addOnFailureListener(e -> errorLabel.setText(e.getLocalizedMessage()));
+        }
     }
 
     // Method used to retrieve the users profile image uri

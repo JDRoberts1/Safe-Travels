@@ -177,6 +177,12 @@ public class ProfileActivity extends AppCompatActivity {
 
             removeBttn.setVisibility(View.INVISIBLE);
             addBttn.setVisibility(View.VISIBLE);
+
+            db.collection("users")
+                    .document(currentUser.getUid())
+                    .collection("friends")
+                    .document(user.getUid())
+                    .delete();
         }
     };
 
