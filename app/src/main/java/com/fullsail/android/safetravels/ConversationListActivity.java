@@ -4,9 +4,12 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -34,12 +37,10 @@ public class ConversationListActivity extends AppCompatActivity {
 
     private static final String TAG = "ConversationListActivity";
     BottomNavigationView navView;
-    ImageButton newMessageBttn;
     RecyclerView messagesRCV;
     FirebaseFirestore db;
     CollectionReference cR;
     ArrayList<User> users;
-    UserListAdapter adpt;
     ArrayList<User> messageUsers = new ArrayList<>();
     ConversationListAdapter conversationListAdapter;
 
@@ -53,20 +54,25 @@ public class ConversationListActivity extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
         getUsers();
 
-        newMessageBttn = findViewById(R.id.new_Message_Bttn);
-        newMessageBttn.setOnClickListener(newMessageClick);
         messagesRCV = findViewById(R.id.messages_RCV);
-
-
-
         setUpBottomNav();
     }
 
-    // Set up OnClick for new Message
-    View.OnClickListener newMessageClick = v -> {
-        // Take the user to the user search activity
-        startActivity(new Intent(ConversationListActivity.this, UserMessageSearchActivity.class));
-    };
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.conversation_list_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.action_new_message){
+            // Take the user to the user search activity
+            startActivity(new Intent(ConversationListActivity.this, UserMessageSearchActivity.class));
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
 
     // Method to retrieve users from Firebase Collection
     public void getUsers(){
