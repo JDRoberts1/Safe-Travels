@@ -26,7 +26,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 
-public class PendingFriendsListAdapter extends ArrayAdapter<User> {
+public class PendingFriendsListAdapter extends ArrayAdapter<PendingFriendsListAdapter.ViewHolder> {
 
     private static final long BASE_ID = 0x1011;
     private static final String TAG = "ListViewAdapter";
@@ -47,10 +47,10 @@ public class PendingFriendsListAdapter extends ArrayAdapter<User> {
         this.buttonListener = listener;
     }
 
-    public PendingFriendsListAdapter(@NonNull Context context, int resource, @NonNull ArrayList<User> users) {
-        super(context, resource, users);
+    public PendingFriendsListAdapter(@NonNull Context context, int resource, ArrayList<User> mResults) {
+        super(context, resource);
         this.mContext = context;
-        this.mResults = users;
+        this.mResults = mResults;
     }
 
     @Override
@@ -62,23 +62,15 @@ public class PendingFriendsListAdapter extends ArrayAdapter<User> {
     }
 
     @Override
-    public User getItem(int position) {
-
-        if (mResults != null && position >= 0 && position < mResults.size()){
-            return mResults.get(position);
-        }
-        return null;
-    }
-
-    @Override
     public long getItemId(int position) {
         return BASE_ID + position;
     }
 
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder vh;
-        User u = (User) getItem(position);
+        User u = mResults.get(position);
 
         if (convertView == null){
             convertView = LayoutInflater.from(mContext).inflate(R.layout.friend_listview_item, parent, false);

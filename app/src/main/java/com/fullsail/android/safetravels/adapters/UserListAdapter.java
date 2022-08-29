@@ -85,22 +85,24 @@ public class UserListAdapter extends ArrayAdapter<User> {
 
             storageReference = FirebaseStorage.getInstance().getReference(u.getUid());
 
-            StorageReference imgReference = storageReference.child(u.getUid());
-            final long MEGABYTE = 1024 * 1024;
-            imgReference.getBytes(MEGABYTE)
-                    .addOnSuccessListener(new OnSuccessListener<byte[]>() {
-                        @Override
-                        public void onSuccess(byte[] bytes) {
-                            if (bytes.length > 0){
-                                InputStream is = new ByteArrayInputStream(bytes);
-                                Bitmap bmp = BitmapFactory.decodeStream(is);
-                                vh._userImg.setImageBitmap(bmp);
+            if (u.getUri() != null){
+                StorageReference imgReference = storageReference.child(u.getUid());
+                final long MEGABYTE = 1024 * 1024;
+                imgReference.getBytes(MEGABYTE)
+                        .addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                            @Override
+                            public void onSuccess(byte[] bytes) {
+                                if (bytes.length > 0){
+                                    InputStream is = new ByteArrayInputStream(bytes);
+                                    Bitmap bmp = BitmapFactory.decodeStream(is);
+                                    vh._userImg.setImageBitmap(bmp);
+                                }
+                                else {
+                                    vh._userImg.setImageResource(R.drawable.default_img);
+                                }
                             }
-                            else {
-                                vh._userImg.setImageResource(R.drawable.default_img);
-                            }
-                        }
-                    });
+                        });
+            }
         }
 
         return convertView;

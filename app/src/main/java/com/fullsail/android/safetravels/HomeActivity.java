@@ -11,18 +11,22 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.fullsail.android.safetravels.adapters.HomePostListAdapter;
 import com.fullsail.android.safetravels.objects.Post;
 import com.fullsail.android.safetravels.objects.User;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -149,10 +153,10 @@ public class HomeActivity extends AppCompatActivity{
     // Set up Blog Post ListView (Display All Blog Post)
     private void savePosts(){
         // Get Post List collection
+        
         db = FirebaseFirestore.getInstance();
-        cR = db.collection("blogPosts");
-
-        cR.addSnapshotListener((value, error) -> {
+        db.collection("blogPosts")
+                .addSnapshotListener((value, error) -> {
             if (error != null) {
                 Log.w(TAG, "Listen failed.", error);
                 return;

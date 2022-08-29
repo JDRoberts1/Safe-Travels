@@ -1,39 +1,137 @@
 package com.fullsail.android.safetravels;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.fullsail.android.safetravels.adapters.ConversationListAdapter;
+import com.fullsail.android.safetravels.adapters.UserListAdapter;
+import com.fullsail.android.safetravels.objects.Message;
+import com.fullsail.android.safetravels.objects.User;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+
+import java.util.ArrayList;
 
 public class ConversationListActivity extends AppCompatActivity {
 
+    private static final String TAG = "ConversationListActivity";
     BottomNavigationView navView;
     ImageButton newMessageBttn;
     RecyclerView messagesRCV;
+    FirebaseFirestore db;
+    CollectionReference cR;
+    ArrayList<User> users;
+    UserListAdapter adpt;
+    ArrayList<User> messageUsers = new ArrayList<>();
+    ConversationListAdapter conversationListAdapter;
+
+    FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    FirebaseUser currentUser = mAuth.getCurrentUser();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_messages_list);
+        db = FirebaseFirestore.getInstance();
+        getUsers();
+
         newMessageBttn = findViewById(R.id.new_Message_Bttn);
         newMessageBttn.setOnClickListener(newMessageClick);
         messagesRCV = findViewById(R.id.messages_RCV);
+
+
+
         setUpBottomNav();
     }
 
-    // TODO: Set up OnClick for new Message
+    // Set up OnClick for new Message
     View.OnClickListener newMessageClick = v -> {
         // Take the user to the user search activity
         startActivity(new Intent(ConversationListActivity.this, UserMessageSearchActivity.class));
     };
 
-    // TODO: Set up RCV for users messages
-    public void setUpRCV(){
+    // Method to retrieve users from Firebase Collection
+    public void getUsers(){
+        users = new ArrayList<>();
+        cR = db.collection("users");
+        cR.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                if (error != null) {
+                    Log.w(TAG, "Listen failed.", error);
+                    return;
+                }
+
+                for (QueryDocumentSnapshot doc : value) {
+                    String id = (String) doc.get("userId");
+                    if (id != null && !id.equals(currentUser.getUid())) {
+                        String username = (String) doc.get("username");
+                        String imgUrl = (String) doc.get("img");
+
+                        User u;
+                        if (imgUrl != null){
+                            u = new User(username, id, Uri.parse(imgUrl));
+                        }
+                        else{
+                            u = new User(username, id, null);
+                        }
+
+                        users.add(u);
+                    }
+                }
+
+                Log.i(TAG, "onEvent: " + users.size());
+                checkForMessages();
+            }
+        });
+
+
+    }
+
+    private void checkForMessages(){
+        currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        CollectionReference reference = cR.document(currentUser.getUid()).collection("messages");
+
+        messageUsers = new ArrayList<>();
+        reference.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                for (DocumentSnapshot doc : value){
+                    String docId = doc.getId();
+
+                    for (User u : users){
+                        if (u.getUid().equals(docId)){
+                            messageUsers.add(u);
+                        }
+                    }
+
+
+                }
+
+                conversationListAdapter = new ConversationListAdapter(ConversationListActivity.this.getApplicationContext(), messageUsers);
+                messagesRCV.setLayoutManager(new LinearLayoutManager(ConversationListActivity.this.getApplicationContext()));
+                messagesRCV.setAdapter(conversationListAdapter);
+            }
+        });
+
 
     }
 
