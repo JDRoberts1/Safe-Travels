@@ -1,6 +1,8 @@
 package com.fullsail.android.safetravels;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -28,14 +30,18 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ConversationActivity extends AppCompatActivity {
-    private static final String TAG = "ConversationActivity";
+    public static final String TAG = "ConversationActivity";
 
     CircleImageView messageImg;
     TextView conversationLabel;
@@ -72,22 +78,33 @@ public class ConversationActivity extends AppCompatActivity {
 
         Intent i = getIntent();
         if (i != null){
-            selectedUser = i.getParcelableExtra(UserMessageSearchActivity.TAG);
+            selectedUser = i.getParcelableExtra(TAG);
         }
 
         setUpUi();
 
     }
 
-    // TODO: Set up conversation activity
+    // Set up conversation activity
     private void setUpUi() {
-        if (selectedUser.getUri() != null){
-            Uri imgUri = selectedUser.getUri();
-            messageImg.setImageURI(imgUri);
-        }
-        else {
-            messageImg.setImageResource(R.drawable.default_img);
-        }
+        StorageReference storageReference = FirebaseStorage.getInstance().getReference(selectedUser.getUid());
+        StorageReference imgReference = storageReference.child(selectedUser.getUid());
+
+        final long MEGABYTE = 1024 * 1024;
+        imgReference.getBytes(MEGABYTE)
+                .addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                    @Override
+                    public void onSuccess(byte[] bytes) {
+                        if (bytes.length > 0){
+                            InputStream is = new ByteArrayInputStream(bytes);
+                            Bitmap bmp = BitmapFactory.decodeStream(is);
+                            messageImg.setImageBitmap(bmp);
+                        }
+                        else {
+                            messageImg.setImageResource(R.drawable.default_img);
+                        }
+                    }
+                });
 
         String labelString = "Conversation with " + selectedUser.getUsername();
         conversationLabel.setText(labelString);

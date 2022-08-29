@@ -66,7 +66,7 @@ public class UserMessageSearchActivity extends AppCompatActivity {
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             User selectedUser = users.get(position);
             Intent i = new Intent(UserMessageSearchActivity.this, ConversationActivity.class);
-            i.putExtra(TAG, selectedUser);
+            i.putExtra(ConversationActivity.TAG, selectedUser);
             startActivity(i);
             overridePendingTransition(0,0);
         }

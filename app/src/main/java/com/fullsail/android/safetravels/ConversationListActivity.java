@@ -183,7 +183,7 @@ public class ConversationListActivity extends AppCompatActivity implements Conve
     @Override
     public void onItemClick(User u) {
         Intent i = new Intent(this, ConversationActivity.class);
-        i.putExtra(ConversationListActivity.TAG, u);
+        i.putExtra(ConversationActivity.TAG, u);
         startActivity(i);
     }
 }
