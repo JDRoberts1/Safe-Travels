@@ -1,6 +1,7 @@
 package com.fullsail.android.safetravels.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
@@ -13,6 +14,8 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.fullsail.android.safetravels.ConversationActivity;
+import com.fullsail.android.safetravels.ConversationListActivity;
 import com.fullsail.android.safetravels.R;
 import com.fullsail.android.safetravels.objects.Message;
 import com.fullsail.android.safetravels.objects.User;
@@ -35,6 +38,15 @@ public class ConversationListAdapter extends RecyclerView.Adapter<ConversationLi
 
     Context context;
     ArrayList<User> users;
+    clickListener clickListener;
+
+    public interface clickListener{
+        public void onItemClick(User u);
+    }
+
+    public void setClickListener(clickListener listener){
+        this.clickListener = listener;
+    }
 
     public ConversationListAdapter(Context context, ArrayList<User> users){
         this.context = context;
@@ -71,6 +83,13 @@ public class ConversationListAdapter extends RecyclerView.Adapter<ConversationLi
                         }
                     }
                 });
+
+        holder.cardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                clickListener.onItemClick(u);
+            }
+        });
     }
 
     @Override

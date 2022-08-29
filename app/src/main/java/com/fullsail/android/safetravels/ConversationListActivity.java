@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.fullsail.android.safetravels.adapters.ConversationListAdapter;
+import com.fullsail.android.safetravels.adapters.PendingFriendsListAdapter;
 import com.fullsail.android.safetravels.adapters.UserListAdapter;
 import com.fullsail.android.safetravels.objects.Message;
 import com.fullsail.android.safetravels.objects.User;
@@ -33,9 +34,9 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 
-public class ConversationListActivity extends AppCompatActivity {
+public class ConversationListActivity extends AppCompatActivity implements ConversationListAdapter.clickListener {
 
-    private static final String TAG = "ConversationListActivity";
+    public static final String TAG = "ConversationListActivity";
     BottomNavigationView navView;
     RecyclerView messagesRCV;
     FirebaseFirestore db;
@@ -47,6 +48,7 @@ public class ConversationListActivity extends AppCompatActivity {
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
     FirebaseUser currentUser = mAuth.getCurrentUser();
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,6 +57,7 @@ public class ConversationListActivity extends AppCompatActivity {
         getUsers();
 
         messagesRCV = findViewById(R.id.messages_RCV);
+
         setUpBottomNav();
     }
 
@@ -133,6 +136,7 @@ public class ConversationListActivity extends AppCompatActivity {
                 }
 
                 conversationListAdapter = new ConversationListAdapter(ConversationListActivity.this.getApplicationContext(), messageUsers);
+                conversationListAdapter.setClickListener(ConversationListActivity.this);
                 messagesRCV.setLayoutManager(new LinearLayoutManager(ConversationListActivity.this.getApplicationContext()));
                 messagesRCV.setAdapter(conversationListAdapter);
             }
@@ -174,5 +178,12 @@ public class ConversationListActivity extends AppCompatActivity {
             return false;
         });
 
+    }
+
+    @Override
+    public void onItemClick(User u) {
+        Intent i = new Intent(this, ConversationActivity.class);
+        i.putExtra(ConversationListActivity.TAG, u);
+        startActivity(i);
     }
 }
