@@ -314,9 +314,7 @@ public class EditPostActivity extends AppCompatActivity {
                         }
                     });
         }
-        else {
-            imageView1.setVisibility(View.GONE);
-        }
+        
 
         if (p.getUri2() != null){
             imgReference = pathReference.child(p.getTitle() + "2");
@@ -364,7 +362,7 @@ public class EditPostActivity extends AppCompatActivity {
                         }
                     });
         }
-        
+
     }
 
     // saveAndDisplayImg Method
