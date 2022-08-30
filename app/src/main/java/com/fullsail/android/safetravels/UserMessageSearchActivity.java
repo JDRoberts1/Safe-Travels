@@ -36,8 +36,8 @@ public class UserMessageSearchActivity extends AppCompatActivity {
     ArrayList<User> users;
     UserListAdapter adpt;
 
-    FirebaseAuth mAuth = FirebaseAuth.getInstance();
-    FirebaseUser cUser = mAuth.getCurrentUser();
+    final FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    final FirebaseUser cUser = mAuth.getCurrentUser();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +61,7 @@ public class UserMessageSearchActivity extends AppCompatActivity {
     }
 
     // Set up Item on click listener
-    AdapterView.OnItemClickListener userCLick = new AdapterView.OnItemClickListener() {
+    final AdapterView.OnItemClickListener userCLick = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             User selectedUser = users.get(position);
@@ -73,7 +73,7 @@ public class UserMessageSearchActivity extends AppCompatActivity {
     };
 
     // Set up OnQueryTextListener
-    SearchView.OnQueryTextListener query = new SearchView.OnQueryTextListener() {
+    final SearchView.OnQueryTextListener query = new SearchView.OnQueryTextListener() {
         @Override
         public boolean onQueryTextSubmit(String query) {
             if (!query.isEmpty()){
@@ -114,22 +114,24 @@ public class UserMessageSearchActivity extends AppCompatActivity {
                     return;
                 }
 
-                for (QueryDocumentSnapshot doc : value) {
-                    String id = (String) doc.get("userId");
-                    if (id != null && !id.equals(cUser.getUid())) {
-                        String username = (String) doc.get("username");
-                        String imgUrl = (String) doc.get("img");
+                if (value != null) {
+                    for (QueryDocumentSnapshot doc : value) {
+                        String id = (String) doc.get("userId");
+                        if (id != null && !id.equals(cUser.getUid())) {
+                            String username = (String) doc.get("username");
+                            String imgUrl = (String) doc.get("img");
 
-                        User u;
-                       if (imgUrl != null){
-                           u = new User(username, id, Uri.parse(imgUrl));
-                       }
-                       else{
-                           u = new User(username, id, null);
-                       }
+                            User u;
+                           if (imgUrl != null){
+                               u = new User(username, id, Uri.parse(imgUrl));
+                           }
+                           else{
+                               u = new User(username, id, null);
+                           }
 
-                        users.add(u);
-                        Log.i(TAG, "Snapshot: " + users.size());
+                            users.add(u);
+                            Log.i(TAG, "Snapshot: " + users.size());
+                        }
                     }
                 }
                 adpt.notifyDataSetChanged();

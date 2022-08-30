@@ -17,7 +17,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.fullsail.android.safetravels.adapters.HomePostListAdapter;
-import com.fullsail.android.safetravels.adapters.PostListAdapter;
 import com.fullsail.android.safetravels.objects.Post;
 import com.fullsail.android.safetravels.objects.User;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -37,12 +36,8 @@ import com.google.firebase.storage.StorageReference;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -61,12 +56,12 @@ public class ProfileActivity extends AppCompatActivity {
     ImageButton addBttn;
     ImageButton removeBttn;
     ImageButton messageBttn;
-    FirebaseAuth mAuth = FirebaseAuth.getInstance();
-    FirebaseUser currentUser = mAuth.getCurrentUser();
+    final FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    final FirebaseUser currentUser = mAuth.getCurrentUser();
     boolean friends = false;
     boolean pending = false;
 
-    ArrayList<Post> posts = new ArrayList<>();
+    final ArrayList<Post> posts = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -134,15 +129,18 @@ public class ProfileActivity extends AppCompatActivity {
 
     }
 
-    View.OnClickListener addClick = new View.OnClickListener() {
+    final View.OnClickListener addClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
 
             // Add request to each users pending request
             Map<String, Object> pendingFriend = new HashMap<>();
-            pendingFriend.put("username", currentUser.getDisplayName());
-            pendingFriend.put("userId", currentUser.getUid());
-            pendingFriend.put("img", currentUser.getPhotoUrl());
+            if (currentUser != null) {
+                pendingFriend.put("username", currentUser.getDisplayName());
+                pendingFriend.put("userId", currentUser.getUid());
+                pendingFriend.put("img", currentUser.getPhotoUrl());
+            }
+
 
             db.collection("users")
                     .document(user.getUid())
@@ -166,14 +164,16 @@ public class ProfileActivity extends AppCompatActivity {
         }
     };
 
-    View.OnClickListener removeClick = new View.OnClickListener() {
+    final View.OnClickListener removeClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            db.collection("users")
-                    .document(user.getUid())
-                    .collection("friends")
-                    .document(currentUser.getUid())
-                    .delete();
+            if (currentUser != null) {
+                db.collection("users")
+                        .document(user.getUid())
+                        .collection("friends")
+                        .document(currentUser.getUid())
+                        .delete();
+            }
 
             removeBttn.setVisibility(View.INVISIBLE);
             addBttn.setVisibility(View.VISIBLE);
@@ -187,7 +187,7 @@ public class ProfileActivity extends AppCompatActivity {
     };
 
     // TODO:: Set up message action
-    View.OnClickListener messageClick = new View.OnClickListener() {
+    final View.OnClickListener messageClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
 
@@ -336,15 +336,17 @@ public class ProfileActivity extends AppCompatActivity {
                             return;
                         }
 
-                        for (QueryDocumentSnapshot doc : value){
-                            String uid = (String) doc.get("uid");
-                            if (uid != null && uid.equals(user.getUid())) {
-                                addBttn.setVisibility(View.INVISIBLE);
-                                removeBttn.setVisibility(View.VISIBLE);
-                                Log.i(TAG, "onEvent: FOUND FRIEND");
-                            }
-                            else {
-                                Log.i(TAG, "onEvent: NO FOUND FRIEND");
+                        if (value != null) {
+                            for (QueryDocumentSnapshot doc : value){
+                                String uid = (String) doc.get("uid");
+                                if (uid != null && uid.equals(user.getUid())) {
+                                    addBttn.setVisibility(View.INVISIBLE);
+                                    removeBttn.setVisibility(View.VISIBLE);
+                                    Log.i(TAG, "onEvent: FOUND FRIEND");
+                                }
+                                else {
+                                    Log.i(TAG, "onEvent: NO FOUND FRIEND");
+                                }
                             }
                         }
 
@@ -366,16 +368,18 @@ public class ProfileActivity extends AppCompatActivity {
                             return;
                         }
 
-                        for (QueryDocumentSnapshot doc : value){
-                            String uid = (String) doc.get("userId");
-                            if (uid != null && uid.equals(currentUser.getUid())) {
-                                pending = true;
-                                Log.i(TAG, "onEvent: FOUND PENDING");
-                                addBttn.setVisibility(View.INVISIBLE);
-                            }
-                            else {
-                                pending = false;
-                                Log.i(TAG, "onEvent: NO FOUND PENDING");
+                        if (value != null) {
+                            for (QueryDocumentSnapshot doc : value){
+                                String uid = (String) doc.get("userId");
+                                if (uid != null && uid.equals(currentUser.getUid())) {
+                                    pending = true;
+                                    Log.i(TAG, "onEvent: FOUND PENDING");
+                                    addBttn.setVisibility(View.INVISIBLE);
+                                }
+                                else {
+                                    pending = false;
+                                    Log.i(TAG, "onEvent: NO FOUND PENDING");
+                                }
                             }
                         }
 

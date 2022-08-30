@@ -62,14 +62,14 @@ public class EditPostActivity extends AppCompatActivity {
     CollectionReference cR;
     DocumentReference dR;
     StorageReference storageReference;
-    FirebaseAuth mAuth = FirebaseAuth.getInstance();
-    FirebaseUser cUser = mAuth.getCurrentUser();
+    final FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    final FirebaseUser cUser = mAuth.getCurrentUser();
     Bitmap imageBitmap = null;
-    FirebaseFirestore db = FirebaseFirestore.getInstance();
+    final FirebaseFirestore db = FirebaseFirestore.getInstance();
     static final int REQUEST_IMAGE_CAPTURE = 1;
     static final int REQUEST_IMAGE_GALLERY = 2;
-    Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-    Intent galleryIntent = new Intent(Intent.ACTION_GET_CONTENT);
+    final Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+    final Intent galleryIntent = new Intent(Intent.ACTION_GET_CONTENT);
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -115,7 +115,7 @@ public class EditPostActivity extends AppCompatActivity {
 
     // Activity Contracts
     // Contract to Request Permission if not granted
-    public ActivityResultLauncher<String> requestPerms = registerForActivityResult(new ActivityResultContracts.RequestPermission(), result -> Log.i(TAG, "onActivityResult: " + result));
+    public final ActivityResultLauncher<String> requestPerms = registerForActivityResult(new ActivityResultContracts.RequestPermission(), result -> Log.i(TAG, "onActivityResult: " + result));
 
     // onActivityResult method to handle img results
     @Override
@@ -147,7 +147,7 @@ public class EditPostActivity extends AppCompatActivity {
 
     }
 
-    View.OnClickListener imgClick = new View.OnClickListener() {
+    final View.OnClickListener imgClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             // Request Permission
@@ -346,7 +346,7 @@ public class EditPostActivity extends AppCompatActivity {
 
     }
 
-    View.OnClickListener cancelClick = new View.OnClickListener() {
+    final View.OnClickListener cancelClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             backToProfile();

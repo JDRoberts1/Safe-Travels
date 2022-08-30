@@ -55,18 +55,18 @@ public class RegisterActivity extends AppCompatActivity {
     Spinner spinner;
     Uri imgUri = null;
     ArrayList<String> bannedEmails = new ArrayList<>();
-    ArrayList<String> usernames = new ArrayList<>();
+    final ArrayList<String> usernames = new ArrayList<>();
     Bitmap imageBitmap = null;
     boolean imgUploaded = false;
 
-    FirebaseAuth mAuth = FirebaseAuth.getInstance();
-    FirebaseFirestore db = FirebaseFirestore.getInstance();
+    final FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    final FirebaseFirestore db = FirebaseFirestore.getInstance();
     StorageReference storageReference;
 
     static final int REQUEST_IMAGE_CAPTURE = 1;
     static final int REQUEST_IMAGE_GALLERY = 2;
-    Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-    Intent galleryIntent = new Intent(Intent.ACTION_GET_CONTENT);
+    final Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+    final Intent galleryIntent = new Intent(Intent.ACTION_GET_CONTENT);
 
     boolean approvalStatus;
 
@@ -134,7 +134,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     // Activity Contracts
     // Contract to Request Permission if not granted
-    public ActivityResultLauncher<String> requestPerms = registerForActivityResult(new ActivityResultContracts.RequestPermission(), result -> Log.i(TAG, "onActivityResult: " + result));
+    public final ActivityResultLauncher<String> requestPerms = registerForActivityResult(new ActivityResultContracts.RequestPermission(), result -> Log.i(TAG, "onActivityResult: " + result));
 
     // Intent to take user to the Log In activity
     private void verificationIntent() {
@@ -176,9 +176,11 @@ public class RegisterActivity extends AppCompatActivity {
         newUser.put("email", user.getEmail());
         newUser.put("password", password);
 
+
         UserProfileChangeRequest profileUpdates;
         if (imgUploaded){
             imgUri = getImgUri(this, imageBitmap, user.getUid());
+            newUser.put("profileImg", imgUri);
             profileUpdates = new UserProfileChangeRequest.Builder()
                     .setDisplayName(userName)
                     .setPhotoUri(imgUri)
@@ -189,6 +191,7 @@ public class RegisterActivity extends AppCompatActivity {
 
         }
         else{
+            newUser.put("profileImg", null);
             profileUpdates = new UserProfileChangeRequest.Builder()
                     .setDisplayName(userName)
                     .build();
@@ -214,13 +217,13 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     // OnClickListener for Sign-In textview
-    View.OnClickListener signInClick = v -> {
+    final View.OnClickListener signInClick = v -> {
         // Create Intent to take user to sign in screen
         verificationIntent();
     };
 
     // OnClickListener for Upload Image button
-    View.OnClickListener uploadClick = v -> {
+    final View.OnClickListener uploadClick = v -> {
 
         // Request Permission
         if (ActivityCompat.checkSelfPermission(RegisterActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
@@ -248,7 +251,7 @@ public class RegisterActivity extends AppCompatActivity {
     };
 
     // OnClickListener for Register button
-    View.OnClickListener registerClick = new View.OnClickListener() {
+    final View.OnClickListener registerClick = new View.OnClickListener() {
 
         @Override
         public void onClick(View v) {

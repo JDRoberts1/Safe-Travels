@@ -1,47 +1,37 @@
 package com.fullsail.android.safetravels.adapters;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.fullsail.android.safetravels.ConversationActivity;
-import com.fullsail.android.safetravels.ConversationListActivity;
 import com.fullsail.android.safetravels.R;
-import com.fullsail.android.safetravels.objects.Message;
 import com.fullsail.android.safetravels.objects.User;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ConversationListAdapter extends RecyclerView.Adapter<ConversationListAdapter.ViewHolder> {
 
-    Context context;
-    ArrayList<User> users;
+    final Context context;
+    final ArrayList<User> users;
     clickListener clickListener;
 
     public interface clickListener{
-        public void onItemClick(User u);
+        void onItemClick(User u);
     }
 
     public void setClickListener(clickListener listener){
@@ -84,12 +74,14 @@ public class ConversationListAdapter extends RecyclerView.Adapter<ConversationLi
                     }
                 });
 
-        holder.cardView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                clickListener.onItemClick(u);
-            }
-        });
+        if (u.getUid() != null){
+            holder.cardView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    clickListener.onItemClick(u);
+                }
+            });
+        }
     }
 
     @Override
@@ -104,10 +96,10 @@ public class ConversationListAdapter extends RecyclerView.Adapter<ConversationLi
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
-        public CircleImageView circleImageView;
-        public TextView usernameLabel;
-        public TextView messageLabel;
-        public CardView cardView;
+        public final CircleImageView circleImageView;
+        public final TextView usernameLabel;
+        public final TextView messageLabel;
+        public final CardView cardView;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);

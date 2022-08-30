@@ -25,10 +25,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import com.fullsail.android.safetravels.objects.Post;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -39,10 +37,7 @@ import com.squareup.picasso.Picasso;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.sql.Timestamp;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
 
 public class NewPostActivity extends AppCompatActivity {
 
@@ -58,12 +53,12 @@ public class NewPostActivity extends AppCompatActivity {
     StorageReference storageReference;
 
     Bitmap imageBitmap = null;
-    FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-    FirebaseFirestore db = FirebaseFirestore.getInstance();
+    final FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+    final FirebaseFirestore db = FirebaseFirestore.getInstance();
     static final int REQUEST_IMAGE_CAPTURE = 1;
     static final int REQUEST_IMAGE_GALLERY = 2;
-    Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-    Intent galleryIntent = new Intent(Intent.ACTION_GET_CONTENT);
+    final Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+    final Intent galleryIntent = new Intent(Intent.ACTION_GET_CONTENT);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,7 +93,7 @@ public class NewPostActivity extends AppCompatActivity {
 
     // Activity Contracts
     // Contract to Request Permission if not granted
-    public ActivityResultLauncher<String> requestPerms = registerForActivityResult(new ActivityResultContracts.RequestPermission(), result -> Log.i(TAG, "onActivityResult: " + result));
+    public final ActivityResultLauncher<String> requestPerms = registerForActivityResult(new ActivityResultContracts.RequestPermission(), result -> Log.i(TAG, "onActivityResult: " + result));
 
     // onActivityResult method to handle img results
     @Override
@@ -152,7 +147,7 @@ public class NewPostActivity extends AppCompatActivity {
     }
 
     // Set up cancel click OnClickListener
-    View.OnClickListener cancelClick = new View.OnClickListener() {
+    final View.OnClickListener cancelClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             backToHome();
@@ -160,7 +155,7 @@ public class NewPostActivity extends AppCompatActivity {
     };
 
     // Set up post click OnClickListener
-    View.OnClickListener postClick = new View.OnClickListener() {
+    final View.OnClickListener postClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
 
@@ -267,7 +262,7 @@ public class NewPostActivity extends AppCompatActivity {
     }
 
     // OnClickListener for when the user clicks the Img View button.
-    View.OnClickListener imgClick = new View.OnClickListener() {
+    final View.OnClickListener imgClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             // Request Permission

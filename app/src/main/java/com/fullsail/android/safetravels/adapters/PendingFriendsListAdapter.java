@@ -33,14 +33,14 @@ public class PendingFriendsListAdapter extends ArrayAdapter<PendingFriendsListAd
     private final Context mContext;
     private final ArrayList<User> mResults;
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
-    FirebaseAuth mAuth = FirebaseAuth.getInstance();
-    FirebaseUser cUser = mAuth.getCurrentUser();
-    StorageReference storageReference = FirebaseStorage.getInstance().getReference(cUser.getUid());
+    final FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    final FirebaseUser cUser = mAuth.getCurrentUser();
+    StorageReference storageReference;
     buttonListener buttonListener;
 
     public interface buttonListener{
-        public void onAcceptClick(int position);
-        public void onDeclineClick(int position);
+        void onAcceptClick(int position);
+        void onDeclineClick(int position);
     }
 
     public void setButtonListener(buttonListener listener){
@@ -51,6 +51,9 @@ public class PendingFriendsListAdapter extends ArrayAdapter<PendingFriendsListAd
         super(context, resource);
         this.mContext = context;
         this.mResults = mResults;
+        if (cUser != null) {
+            storageReference = FirebaseStorage.getInstance().getReference(cUser.getUid());
+        }
     }
 
     @Override
@@ -123,10 +126,10 @@ public class PendingFriendsListAdapter extends ArrayAdapter<PendingFriendsListAd
     }
 
     static class ViewHolder{
-        TextView _usernameLabel;
-        ImageView _userImg;
-        Button addBttn;
-        Button declineBttn;
+        final TextView _usernameLabel;
+        final ImageView _userImg;
+        final Button addBttn;
+        final Button declineBttn;
 
         public ViewHolder(View layout){
             _usernameLabel = layout.findViewById(R.id.userName_LV_Label);

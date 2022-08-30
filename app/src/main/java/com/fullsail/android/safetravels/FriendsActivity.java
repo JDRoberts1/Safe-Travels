@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -29,7 +28,6 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
-import java.util.Map;
 
 public class FriendsActivity extends AppCompatActivity implements PendingFriendsListAdapter.buttonListener {
 
@@ -40,16 +38,16 @@ public class FriendsActivity extends AppCompatActivity implements PendingFriends
     BottomNavigationView navView;
     ListView pendingFriendsLV;
     ListView friendsLV;
-    FirebaseFirestore db = FirebaseFirestore.getInstance();;;
+    final FirebaseFirestore db = FirebaseFirestore.getInstance();
     CollectionReference cR;
     DocumentReference dR;
-    FirebaseAuth mAuth = FirebaseAuth.getInstance();
-    FirebaseUser currentUser = mAuth.getCurrentUser();
+    final FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    final FirebaseUser currentUser = mAuth.getCurrentUser();
     PendingFriendsListAdapter pendingFriendsListAdapter;
     UserListAdapter userListAdapter;
 
-    ArrayList<User> pendingFriends = new ArrayList<>();
-    ArrayList<User> friends = new ArrayList<>();
+    final ArrayList<User> pendingFriends = new ArrayList<>();
+    final ArrayList<User> friends = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,7 +74,7 @@ public class FriendsActivity extends AppCompatActivity implements PendingFriends
 
     }
 
-    View.OnClickListener addClick = v -> startActivity(new Intent(FriendsActivity.this, UserFriendSearchActivity.class));
+    final View.OnClickListener addClick = v -> startActivity(new Intent(FriendsActivity.this, UserFriendSearchActivity.class));
 
     public void setUpBottomNav(){
         navView = findViewById(R.id.navView);
@@ -164,14 +162,16 @@ public class FriendsActivity extends AppCompatActivity implements PendingFriends
                     return;
                 }
 
-                for (QueryDocumentSnapshot doc : value){
-                    String uid = (String) doc.get("userId");
-                    if (uid!= null){
-                        String username = (String) doc.get("username");
-                        String img = (String) doc.get("img");
+                if (value != null) {
+                    for (QueryDocumentSnapshot doc : value){
+                        String uid = (String) doc.get("userId");
+                        if (uid!= null){
+                            String username = (String) doc.get("username");
+                            String img = (String) doc.get("img");
 
-                        User friend = new User(username, uid, Uri.parse(img));
-                        pendingFriends.add(friend);
+                            User friend = new User(username, uid, Uri.parse(img));
+                            pendingFriends.add(friend);
+                        }
                     }
                 }
 
@@ -186,7 +186,7 @@ public class FriendsActivity extends AppCompatActivity implements PendingFriends
 
     // method to set up the Listview to display pending friend requests
     public void updatePendingFriendsCount(){
-        String count = "(" + String.valueOf(pendingFriends.size()) + ")";
+        String count = "(" + pendingFriends.size() + ")";
         pendingCount.setText( count );
     }
 
@@ -219,7 +219,7 @@ public class FriendsActivity extends AppCompatActivity implements PendingFriends
 
     }
 
-    AdapterView.OnItemClickListener friendSelect = new AdapterView.OnItemClickListener() {
+    final AdapterView.OnItemClickListener friendSelect = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             User f = friends.get(position);

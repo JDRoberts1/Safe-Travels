@@ -57,8 +57,8 @@ public class EditProfileActivity extends AppCompatActivity {
     Bitmap imageBitmap = null;
     static final int REQUEST_IMAGE_CAPTURE = 1;
     static final int REQUEST_IMAGE_GALLERY = 2;
-    Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-    Intent galleryIntent = new Intent(Intent.ACTION_GET_CONTENT);
+    final Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+    final Intent galleryIntent = new Intent(Intent.ACTION_GET_CONTENT);
 
     TextView errorLabel;
     EditText uName;
@@ -70,8 +70,8 @@ public class EditProfileActivity extends AppCompatActivity {
     ImageView profileImage;
     CollectionReference cR;
     StorageReference storageReference;
-    FirebaseAuth mAuth = FirebaseAuth.getInstance();
-    FirebaseUser user = mAuth.getCurrentUser();
+    final FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    final FirebaseUser user = mAuth.getCurrentUser();
     FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     @Override
@@ -129,7 +129,7 @@ public class EditProfileActivity extends AppCompatActivity {
 
     // Activity Contracts
     // Contract to Request Permission if not granted
-    public ActivityResultLauncher<String> requestPerms = registerForActivityResult(new ActivityResultContracts.RequestPermission(), result -> Log.i(TAG, "onActivityResult: " + result));
+    public final ActivityResultLauncher<String> requestPerms = registerForActivityResult(new ActivityResultContracts.RequestPermission(), result -> Log.i(TAG, "onActivityResult: " + result));
 
     // Display current users profile information
     private void displayInfo(){
@@ -218,7 +218,7 @@ public class EditProfileActivity extends AppCompatActivity {
     }
 
     // On
-    View.OnClickListener cancelClick = new View.OnClickListener() {
+    final View.OnClickListener cancelClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             backToProfile();
@@ -226,7 +226,7 @@ public class EditProfileActivity extends AppCompatActivity {
     };
 
     // OnClickListener for Update button Press
-    View.OnClickListener updateClick = new View.OnClickListener() {
+    final View.OnClickListener updateClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
 
@@ -237,7 +237,7 @@ public class EditProfileActivity extends AppCompatActivity {
             if (nullCheck(newEmail, newUserName)){
 
                 // If username is different, Update the username
-                if (user.getDisplayName() != null && !user.getDisplayName().equals(newUserName)){
+                if (user != null && user.getDisplayName() != null && !user.getDisplayName().equals(newUserName)) {
 
                     UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
                             .setDisplayName(newUserName)
@@ -251,7 +251,7 @@ public class EditProfileActivity extends AppCompatActivity {
 
                                     db.collection("users")
                                             .document(user.getUid())
-                                            .set(data, SetOptions.merge() );
+                                            .set(data, SetOptions.merge());
 
                                     // UPDATE USERNAME IN BLOG POSTS
                                     updateBlogPosts(newUserName);
@@ -261,7 +261,7 @@ public class EditProfileActivity extends AppCompatActivity {
 
                                 }
                             })
-                    .addOnFailureListener(e -> errorLabel.setText(e.getLocalizedMessage()));
+                            .addOnFailureListener(e -> errorLabel.setText(e.getLocalizedMessage()));
                 }
 
                 // Check if user has updated their img
@@ -369,7 +369,7 @@ public class EditProfileActivity extends AppCompatActivity {
     }
 
     // OnClickListener for Image upload button
-    View.OnClickListener uploadClick = v -> {
+    final View.OnClickListener uploadClick = v -> {
 
         // Request Permission
         if (ActivityCompat.checkSelfPermission(EditProfileActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {

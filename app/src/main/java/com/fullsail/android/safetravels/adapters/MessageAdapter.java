@@ -18,11 +18,11 @@ import java.util.ArrayList;
 public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHolder> {
 
     boolean status;
-    ArrayList<Message> messages;
-    Context mContext;
+    final ArrayList<Message> messages;
+    final Context mContext;
     FirebaseUser currentUser;
-    int send = 1;
-    int receive = 2;
+    final int send = 1;
+    final int receive = 2;
 
     public MessageAdapter(ArrayList<Message> messages, Context mContext) {
         this.messages = messages;
@@ -78,8 +78,8 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
-        TextView messageReceive;
-        TextView messageSent;
+        final TextView messageReceive;
+        final TextView messageSent;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);

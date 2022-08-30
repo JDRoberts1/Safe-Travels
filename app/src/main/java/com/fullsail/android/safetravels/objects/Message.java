@@ -1,11 +1,11 @@
 package com.fullsail.android.safetravels.objects;
 
 public class Message {
-    String toUID;
-    String fromUID;
-    String message;
-    String timeStamp;
-    boolean readStatus;
+    final String toUID;
+    final String fromUID;
+    final String message;
+    final String timeStamp;
+    final boolean readStatus;
 
     public Message(String toUID, String fromUID, String message, String timeStamp, boolean readStatus) {
         this.toUID = toUID;

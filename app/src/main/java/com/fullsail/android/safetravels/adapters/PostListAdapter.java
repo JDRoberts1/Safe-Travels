@@ -25,8 +25,8 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class PostListAdapter extends ArrayAdapter<Post> {
 
-    ArrayList<Post> posts;
-    Context mContext;
+    final ArrayList<Post> posts;
+    final Context mContext;
     private static final long BASE_ID = 0x1011;
     StorageReference storageReference;
 
@@ -104,10 +104,10 @@ public class PostListAdapter extends ArrayAdapter<Post> {
 
     public static class ViewHolder{
 
-        CircleImageView userImageView;
-        TextView username_CV;
-        TextView title_CV;
-        TextView date_Posted_CV;
+        final CircleImageView userImageView;
+        final TextView username_CV;
+        final TextView title_CV;
+        final TextView date_Posted_CV;
 
         public ViewHolder(View layout){
             userImageView = layout.findViewById(R.id.userImageView);

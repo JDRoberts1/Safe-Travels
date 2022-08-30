@@ -1,16 +1,16 @@
 package com.fullsail.android.safetravels;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
+import android.provider.MediaStore;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -22,18 +22,14 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -53,7 +49,6 @@ public class ConversationActivity extends AppCompatActivity {
     MessageAdapter messageAdapter;
 
     FirebaseFirestore db;
-    DatabaseReference ref;
     ArrayList<Message> messages;
 
 
@@ -99,6 +94,8 @@ public class ConversationActivity extends AppCompatActivity {
                             InputStream is = new ByteArrayInputStream(bytes);
                             Bitmap bmp = BitmapFactory.decodeStream(is);
                             messageImg.setImageBitmap(bmp);
+                            selectedUser.setUri(getImgUri(getApplicationContext(), bmp, selectedUser.getUid()));
+
                         }
                         else {
                             messageImg.setImageResource(R.drawable.default_img);
@@ -111,7 +108,7 @@ public class ConversationActivity extends AppCompatActivity {
     }
 
     // TODO: Set up onClickListener for send button
-    View.OnClickListener sendClick = new View.OnClickListener() {
+    final View.OnClickListener sendClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             String message = messageETV.getText().toString();
@@ -123,6 +120,13 @@ public class ConversationActivity extends AppCompatActivity {
 
         }
     };
+
+    public Uri getImgUri(Context c, Bitmap bitmapImg, String uuid){
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        bitmapImg.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(c.getContentResolver(), bitmapImg, uuid, null);
+        return Uri.parse(path);
+    }
 
     private void sendMessage(String message) {
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -137,6 +141,7 @@ public class ConversationActivity extends AppCompatActivity {
     private void updateDatabase(Message newMessage) {
         CollectionReference reference = db.collection("users").document(currentUser.getUid()).collection("messages");
         DocumentReference documentReference = reference.document(selectedUser.getUid());
+        documentReference.set(selectedUser);
         CollectionReference threadReference = documentReference.collection("thread");
         threadReference.add(newMessage)
                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
@@ -144,15 +149,12 @@ public class ConversationActivity extends AppCompatActivity {
                     public void onSuccess(DocumentReference docReference) {
                         CollectionReference reference = db.collection("users").document(selectedUser.getUid()).collection("messages");
                         DocumentReference documentReference = reference.document(currentUser.getUid());
+                        User cUser = new User(currentUser.getDisplayName(), currentUser.getUid() ,currentUser.getPhotoUrl());
+                        documentReference.set(cUser);
                         CollectionReference threadReference = documentReference.collection("thread");
                         threadReference.add(newMessage);
                     }
                 });
 
     }
-
-    public void getMessage(){
-
-    }
-
 }

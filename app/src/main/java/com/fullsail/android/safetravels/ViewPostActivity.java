@@ -41,8 +41,8 @@ public class ViewPostActivity extends AppCompatActivity {
     BottomNavigationView navView;
 
     Post p = null;
-    FirebaseAuth mAuth = FirebaseAuth.getInstance();
-    FirebaseUser cUser = mAuth.getCurrentUser();
+    final FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    final FirebaseUser cUser = mAuth.getCurrentUser();
     public static final String TAG = "ViewPostActivity";
 
     @Override
@@ -94,7 +94,7 @@ public class ViewPostActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    View.OnClickListener imgClick = new View.OnClickListener() {
+    final View.OnClickListener imgClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             Intent i;

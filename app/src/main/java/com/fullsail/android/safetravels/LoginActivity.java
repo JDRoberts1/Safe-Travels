@@ -40,9 +40,9 @@ public class LoginActivity extends AppCompatActivity {
     EditText passwordETV;
     ProgressBar pb;
 
-    ArrayList<String> bannedList = new ArrayList<>();
-    FirebaseFirestore db = FirebaseFirestore.getInstance();
-    CollectionReference cR = db.collection("bannedEmails");
+    final ArrayList<String> bannedList = new ArrayList<>();
+    final FirebaseFirestore db = FirebaseFirestore.getInstance();
+    final CollectionReference cR = db.collection("bannedEmails");
 
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.Theme_SafeTravels_Fullscreen);
@@ -84,7 +84,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     // OnClickListener for Sign-In textview
-    View.OnClickListener signInClick = new View.OnClickListener() {
+    final View.OnClickListener signInClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
 
@@ -104,10 +104,10 @@ public class LoginActivity extends AppCompatActivity {
     };
 
     // OnClickListener for Forgot Password button
-    View.OnClickListener forgotPWClick = v -> forgotPWIntent();
+    final View.OnClickListener forgotPWClick = v -> forgotPWIntent();
 
     // OnClickListener for Create Account button
-    View.OnClickListener createAcctClick = v -> registerIntent();
+    final View.OnClickListener createAcctClick = v -> registerIntent();
 
     // Intent method to take user to Reset Password activity
     private void forgotPWIntent() {
@@ -145,7 +145,7 @@ public class LoginActivity extends AppCompatActivity {
                     } else {
                         // If sign in fails, display a message to the user.
                         Log.w(TAG, "signInWithEmail:failure", task.getException());
-                        errorLabel.setText(task.getException().getLocalizedMessage());
+                        errorLabel.setText(task.getException().getMessage());
                     }
                 });
 

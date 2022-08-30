@@ -58,9 +58,9 @@ public class UserProfileActivity extends AppCompatActivity {
     FirebaseFirestore db;
     CollectionReference cR;
     DocumentReference dR;
-    FirebaseAuth mAuth = FirebaseAuth.getInstance();
-    FirebaseUser user = mAuth.getCurrentUser();
-    ArrayList<Post> posts = new ArrayList<>();
+    final FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    final FirebaseUser user = mAuth.getCurrentUser();
+    final ArrayList<Post> posts = new ArrayList<>();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -145,7 +145,7 @@ public class UserProfileActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    View.OnClickListener editClick = new View.OnClickListener() {
+    final View.OnClickListener editClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             // Intent to edit profile activity
@@ -153,7 +153,7 @@ public class UserProfileActivity extends AppCompatActivity {
         }
     };
 
-    AdapterView.OnItemClickListener itemClick = new AdapterView.OnItemClickListener() {
+    final AdapterView.OnItemClickListener itemClick = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             Post selectedPost = posts.get(position);
@@ -176,14 +176,16 @@ public class UserProfileActivity extends AppCompatActivity {
                     return;
                 }
 
-                for (QueryDocumentSnapshot doc : value){
+                if (value != null) {
+                    for (QueryDocumentSnapshot doc : value){
 
-                    String uid = (String) doc.get("uid");
-                    String docId = doc.getId();
+                        String uid = (String) doc.get("uid");
+                        String docId = doc.getId();
 
-                    if (uid != null && uid.equals(user.getUid())) {
-                        dR = cR.document(docId);
-                        dR.delete();
+                        if (uid != null && uid.equals(user.getUid())) {
+                            dR = cR.document(docId);
+                            dR.delete();
+                        }
                     }
                 }
             }
@@ -273,69 +275,71 @@ public class UserProfileActivity extends AppCompatActivity {
                     return;
                 }
 
-                for (QueryDocumentSnapshot doc : value) {
+                if (value != null) {
+                    for (QueryDocumentSnapshot doc : value) {
 
-                    String uId = doc.getString("uid");
+                        String uId = doc.getString("uid");
 
-                    if (uId != null && uId.equals(user.getUid())) {
+                        if (uId != null && uId.equals(user.getUid())) {
 
-                        Post newUserPost;
-                        String date = (String) doc.get("date");
-                        Log.i(TAG, "onEvent: " + date);
+                            Post newUserPost;
+                            String date = (String) doc.get("date");
+                            Log.i(TAG, "onEvent: " + date);
 
-                        String datePosted = (String) doc.get("datePosted");
-                        String location = (String) doc.get("location");
-                        String post = (String) doc.get("post");
-                        String postId = doc.getId();
+                            String datePosted = (String) doc.get("datePosted");
+                            String location = (String) doc.get("location");
+                            String post = (String) doc.get("post");
+                            String postId = doc.getId();
 
-                        String uriString = (String) doc.get("profileImgUri");
-                        Uri profileImgUri = null;
-                        if (uriString != null){
-                            profileImgUri = Uri.parse(uriString);
+                            String uriString = (String) doc.get("profileImgUri");
+                            Uri profileImgUri = null;
+                            if (uriString != null){
+                                profileImgUri = Uri.parse(uriString);
+                            }
+
+                            String title = (String) doc.get("title");
+                            Log.i(TAG, "onEvent: " + title);
+                            String uid = (String) doc.get("uid");
+                            String username = (String) doc.get("username");
+
+                            String uriString1 = (String) doc.get("uri1");
+                            String uriString2 = (String) doc.get("uri2");
+                            String uriString3 = (String) doc.get("uri3");
+                            String uriString4 = (String) doc.get("uri3");
+
+                            // Check for empty URI's and set non-null fields
+                            if(uriString1 == null && uriString2 == null && uriString3 == null && uriString4 == null){
+                                newUserPost = new Post(uid, title, post, date, location, username, datePosted, profileImgUri, null, null, null, null);
+                            }
+                            else if (uriString1 != null && uriString2 == null && uriString3 == null && uriString4 == null){
+                                Uri uri1 = Uri.parse(uriString1);
+                                newUserPost = new Post(uid, title, post, date, location, username, datePosted, profileImgUri, uri1, null, null, null);
+                            }
+                            else if(uriString1 != null && uriString2 != null && uriString3 == null && uriString4 == null){
+                                Uri uri1 = Uri.parse(uriString1);
+                                Uri uri2 = Uri.parse(uriString2);
+                                newUserPost = new Post(uid, title, post, date, location, username, datePosted, profileImgUri, uri1, uri2, null, null);
+                            }
+                            else if( uriString1 != null && uriString2 != null && uriString3 != null && uriString4 == null){
+                                Uri uri1 = Uri.parse(uriString1);
+                                Uri uri2 = Uri.parse(uriString2);
+                                Uri uri3 = Uri.parse(uriString3);
+                                newUserPost = new Post(uid, title, post, date, location, username, datePosted, profileImgUri, uri1, uri2, uri3, null);
+                            }
+                            else{
+                                Uri uri1 = Uri.parse(uriString1);
+                                Uri uri2 = Uri.parse(uriString2);
+                                Uri uri3 = Uri.parse(uriString3);
+                                Uri uri4 = Uri.parse(uriString4);
+                                newUserPost = new Post(uid, title, post, date, location, username, datePosted, profileImgUri, uri1, uri2, uri3, uri4);
+                            }
+
+                            // Add post ID
+                            newUserPost.setPostId(postId);
+
+                            // Add Post object to ArrList
+                            posts.add(newUserPost);
                         }
-
-                        String title = (String) doc.get("title");
-                        Log.i(TAG, "onEvent: " + title);
-                        String uid = (String) doc.get("uid");
-                        String username = (String) doc.get("username");
-
-                        String uriString1 = (String) doc.get("uri1");
-                        String uriString2 = (String) doc.get("uri2");
-                        String uriString3 = (String) doc.get("uri3");
-                        String uriString4 = (String) doc.get("uri3");
-
-                        // Check for empty URI's and set non-null fields
-                        if(uriString1 == null && uriString2 == null && uriString3 == null && uriString4 == null){
-                            newUserPost = new Post(uid, title, post, date, location, username, datePosted, profileImgUri, null, null, null, null);
-                        }
-                        else if (uriString1 != null && uriString2 == null && uriString3 == null && uriString4 == null){
-                            Uri uri1 = Uri.parse(uriString1);
-                            newUserPost = new Post(uid, title, post, date, location, username, datePosted, profileImgUri, uri1, null, null, null);
-                        }
-                        else if(uriString1 != null && uriString2 != null && uriString3 == null && uriString4 == null){
-                            Uri uri1 = Uri.parse(uriString1);
-                            Uri uri2 = Uri.parse(uriString2);
-                            newUserPost = new Post(uid, title, post, date, location, username, datePosted, profileImgUri, uri1, uri2, null, null);
-                        }
-                        else if( uriString1 != null && uriString2 != null && uriString3 != null && uriString4 == null){
-                            Uri uri1 = Uri.parse(uriString1);
-                            Uri uri2 = Uri.parse(uriString2);
-                            Uri uri3 = Uri.parse(uriString3);
-                            newUserPost = new Post(uid, title, post, date, location, username, datePosted, profileImgUri, uri1, uri2, uri3, null);
-                        }
-                        else{
-                            Uri uri1 = Uri.parse(uriString1);
-                            Uri uri2 = Uri.parse(uriString2);
-                            Uri uri3 = Uri.parse(uriString3);
-                            Uri uri4 = Uri.parse(uriString4);
-                            newUserPost = new Post(uid, title, post, date, location, username, datePosted, profileImgUri, uri1, uri2, uri3, uri4);
-                        }
-
-                        // Add post ID
-                        newUserPost.setPostId(postId);
-
-                        // Add Post object to ArrList
-                        posts.add(newUserPost);
                     }
                 }
                 displayPosts();

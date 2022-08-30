@@ -3,7 +3,6 @@ package com.fullsail.android.safetravels.adapters;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +17,6 @@ import com.fullsail.android.safetravels.objects.User;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -29,12 +27,10 @@ import java.util.ArrayList;
 public class UserListAdapter extends ArrayAdapter<User> {
 
     private static final long BASE_ID = 0x1011;
-    private static final String TAG = "ListViewAdapter";
     private final Context mContext;
     private final ArrayList<User> mResults;
-    private final FirebaseFirestore db = FirebaseFirestore.getInstance();
-    FirebaseAuth mAuth = FirebaseAuth.getInstance();
-    FirebaseUser cUser = mAuth.getCurrentUser();
+    final FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    final FirebaseUser cUser = mAuth.getCurrentUser();
     StorageReference storageReference = FirebaseStorage.getInstance().getReference(cUser.getUid());
 
 
@@ -107,8 +103,8 @@ public class UserListAdapter extends ArrayAdapter<User> {
     }
 
     static class ViewHolder{
-        TextView _usernameLabel;
-        ImageView _userImg;
+        final TextView _usernameLabel;
+        final ImageView _userImg;
 
         public ViewHolder(View layout){
             _usernameLabel = layout.findViewById(R.id.userName_LV_Label);

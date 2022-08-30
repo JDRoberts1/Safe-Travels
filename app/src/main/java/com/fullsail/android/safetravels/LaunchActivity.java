@@ -13,8 +13,8 @@ import com.google.firebase.auth.FirebaseUser;
 public class LaunchActivity extends AppCompatActivity {
 
     final Handler handler = new Handler();
-    FirebaseAuth mAuth = FirebaseAuth.getInstance();
-    FirebaseUser cUser = mAuth.getCurrentUser();
+    final FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    final FirebaseUser cUser = mAuth.getCurrentUser();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -6,8 +6,8 @@ import android.os.Parcelable;
 
 public class User implements Parcelable {
 
-    String username;
-    String uid;
+    final String username;
+    final String uid;
     Uri uri;
 
     public User(String username, String uid, Uri uri) {
@@ -46,6 +46,9 @@ public class User implements Parcelable {
         return uri;
     }
 
+    public void setUri(Uri uri) {
+        this.uri = uri;
+    }
 
     @Override
     public int describeContents() {

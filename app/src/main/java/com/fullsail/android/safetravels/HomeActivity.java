@@ -6,38 +6,28 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.fullsail.android.safetravels.adapters.HomePostListAdapter;
 import com.fullsail.android.safetravels.objects.Post;
 import com.fullsail.android.safetravels.objects.User;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.Locale;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -52,11 +42,11 @@ public class HomeActivity extends AppCompatActivity{
     FirebaseFirestore db;
     StorageReference storageReference;
     CollectionReference cR;
-    FirebaseAuth mAuth = FirebaseAuth.getInstance();
-    FirebaseUser user = mAuth.getCurrentUser();
+    final FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    final FirebaseUser user = mAuth.getCurrentUser();
 
 
-    ArrayList<Post> posts = new ArrayList<>();
+    final ArrayList<Post> posts = new ArrayList<>();
     ArrayList<User> users = new ArrayList<>();
 
     @Override
@@ -74,7 +64,7 @@ public class HomeActivity extends AppCompatActivity{
     }
 
     // OnItemClickListener for when a user taps on a post
-    AdapterView.OnItemClickListener itemClick = (parent, view, position, id) -> {
+    final AdapterView.OnItemClickListener itemClick = (parent, view, position, id) -> {
         Post selectedPost = posts.get(position);
         Intent i = new Intent(HomeActivity.this, ViewPostActivity.class);
         i.putExtra(TAG, selectedPost);

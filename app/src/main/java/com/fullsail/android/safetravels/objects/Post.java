@@ -4,21 +4,20 @@ import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-
 public class Post implements Parcelable {
 
-    String uid;
-    String title;
-    String post;
-    String date;
-    String location;
-    String username;
-    String datePosted;
-    Uri profileImgUri, uri1, uri2, uri3, uri4;
+    final String uid;
+    final String title;
+    final String post;
+    final String date;
+    final String location;
+    final String username;
+    final String datePosted;
+    final Uri profileImgUri;
+    final Uri uri1;
+    final Uri uri2;
+    final Uri uri3;
+    final Uri uri4;
     String postId;
 
     public Post(String uid, String title, String post, String date, String location, String username, String datePosted, Uri profileImgUri, Uri uri1, Uri uri2, Uri uri3, Uri uri4) {

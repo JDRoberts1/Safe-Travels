@@ -32,7 +32,7 @@ public class ResetPasswordActivity extends AppCompatActivity {
         errorLabel = findViewById(R.id.error_label_reset);
     }
 
-    View.OnClickListener sendClick = new View.OnClickListener() {
+    final View.OnClickListener sendClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
 
