@@ -1,6 +1,7 @@
 package com.fullsail.android.safetravels.adapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,28 +12,31 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.fullsail.android.safetravels.R;
 import com.fullsail.android.safetravels.objects.Message;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
 
 public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHolder> {
 
+    private static final String TAG = "MessageAdapter";
     boolean status;
     final ArrayList<Message> messages;
     final Context mContext;
-    FirebaseUser currentUser;
+    FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
     final int send = 1;
     final int receive = 2;
 
     public MessageAdapter(ArrayList<Message> messages, Context mContext) {
         this.messages = messages;
         this.mContext = mContext;
-
+        Log.i(TAG, "MessageAdapter: " + messages.size());
     }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+
         View view;
         if (viewType == send){
             view = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_view_send, parent, false);

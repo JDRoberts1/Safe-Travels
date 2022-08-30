@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -24,7 +25,11 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -33,6 +38,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -58,18 +65,13 @@ public class ConversationActivity extends AppCompatActivity {
         setContentView(R.layout.activity_conversation);
 
         db = FirebaseFirestore.getInstance();
-        messages = new ArrayList<>();
 
         messageImg = findViewById(R.id.message_Img);
         conversationLabel = findViewById(R.id.conversation_Label);
         chatRCV = findViewById(R.id.chat_RCV);
-        chatRCV.setLayoutManager(new LinearLayoutManager(ConversationActivity.this.getApplicationContext()));
-        messageAdapter = new MessageAdapter(messages, ConversationActivity.this.getApplicationContext());
-        chatRCV.setAdapter(messageAdapter);
         messageETV = findViewById(R.id.message_ETV_Chat);
         sendBttn = findViewById(R.id.send_Bttn);
         sendBttn.setOnClickListener(sendClick);
-
 
         Intent i = getIntent();
         if (i != null){
@@ -105,6 +107,8 @@ public class ConversationActivity extends AppCompatActivity {
 
         String labelString = "Conversation with " + selectedUser.getUsername();
         conversationLabel.setText(labelString);
+
+        checkForMessages();
     }
 
     // TODO: Set up onClickListener for send button
@@ -156,5 +160,48 @@ public class ConversationActivity extends AppCompatActivity {
                     }
                 });
 
+        checkForMessages();
+    }
+
+    private void checkForMessages(){
+        currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        messages = new ArrayList<>();
+
+        CollectionReference reference = db.collection("users")
+                .document(currentUser.getUid())
+                .collection("messages")
+                .document(selectedUser.getUid())
+                .collection("thread");
+
+
+        reference.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                for (DocumentSnapshot doc : value){
+                    if (doc.get("fromUID") != null){
+                        String from = (String) doc.get("fromUID");
+                        String to = (String) doc.get("toUID");
+                        String message = (String) doc.get("message");
+                        String timeStamp = (String) doc.getId();
+
+                        Message m = new Message(to, from, message, timeStamp, true);
+                        messages.add(m);
+                    }
+                }
+
+                messages.sort(new Comparator<Message>() {
+                    @Override
+                    public int compare(Message o1, Message o2) {
+                        String date1 = o1.getTimeStamp();
+                        String date2 = o2.getTimeStamp();
+
+                        return date2.compareTo(date1);
+                    }
+                });
+                messageAdapter = new MessageAdapter(messages, getApplicationContext());
+                chatRCV.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                chatRCV.setAdapter(messageAdapter);
+            }
+        });
     }
 }
