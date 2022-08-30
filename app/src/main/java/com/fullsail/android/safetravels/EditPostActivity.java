@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -28,23 +29,19 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import com.fullsail.android.safetravels.objects.Post;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 public class EditPostActivity extends AppCompatActivity {
 
@@ -58,8 +55,6 @@ public class EditPostActivity extends AppCompatActivity {
     Button cancel_Post_Bttn;
 
     Post p = null;
-
-    CollectionReference cR;
     DocumentReference dR;
     StorageReference storageReference;
     final FirebaseAuth mAuth = FirebaseAuth.getInstance();
@@ -210,18 +205,7 @@ public class EditPostActivity extends AppCompatActivity {
             builder.setPositiveButton(R.string.action_remove_post, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    cUser.delete()
-                            .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    if (task.isSuccessful()) {
-
-                                        deletePost();
-
-                                        Log.d(TAG, "User account deleted.");
-                                    }
-                                }
-                            });
+                    deletePost();
                 }
 
             });
@@ -245,7 +229,6 @@ public class EditPostActivity extends AppCompatActivity {
         // Check for null or empty fields
         if(!checkForEmptyFields()){
 
-            String id = cUser.getUid();
             String post_Title = post_Title_ETV.getText().toString();
             String post = post_ETV.getText().toString();
             String location = location_ETV.getText().toString();
@@ -296,53 +279,9 @@ public class EditPostActivity extends AppCompatActivity {
     }
 
     private void deletePost() {
-        String id = cUser.getUid();
-        dR = db.collection("blogPosts").document(id).collection("posts").document(p.getPostId());
+        dR = db.collection("blogPosts").document(p.getPostId());
         dR.delete();
-
-        cR = db.collection("users").document(cUser.getUid()).collection("posts");
-        cR.addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                if (error != null) {
-                    Log.w(TAG, "Listen failed.", error);
-                    return;
-                }
-
-                if (value != null) {
-                    for (QueryDocumentSnapshot doc : value){
-
-                        String ts = p.getDatePosted();
-                        String title = p.getTitle();
-
-                        String docTS = (String) doc.get("datePosted");
-                        String docTitle = (String) doc.get("title");
-
-                        if (docTS != null && docTitle != null) {
-                            if (docTS.equals(ts) && docTitle.equals(title)) {
-                                dR = cR.document(doc.getId());
-                                dR.delete();
-
-                                // Delete images from storage
-                                storageReference = FirebaseStorage.getInstance().getReference(cUser.getUid());
-                                int index = 1;
-                                while (index < 4){
-                                    String imgTitle = docTitle + index;
-                                    StorageReference  ref = storageReference.child("postImages").child(imgTitle);
-                                    ref.delete();
-                                    index++;
-                                }
-
-                            }
-                        }
-
-                    }
-                }
-
-                backToProfile();
-            }
-        });
-
+        backToProfile();
 
     }
 
@@ -355,24 +294,77 @@ public class EditPostActivity extends AppCompatActivity {
 
     // Method to set not null images
     private void setUpImages() {
+
+        StorageReference storageReference = FirebaseStorage.getInstance().getReference(p.getUid());
+        StorageReference imgReference;
+
+        final long MEGABYTE = 1024 * 1024;
+        StorageReference pathReference = storageReference.child("postImages");
         if (p.getUri1() != null){
-            Picasso.get().load(p.getUri1()).into(imageView1);
+            imgReference = pathReference.child(p.getTitle() + "1");
+            imgReference.getBytes(MEGABYTE)
+                    .addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                        @Override
+                        public void onSuccess(byte[] bytes) {
+                            if (bytes.length > 0){
+                                InputStream is = new ByteArrayInputStream(bytes);
+                                Bitmap bmp = BitmapFactory.decodeStream(is);
+                                imageView1.setImageBitmap(bmp);
+                            }
+                        }
+                    });
+        }
+        else {
+            imageView1.setVisibility(View.GONE);
         }
 
         if (p.getUri2() != null){
-            Picasso.get().load(p.getUri2()).into(imageView2);
+            imgReference = pathReference.child(p.getTitle() + "2");
+            imgReference.getBytes(MEGABYTE)
+                    .addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                        @Override
+                        public void onSuccess(byte[] bytes) {
+                            if (bytes.length > 0){
+                                InputStream is = new ByteArrayInputStream(bytes);
+                                Bitmap bmp = BitmapFactory.decodeStream(is);
+                                imageView2.setImageBitmap(bmp);
+                            }
+                        }
+                    });
         }
 
 
         if (p.getUri3() != null){
-            Picasso.get().load(p.getUri3()).into(imageView3);
+            imgReference = pathReference.child(p.getTitle() + "3");
+            imgReference.getBytes(MEGABYTE)
+                    .addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                        @Override
+                        public void onSuccess(byte[] bytes) {
+                            if (bytes.length > 0){
+                                InputStream is = new ByteArrayInputStream(bytes);
+                                Bitmap bmp = BitmapFactory.decodeStream(is);
+                                imageView3.setImageBitmap(bmp);
+                            }
+                        }
+                    });
         }
 
 
         if (p.getUri4() != null){
-            Picasso.get().load(p.getUri4()).into(imageView4);
+            imgReference = pathReference.child(p.getTitle() + "4");
+            imgReference.getBytes(MEGABYTE)
+                    .addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                        @Override
+                        public void onSuccess(byte[] bytes) {
+                            if (bytes.length > 0){
+                                InputStream is = new ByteArrayInputStream(bytes);
+                                Bitmap bmp = BitmapFactory.decodeStream(is);
+                                imageView4.setImageBitmap(bmp);
+                            }
+                        }
+                    });
         }
-
+        
     }
 
     // saveAndDisplayImg Method
@@ -399,12 +391,7 @@ public class EditPostActivity extends AppCompatActivity {
     // Method to validate the Date entry submitted by the user
     private boolean validateDate(String d){
 
-        if (d.matches("([0-9]{2})/([0-9]{2})/([0-9]{4})")){
-            return true;
-        }
-        else {
-            return false;
-        }
+        return d.matches("([0-9]{2})/([0-9]{2})/([0-9]{4})");
 
     }
 

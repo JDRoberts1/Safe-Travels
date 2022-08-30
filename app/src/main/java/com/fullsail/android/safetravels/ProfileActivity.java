@@ -190,7 +190,9 @@ public class ProfileActivity extends AppCompatActivity {
     final View.OnClickListener messageClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-
+            Intent i = new Intent(ProfileActivity.this, ConversationActivity.class);
+            i.putExtra(ConversationActivity.TAG, user);
+            startActivity(i);
         }
     };
 
